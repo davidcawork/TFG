@@ -12,11 +12,7 @@
 #include <linux/in.h>
 #include <bpf/bpf_helpers.h>
 #include <bpf/bpf_endian.h>
-
-// The parsing helper functions from the packet01 lesson have moved here
 #include "../common/parsing_helpers.h"
-
-/* Defines xdp_stats_map */
 #include "../common/xdp_stats_kern_user.h"
 #include "../common/xdp_stats_kern.h"
 
@@ -65,8 +61,6 @@ static __always_inline __u16 icmp_checksum_diff(
 
 static __always_inline void swap_src_dst_mac(struct ethhdr *eth)
 {
-	/* Assignment 1: swap source and destination addresses in the eth.
-	 * For simplicity you can use the memcpy macro defined above */
 
 	__u8 tmp[ETH_ALEN];
 
@@ -77,7 +71,6 @@ static __always_inline void swap_src_dst_mac(struct ethhdr *eth)
 
 static __always_inline void swap_src_dst_ipv6(struct ipv6hdr *ipv6)
 {
-	/* Assignment 1: swap source and destination addresses in the iphv6dr */
 
 	struct in6_addr tmp = ipv6->saddr;
 
@@ -89,7 +82,6 @@ static __always_inline void swap_src_dst_ipv6(struct ipv6hdr *ipv6)
 
 static __always_inline void swap_src_dst_ipv4(struct iphdr *iphdr)
 {
-	/* Assignment 1: swap source and destination addresses in the iphdr */
 	__be32 tmp = iphdr->saddr;
 
 	iphdr->saddr = iphdr->daddr;
@@ -97,8 +89,7 @@ static __always_inline void swap_src_dst_ipv4(struct iphdr *iphdr)
 	
 }
 
-/* Implement packet03/assignment-1 in this section */
-SEC("xdp_icmp_echo")
+SEC("xdp_case03")
 int xdp_icmp_echo_func(struct xdp_md *ctx)
 {
 	void *data_end = (void *)(long)ctx->data_end;
@@ -155,8 +146,6 @@ int xdp_icmp_echo_func(struct xdp_md *ctx)
 	/* Swap Ethernet source and destination */
 	swap_src_dst_mac(eth);
 
-	/* Assignment 1: patch the packet and update the checksum. You can use
-	 * the echo_reply variable defined above to fix the ICMP Type field. */
 	
 	old_csum = icmphdr->cksum;
 	icmphdr->cksum = 0;
