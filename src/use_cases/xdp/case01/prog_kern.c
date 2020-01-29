@@ -13,7 +13,7 @@
 #include "../common/xdp_stats_kern_user.h"
 #include "../common/xdp_stats_kern.h"
 	
-SEC("case01")
+SEC("xdp_case01")
 int xdp_pass_func(struct xdp_md *ctx)
 {
 	int action = XDP_PASS;
