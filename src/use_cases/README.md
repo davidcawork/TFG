@@ -6,7 +6,7 @@
 
 | Cases         | xdp | p4 |   |
 |---------------|-----|----|---|
-| drop          |     |    |   |
-| pass          |     |    |   |
-| echo server   |     |    |   |
-| l3 forwarding |     |    |   |
+| case01 - drop          |     |    |   |
+| case02 - pass          |     |    |   |
+| case03 - echo server   |     |    |   |
+| case04 - l3 forwarding |     |    |   |
