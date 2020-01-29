@@ -6,7 +6,7 @@
 
 | Cases         | xdp | p4 |   |
 |---------------|-----|----|---|
-| case01 - drop          |     |    |   |
-| case02 - pass          |     |    |   |
+| case01 - drop          | :white_check_mark:    |    |   |
+| case02 - pass          | :white_check_mark:    |    |   |
 | case03 - echo server   |     |    |   |
 | case04 - l3 forwarding |     |    |   |
