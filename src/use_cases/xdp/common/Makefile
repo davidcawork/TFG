@@ -1,4 +1,11 @@
 # SPDX-License-Identifier: (GPL-2.0)
+#
+# Modified archive of the xdp-project (github.com/xdp-project) repository 
+# for purely academic purposes. 
+#
+# 	Author: David Carrascal <davidcawork@gmail.com>
+# 	Date:   29 Jan 2011
+
 CC := gcc
 
 all: common_params.o common_user_bpf_xdp.o common_libbpf.o
@@ -7,7 +14,6 @@ CFLAGS := -g -Wall
 
 LIBBPF_DIR = ../libbpf/src/
 CFLAGS += -I$(LIBBPF_DIR)/build/usr/include/  -I../headers
-# TODO: Do we need to make libbpf from this make file too?
 
 common_params.o: common_params.c common_params.h
 	$(CC) $(CFLAGS) -c -o $@ $<
