@@ -2,14 +2,12 @@
 # --------------------------------------------------
 # SPDX-License-Identifier: (GPL-2.0 OR BSD-2-Clause)
 #
-# This file should be included from your Makefile like:
-#  COMMON_DIR = ../common/
-#  include $(COMMON_DIR)/common.mk
+# Modified archive of the xdp-project (github.com/xdp-project) repository
+# for purely academic purposes.
 #
-# It is expected that you define the variables:
-#  XDP_TARGETS and USER_TARGETS
-# as a space-separated list
-#
+# 	Author: David Carrascal <davidcawork@gmail.com>
+# 	Date:   29 Jan 2011
+
 LLC ?= llc
 CLANG ?= clang
 CC ?= gcc
@@ -24,7 +22,7 @@ COMMON_DIR ?= ../common/
 LIBBPF_DIR ?= ../libbpf/src/
 
 COPY_LOADER ?=
-LOADER_DIR ?= $(COMMON_DIR)/../basic-solutions
+LOADER_DIR ?= $(COMMON_DIR)/../util
 
 OBJECT_LIBBPF = $(LIBBPF_DIR)/libbpf.a
 
