@@ -16,7 +16,7 @@
 SEC("xdp_case01")
 int xdp_pass_func(struct xdp_md *ctx)
 {
-	int action = XDP_PASS;
+	int action = XDP_DROP;
 	goto out;
 out:
         return xdp_stats_record_action(ctx, action);
