@@ -1,6 +1,3 @@
-[submodule "src/xdp-tutorial-solutions"]
-	path = src/xdp-tutorial-solutions
-	url = https://github.com/davidcawork/xdp-tutorial-solutions.git
 [submodule "src/testP4"]
 	path = src/testP4
 	url = https://github.com/davidcawork/testP4
