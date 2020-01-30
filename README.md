@@ -11,7 +11,6 @@
 ## TODO
 
 - End up with p4 use cases.
-- Upload all doc 
 
 
 <p align="center">
