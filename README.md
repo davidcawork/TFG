@@ -3,7 +3,7 @@
 
 
 **Title**: Design and study of integrated IoT devices in SDN environments. <br>
-**Tutor**: [Elisa Rojas Sánchez](https://scholar.google.es/citations?user=Dgn0ShwAAAAJ&hl=es). <br>
+**Tutor**: [Elisa Rojas Sánchez](https://scholar.google.es/citations?user=Dgn0ShwAAAAJ&hl=es) <br>
 **Degree**: Telematics engineering, University of Alcalá <br>
 
 ---
