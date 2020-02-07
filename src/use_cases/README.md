@@ -1,6 +1,8 @@
 # Use cases xdp - p4
 
-- Ethernet
+En este directorio se encuentran distintos casos de uso, a replicar con cada tecnología xdp - p4 para así conocer sus limitaciones y ventajas. Todos estos casos de uso se desarrollarán para los siguientes medios:
+
+- Ethernet (cableado)
 - Wireless
 
 
