@@ -6,10 +6,10 @@ En este directorio se encuentran distintos casos de uso, a replicar con cada tec
 - Wireless
 
 
-| Cases         | xdp | p4 |   |
-|---------------|-----|----|---|
-| case01 - Drop          | :white_check_mark:    |    |   |
-| case02 - Pass          | :white_check_mark:    |    |   |
-| case03 - Echo server   | :white_check_mark:    |    |   |
-| case04 - Layer 3 forwarding | :white_check_mark:    |    |   |
-| case05 - Broadcast |     |    |   |
+| Cases         | xdp | p4 |  p4-wireless | xdp-wireless    |
+|---------------|-----|----|---| --- |
+| case01 - Drop               | :white_check_mark:    |    |   |  |
+| case02 - Pass               | :white_check_mark:    |    |   |  |
+| case03 - Echo server        | :white_check_mark:    |    |   |  |
+| case04 - Layer 3 forwarding | :white_check_mark:    |    |   |  |
+| case05 - Broadcast          |                       |    |   |  |
