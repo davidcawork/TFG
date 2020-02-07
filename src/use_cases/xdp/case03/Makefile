@@ -1,4 +1,10 @@
 # SPDX-License-Identifier: (GPL-2.0 OR BSD-2-Clause)
+#
+# Modified archive of the xdp-project (github.com/xdp-project) repository 
+# for purely academic purposes. 
+#
+# 	Author: David Carrascal <davidcawork@gmail.com>
+# 	Date:   29 Jan 2020
 
 XDP_TARGETS  := prog_kern
 USER_TARGETS :=
