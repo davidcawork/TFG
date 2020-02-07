@@ -37,63 +37,7 @@ struct bpf_map_def SEC("maps") redirect_params = {
 	.max_entries = 1,
 };
 
-static __always_inline __u16 csum_fold_helper(__u32 csum)
-{
-	return ~((csum & 0xffff) + (csum >> 16));
-}
-
-/*
- * The icmp_checksum_diff function takes pointers to old and new structures and
- * the old checksum and returns the new checksum.  It uses the bpf_csum_diff
- * helper to compute the checksum difference. Note that the sizes passed to the
- * bpf_csum_diff helper should be multiples of 4, as it operates on 32-bit
- * words.
- */
-static __always_inline __u16 icmp_checksum_diff(
-		__u16 seed,
-		struct icmphdr_common *icmphdr_new,
-		struct icmphdr_common *icmphdr_old)
-{
-	__u32 csum, size = sizeof(struct icmphdr_common);
-
-	csum = bpf_csum_diff((__be32 *)icmphdr_old, size, (__be32 *)icmphdr_new, size, seed);
-	return csum_fold_helper(csum);
-}
-
-
-
-static __always_inline void swap_src_dst_mac(struct ethhdr *eth)
-{
-
-	__u8 tmp[ETH_ALEN];
-
-	memcpy(tmp, eth->h_source, ETH_ALEN);
-	memcpy(eth->h_source, eth->h_dest, ETH_ALEN);
-	memcpy(eth->h_dest, tmp, ETH_ALEN);
-}
-
-static __always_inline void swap_src_dst_ipv6(struct ipv6hdr *ipv6)
-{
-	/* Assignment 1: swap source and destination addresses in the iphv6dr */
-
-	struct in6_addr tmp = ipv6->saddr;
-
-	ipv6->saddr = ipv6->daddr;
-	ipv6->daddr = tmp;
-	
-	
-}
-
-static __always_inline void swap_src_dst_ipv4(struct iphdr *iphdr)
-{
-	__be32 tmp = iphdr->saddr;
-
-	iphdr->saddr = iphdr->daddr;
-	iphdr->daddr = tmp;
-	
-}
-
-SEC("xdp_redirect")
+SEC("xdp_case04")
 int xdp_redirect_func(struct xdp_md *ctx)
 {
 	void *data_end = (void *)(long)ctx->data_end;
@@ -102,7 +46,7 @@ int xdp_redirect_func(struct xdp_md *ctx)
 	struct ethhdr *eth;
 	int eth_type;
 	int action = XDP_PASS;
-	unsigned char dst[ETH_ALEN + 1] = {0xae,0xdd,0x14,0x51,0xa3,0x9a, '\0'} ;
+	unsigned char dst[ETH_ALEN + 1] = {0x52,0xe1,0xb9,0x94,0xde,0x61, '\0'} ;
 	unsigned ifindex = 6; 	
 
 	/* These keep track of the next header type and iterator pointer */
@@ -121,7 +65,7 @@ out:
 	return xdp_stats_record_action(ctx, action);
 }
 
-SEC("xdp_redirect_map")
+SEC("xdp_case04_map")
 int xdp_redirect_map_func(struct xdp_md *ctx)
 {
 	void *data_end = (void *)(long)ctx->data_end;
@@ -166,7 +110,7 @@ static __always_inline int ip_decrease_ttl(struct iphdr *iph)
 	return --iph->ttl;
 }
 
-SEC("xdp_router")
+SEC("xdp_case04_fib")
 int xdp_router_func(struct xdp_md *ctx)
 {
 	void *data_end = (void *)(long)ctx->data_end;
