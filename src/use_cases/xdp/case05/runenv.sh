@@ -1,11 +1,11 @@
 #!/bin/bash
 
-# Creamos ns
+# Let's create netns
 sudo ip netns add uno
 sudo ip netns add dos
 sudo ip netns add switch
 
-# Creamos interfaces y las colocamos en cada ns
+# We've to create each interface and set into right netns
 sudo ip link add uno type veth peer name veth0
 sudo ip link set veth0 netns uno
 sudo ip link set uno netns switch
@@ -15,7 +15,7 @@ sudo ip link set dos netns switch
 sudo ip link add switch type veth peer name gateway
 sudo ip link set switch netns switch
 
-# Dar IPs y levantar 
+# Finally assign Ip's, and raise each one of them. 
 sudo ip link set gateway up
 sudo ip addr add 10.0.0.1/24 dev gateway
 sudo ip netns exec switch ip link set switch up
