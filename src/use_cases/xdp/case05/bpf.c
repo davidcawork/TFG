@@ -13,7 +13,7 @@
 #include <stddef.h>
 #include "bpf_helpers.h"
 
-#define MAX_NETDEV 64
+#define MAX_NETDEV 256
 
 SEC("action")
 int case05_broadcast(struct __sk_buff *skb)
@@ -27,7 +27,7 @@ int case05_broadcast(struct __sk_buff *skb)
 		return TC_ACT_UNSPEC;
 	
 	#pragma unroll
-	for (int i = 0; i < 256 ; i++) {
+	for (int i = 0; i < MAX_NETDEV ; i++) {
 		if(!( i == skb->ifindex))
 			bpf_clone_redirect(skb, i, 0);
 	}

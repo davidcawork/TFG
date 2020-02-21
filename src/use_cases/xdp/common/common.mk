@@ -44,7 +44,7 @@ BPF_CFLAGS ?= -I$(LIBBPF_DIR)/build/usr/include/ -I../headers/
 
 LIBS = -l:libbpf.a -lelf $(USER_LIBS)
 
-all: llvm-check $(USER_TARGETS) $(XDP_OBJ) $(COPY_LOADER) $(COPY_STATS)
+all: llvm-check $(USER_TARGETS) $(XDP_OBJ) $(COPY_LOADER) $(COPY_STATS) $(EBPF_TC)
 
 .PHONY: clean $(CLANG) $(LLC)
 
@@ -56,6 +56,8 @@ clean:
 	rm -f $(USER_TARGETS) $(XDP_OBJ) $(USER_OBJ) $(COPY_LOADER) $(COPY_STATS)
 	rm -f *.ll
 	rm -f *~
+	rm -f bpf_helpers.h
+	rm -f *.o
 
 ifdef COPY_LOADER
 $(COPY_LOADER): $(LOADER_DIR)/${COPY_LOADER:=.c} $(COMMON_H)
@@ -117,3 +119,7 @@ $(XDP_OBJ): %.o: %.c $(OBJECT_LIBBPF)  Makefile $(COMMON_MK) $(KERN_USER_H) $(EX
 	    -Werror \
 	    -O2 -emit-llvm -c -g -o ${@:.o=.ll} $<
 	$(LLC) -march=bpf -filetype=obj -o $@ ${@:.o=.ll}
+
+$(EBPF_TC):
+	cp ../headers/bpf_helpers.h .
+	clang -O2 -target bpf -I/usr/include/x86_64-linux-gnu -c bpf.c -o bpf.o
