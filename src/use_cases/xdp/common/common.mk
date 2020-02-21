@@ -20,6 +20,7 @@ USER_OBJ := ${USER_C:.c=.o}
 # Expect this is defined by including Makefile, but define if not
 COMMON_DIR ?= ../common/
 LIBBPF_DIR ?= ../libbpf/src/
+HEADERS_DIR ?= ../headers/
 
 COPY_LOADER ?=
 LOADER_DIR ?= $(COMMON_DIR)/../util
@@ -35,13 +36,11 @@ EXTRA_DEPS +=
 
 # BPF-prog kern and userspace shares struct via header file:
 KERN_USER_H ?= $(wildcard common_kern_user.h)
-
 CFLAGS ?= -I$(LIBBPF_DIR)/build/usr/include/ -g
 CFLAGS += -I../headers/
 LDFLAGS ?= -L$(LIBBPF_DIR)
-
 BPF_CFLAGS ?= -I$(LIBBPF_DIR)/build/usr/include/ -I../headers/
-
+EBPF_TC_CFLAGS ?= -O2 -target bpf -I/usr/include/x86_64-linux-gnu
 LIBS = -l:libbpf.a -lelf $(USER_LIBS)
 
 all: llvm-check $(USER_TARGETS) $(XDP_OBJ) $(COPY_LOADER) $(COPY_STATS) $(EBPF_TC)
@@ -121,5 +120,5 @@ $(XDP_OBJ): %.o: %.c $(OBJECT_LIBBPF)  Makefile $(COMMON_MK) $(KERN_USER_H) $(EX
 	$(LLC) -march=bpf -filetype=obj -o $@ ${@:.o=.ll}
 
 $(EBPF_TC):
-	cp ../headers/bpf_helpers.h .
-	clang -O2 -target bpf -I/usr/include/x86_64-linux-gnu -c bpf.c -o bpf.o
+	cp $(HEADERS_DIR)bpf_helpers.h .
+	$(CLANG) $(EBPF_TC_CFLAGS) -c ${@:=.c} -o ${@:=.o}
