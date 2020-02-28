@@ -13,9 +13,12 @@ Para limpiar nuestra máquina del escenario hacemos un:
 
 ```bash
 sudo ./runenv.sh -c
-```
+``` 
 
-> Añadir foto del escenario generado
+
+![scenario](../../../../img/use_cases/xdp/case04/scenario_01.png)
+![scenario1](../../../../img/use_cases/xdp/case04/scenario_02.png)
+![scenario2](../../../../img/use_cases/xdp/case04/scenario_03.png)
 
 ## Forwarding Hardcodeado
 
