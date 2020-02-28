@@ -35,8 +35,22 @@ sudo ./runenv.sh -c
 
 ## Carga del programa  XDP
 
+> Añadir literatura
+
+```bash
+sudo ip netns exec uno ./xdp_loader -d veth0 -F --progsec xdp_case01
+```
 
 ## Comprobación del funcionamiento
+
+> Añadir literatura
+
+```bash
+sudo ip netns exec uno ./xdp_loader -d veth0 -U
+ping 10.0.0.2
+sudo ip netns exec uno ./xdp_loader -d veth0 -F --progsec xdp_case01
+ping 10.0.0.2
+```
 
 ## Fuentes
 
