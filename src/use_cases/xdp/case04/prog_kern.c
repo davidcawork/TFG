@@ -46,8 +46,8 @@ int xdp_redirect_func(struct xdp_md *ctx)
 	struct ethhdr *eth;
 	int eth_type;
 	int action = XDP_PASS;
-	unsigned char dst[ETH_ALEN + 1] = {0x52,0xe1,0xb9,0x94,0xde,0x61, '\0'} ;
-	unsigned ifindex = 6; 	
+	unsigned char dst[ETH_ALEN + 1] = {0x9a,0xde,0xaf,0xec,0x18,0x6e, '\0'} ;
+	unsigned ifindex = 66; 	
 
 	/* These keep track of the next header type and iterator pointer */
 	nh.pos = data;
