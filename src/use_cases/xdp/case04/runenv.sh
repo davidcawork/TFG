@@ -57,7 +57,7 @@ function clean {
 	printf 'Limpiando el escenario...\n' >&2
 	check_prereq
 	
-	if $(ip netns del uno; ip netns del dos; ip link del dos; ip link del uno;); then 
+	if $(ip netns del uno; ip netns del dos; ); then 
 		ok "Completado :)" 
 	fi
 }
