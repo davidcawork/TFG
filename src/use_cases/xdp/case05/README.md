@@ -27,7 +27,9 @@ Para limpiar nuestra máquina del escenario hacemos un:
 sudo ./runenv.sh -c
 ```
 
-> Añadir foto del escenario generado
+![scenario](../../../../img/use_cases/xdp/case05/scenario_01.png)
+![scenario1](../../../../img/use_cases/xdp/case05/scenario_02.png)
+![scenario2](../../../../img/use_cases/xdp/case05/scenario_03.png)
 
 ## Carga del programa  XDP
 
