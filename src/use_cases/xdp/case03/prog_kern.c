@@ -160,4 +160,10 @@ out:
 	return xdp_stats_record_action(ctx, action);
 }
 
+SEC("xdp_pass")
+int xdp_pass_func(struct xdp_md *ctx)
+{
+	return XDP_PASS;
+}
+
 char _license[] SEC("license") = "GPL";
