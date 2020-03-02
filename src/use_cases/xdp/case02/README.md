@@ -20,9 +20,7 @@ Es curioso el hecho de entender, como pasamos de los hipotéticos programas XDP 
 
 ## Puesta en marcha del escenario
 
-Para testear los programas XDP haremos uso de las Network Namespaces
-
-> Añadir brief sobre NETNS
+Para testear los programas XDP haremos uso de las Network Namespaces. Si usted no sabe lo que son las Network Namespaces, o el concepto de namespace en general, le recomendamos que se lea el [``case01``](https://github.com/davidcawork/TFG/tree/master/src/use_cases/xdp/case01) donde se hace una pequeña introducción a las Network Namespaces, qué son y cómo podemos utilizarlas para emular nuestros escenarios de Red. 
 
 Por ello, se ha dejado escrito un script para levantar el escenario haciendo uso de las network namespaces, y para su posterior limpieza. Para levantar el escenario hacemos un:
 
