@@ -57,7 +57,7 @@ Por lo que, entendiendo como funciona el módulo ``netns`` y los parámetros dad
 
 La comprobación del funcionamiento del programa XDP anclado a la interfaz ``veth0`` se llevará a cabo testeando la conectividad entre el par de veth's. Puede que sea una prueba un poco simple, pero nos vale, ya que unicamente queremos verificar que nuestro programa anclado en la interfaz está pasando los paquetes que le llegan al stack de red. 
 
-**Nota personal**: Desde que empece a trabajar con XDP, veía al stack de red de Linux como a un enemigo a batir, o "by-passear".. Ya que con XDP queremos conseguir definir de manera exclusiva el datapath que se desea implementar con un equipo que porte el Kernel de Linux, de esta manera conseguimos un performance superior ya que nos quitamos de encima toda la redundancia y capas que no nos son necesarias para el procesamiento de nuestro hipotetico datapath. 
+**Nota personal**: Desde que empece a trabajar con XDP, veía al stack de red de Linux como a un enemigo a batir, o "by-passear" :smile_cat: .. Ya que con XDP queremos conseguir definir de manera exclusiva el datapath que se desea implementar con un equipo que porte el Kernel de Linux, de esta manera conseguimos un performance superior ya que nos quitamos de encima toda la redundancia y capas que no nos son necesarias para el procesamiento de nuestro hipotetico datapath. 
 
 Ahora bien, en el transcurso  mi aprendizaje con esta tecnología he visto que en ocasiones trabajar de manera cooperativa con el stack de red puede reportarnos muchas facilidades (Se verá en el [``case04``](https://github.com/davidcawork/TFG/tree/master/src/use_cases/xdp/case04)) y muchas otras funcionalidades ya implementadas en este. No es cuestión de re-inventar la rueda, más que nada por que el performance que se puede llegar a ganar por hacer todo el procesamiento de manera exclusiva en la propia NIC, en mi opinión, no compensa con la robusted y fiabilidad que tendrá dicha funcionalidad en el stack de red de Linux. 
 
@@ -77,6 +77,7 @@ ping 10.0.0.2
 ```
 
 ## Fuentes
-
-* [Namespaces](http://man7.org/linux/man-pages/man7/namespaces.7.html)
+* [clang](https://clang.llvm.org/)
+* [LLVM](http://llvm.org/)
+* [iproute2 - netns](http://man7.org/linux/man-pages/man8/ip-netns.8.html)
 * [Network Namespaces](http://man7.org/linux/man-pages/man7/network_namespaces.7.html)
