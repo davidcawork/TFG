@@ -40,11 +40,18 @@ El escenario que vamos a manejar en este caso de uso es el siguiente, compuesto 
 
 ## Carga del programa  XDP
 
-> Añadir literatura
+Ya tenemos escenario y el programa XDP compilado.. Es hora de cargarlo en el Kernel :smile:. Si usted no sabe de dónde ha salido el programa [``xdp_loader``](https://github.com/davidcawork/TFG/blob/master/src/use_cases/xdp/util/xdp_loader.c), qué nos aporta la librería [``libbpf``](https://github.com/torvalds/linux/tree/master/tools/lib/bpf), o por que no hacemos uso de la herramienta [``iproute2``](https://wiki.linuxfoundation.org/networking/iproute2) para cargar los programas XDP en el Kernel, por favor vuelva al [``case01``](https://github.com/davidcawork/TFG/tree/master/src/use_cases/xdp/case01) donde se intenta abordar todas estas dudas. Si aun así tiene alguna duda extra o considera que no se encuentra del todo explicado póngase en contacto conmigo o mis tutores.
+
+Como estábamos diciendo es hora de cargar el programa en el Kernel. Esta vez por variar vamos a cargar el programa XDP en el extremo de la veth que se encuentra en el interior de la Network Namespace. Se podría haber hecho de la misma manera que en el caso de uso anterior y cargar el programa XDP en la veth que se ve desde la Network namepsace por defecto, pero de esta manera exploramos como ejecutar comandos "dentro" de una Network Namespace.
+
+Para ejecutar comandos "dentro" de una Network Namepsace haremos uso de la herramienta [``iproute2``](https://wiki.linuxfoundation.org/networking/iproute2), más concretamente su módulo llamado ``netns``. Indicándole el parámetro ``exec`` y el nombre de la Network namepsace, ejecutaremos el comando que se indique a continuación "dentro" de la Network Namespace indicada previamente.
+
 
 ```bash
 sudo ip netns exec uno ./xdp_loader -d veth0 -F --progsec xdp_case02
 ```
+
+Por lo que, entendiendo como funciona el módulo ``netns`` y los parámetros dados al programa [``xdp_loader``](https://github.com/davidcawork/TFG/blob/master/src/use_cases/xdp/util/xdp_loader.c), explicados en el caso de uso [``case01``](https://github.com/davidcawork/TFG/tree/master/src/use_cases/xdp/case01), se podrá intuir que el resultado de la sentencia anterior es la de cargar nuestro programa XDP en la interfaz llamada ``veth0`` contenida en la Network Namespace ``uno``.
 
 ## Comprobación del funcionamiento
 
