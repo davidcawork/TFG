@@ -1,5 +1,23 @@
 # XDP - Case03: Echo server
 
+En este test nos adentraremos al parseo de paquetes, su filtrado y manejo. En los anteriores caso de uso exclusivamente definíamos un comportamiento de los paquetes haciendo un uso exclusivo de los códigos de retorno XDP, más concretamente ``XDP_DROP`` para tirar los paquetes y ``XDP_PASS`` para admitir los paquetes. Hay más códigos de retorno XDP pero con ellos no podemos lograr desarrollar todas las lógicas posibles, se pueden consultar en el siguiente archivo de cabecera [``bpf.h``](https://github.com/torvalds/linux/blob/master/include/uapi/linux/bpf.h#L3298). En la siguiente tabla se pueden contemplar todos los códigos de retorno XDP.
+
+<div align="center">
+
+|     **Código de Retorno**    |     **Comportamiento** |
+|:-------------:|:-------------:|
+| XDP_PASS | Admitir el paquete, pasarselo al stack de red |
+| XDP_DROP | Tirar el paquete |
+| XDP_ABORTED  | Tirar el paquete y generar una xdp:xdp_exception, útiles para depurar. |
+| XDP_REDIRECT | Utilizado cuando se realiza un forwarding del paquete a otra interfaz |
+| XDP_TX | Re-transmitir el paquete por la misma interfaz por la cual se ha recibido el paquete |
+
+
+</div>
+
+Ahora bien, ¿Cómo podemos implementar una lógica más avanzada? Filtrando los paquetes y en base al tipo de pauqte aplicar un acciones u otras. Para filtrar paquetes tendremos que hacer uso de las estructuras de datos  de los protocolos de red definidas en  el Kernel de Linux, además hacer numerosas comprobaciones de limites de acceso a memoria para que el verificador del Kernel no nos tire el paquete. 
+
+
 ## Compilación
 
 ```bash
