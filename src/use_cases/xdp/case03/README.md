@@ -24,13 +24,13 @@ Ahora bien, ¿Cómo podemos implementar una lógica más avanzada? Filtrando los
   
   <br>
 
-| Estructura            | Archivo de cabecera       |
-|-------------------+----------------------|
-| =struct ethhdr=   | =<linux/if_ether.h>= |
-| =struct ipv6hdr=  | =<linux/ipv6.h>=     |
-| =struct iphdr=    | =<linux/ip.h>=       |
-| =struct icmp6hdr= | =<linux/icmpv6.h>=   |
-| =struct icmphdr=  | =<linux/icmp.h>=     |
+| **Estructura**            | **Archivo de cabecera**       |
+|:-------------:|:-------------:|
+| ``struct ethhdr``   | ``<linux/if_ether.h>`` |
+| ``struct ipv6hdr``  | ``<linux/ipv6.h>``     |
+| ``struct iphdr``    | ``<linux/ip.h>``       |
+| ``struct icmp6hdr`` | ``<linux/icmpv6.h>``   |
+| ``struct icmphdr``  | ``<linux/icmp.h>``    |
 
 <br>
 
