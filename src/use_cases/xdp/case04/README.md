@@ -159,20 +159,32 @@ sudo ./xdp_stats -d dos
 
 ## Forwarding auto (Kernel FIBs)
 
+El escenario sobre el cual trabajaremos será el mismo que el anterior por lo que unicamente debemos preocuparnos de limpiar el escenario de los programas XDP anteriormente anclados a cada interfaz para que no interfieran con los nuevos programas XDP que vamos a anclar. 
+
+En este caso, vamos a ir un paso más allá y el forwarding será automático. ¿Automático? Si, no hardcodearemos ningún tipo de información para hacer el forwarding a los paquetes. Pero, entonces, ¿Cómo sabremos a dónde hay que mandar los paquetes? Muy buena pregunta, esta información la conseguiremos del stack de red del kernel de Linux el cual tiene una FIB (_Forwarding Information Base_) con reglas muy útiles las cuales podemos sacar partido. Por lo que haremos una consulta a la FIB con el _helper_ ``bpf_fib_lookup()`` para obtener información de forwarding desde el propio stack de red, este es un claro ejemplo donde la cooperación con el stack de red hace que nuestro programa XDP sea más robusto e independiente del espacio de usuario. 
+
+
+
 ![scenario3](../../../../img/use_cases/xdp/case04/scenario_03.png)
 
 ### Carga del programa  XDP
 
-> Añadir literatura
+Para la carga de nuestro programa XDP deberemos primero habilitar el forwarding en nuestro Kernel, acto seguido nos procuraremos de anclar los _dummy program_ y por último anclar los programas en ambas interfaces tanto ``uno`` como ``dos`` para conseguir que la comunicación se bidireccional.
 
 ```bash
+
+# Habilitamos el forwarding 
 sudo sysctl net.ipv4.conf.all.forwarding=1
+
+# Anclamos los programas XDP a cada interfaz 
 sudo ./xdp_loader -d uno -F --progsec xdp_case04_fib
 sudo ./xdp_loader -d dos -F --progsec xdp_case04_fib
 
+# Ahora añadimos a cada interfaz destino su "dummy program"
 sudo ip netns exec uno ./xdp_loader -d veth0 -F --progsec xdp_pass
 sudo ip netns exec dos ./xdp_loader -d veth0 -F --progsec xdp_pass
 
+# Habilitamos los ifindex 
 sudo ./prog_user -d uno
 sudo ./prog_user -d dos
 
@@ -180,16 +192,20 @@ sudo ./prog_user -d dos
 
 ### Comprobación del funcionamiento
 
-> Añadir literatura
+La comprobación de funcionamiento de este programa puede ser llevada a cabo desde un extremo u otro debido a que, si todo funciona correctamente, existirá una comunicación bidireccional. Por lo que nosotros haremos las pruebas desde la Network namepsace ``uno``  hacia la ``dos``.
 
-```bash 
+```bash
+
+# Hacemos un ping desde el interior de la Network namespace "uno" hacia la veth0 de la Network namespace "dos"
+ping  {IP_veth_dos} [ y viceversa..]
+
+# Comprobamos con el recolector de estadísticas que se están produciendo XDP_REDIRECT
 sudo ./xdp_stats -d uno
 
 ó
+
 sudo ./xdp_stats -d dos
 
-ping from veth0(uno) to veth0(dos) [ y viceversa..]
-```
 
 ## Fuentes
 
