@@ -45,11 +45,14 @@ sudo ./runenv.sh -c
 
 ## Forwarding Hardcodeado
 
+El escenario levantado es el siguiente, está compuesto de dos Network Namespace, y de dos pares de ``veth's`` las cuales utilizaremos para comunicar las dos network namespaces entre sí, a través del la Network namespace por defecto. En este caso el forwarding lo haremos desde la interfaz ``dos`` hacia la interfaz ``uno``.
+
+
 ![scenario](../../../../img/use_cases/xdp/case04/scenario_01.png)
 
 ### Carga del programa  XDP
 
-Antes de realizar la carga del programa **debemos obtener dos datos**, la **``ifindex`` de la interfaz ``uno``** a la cual le vamos a mandar los paquetes generados desde el interior de la network namespace ``dos``, y la **MAC de la interfaz interna** de la Network namespace ``uno``, ya que será necesario que los paquetes que se dirijan a la interfaz ``uno`` lleven como MAC destino la de la ``veth0`` para que así los programas no sean descartados. Una vez tengamos estos datos anotados abriremos el programa xdp cuan cualquier editor de texto, e iremos a la declaración de variables y hardcoderemos tanto el ``ifindex`` como la MAC. Por ejemplo:
+Antes de realizar la carga del programa **debemos obtener dos datos**, la **``ifindex`` de la interfaz ``uno``** a la cual le vamos a mandar los paquetes generados desde el interior de la network namespace ``dos``, y la **MAC de la interfaz interna** de la Network namespace ``uno``, ya que será necesario que los paquetes que se dirijan a la interfaz ``uno`` lleven como MAC destino la de la ``veth0`` para que así los paquetes no sean descartados. Una vez tengamos estos datos anotados abriremos el programa xdp (``*.c``) cuan cualquier editor de texto, e iremos a la declaración de variables y hardcoderemos tanto el ``ifindex`` como la MAC. Por ejemplo:
 
 ```C 
 
@@ -58,7 +61,7 @@ Antes de realizar la carga del programa **debemos obtener dos datos**, la **``if
     ...
     
     unsigned char dst[ETH_ALEN + 1] = {0x9a,0xde,0xaf,0xec,0x18,0x6e, '\0'} ;
-    unsigned ifindex = 6; 
+	unsigned ifindex = 6; 
 
     ...
 
@@ -66,7 +69,7 @@ Antes de realizar la carga del programa **debemos obtener dos datos**, la **``if
 
 Una vez que tengamos hardcodeado los datos para realizar el forwarding deberemos recompilar el programa XDP para que el bytecode que anclemos a la interfaz ``dos`` haga correctamente el forwarding. Por ello, simplemente tenemos que hacer un **``make``** nuevamente. 
 
-Ahora si :smile: .. Ya tenemos todo preparado para anclar de nuevo el programa XDP! Recordemos que por el estar trabajando con interfaz ``veth's`` debemos anclar un dummy program en el extremo donde se vayan a recibir los paquetes, para más información de esta limitación le recomendamos que vuelva al [case03](https://github.com/davidcawork/TFG/tree/master/src/use_cases/xdp/case03) ó ver la charla de la [Netdev](https://netdevconf.info) llamada **_Veth XDP: XDP for containers_** donde explican con un mayor detalle esta limitación, como abordarla y por que está inducida.  [Enlace a la charla](https://netdevconf.info/0x13/session.html?talk-veth-xdp)
+Ahora si :smile: .. Ya tenemos todo preparado para anclar de nuevo el programa XDP! Recordemos que por el estar trabajando con interfaz ``veth's`` debemos anclar un dummy program en el extremo donde se vayan a recibir los paquetes, para más información de esta limitación le recomendamos que vuelva al [case03](https://github.com/davidcawork/TFG/tree/master/src/use_cases/xdp/case03) ó ver la charla de la [Netdev](https://netdevconf.info) llamada **_Veth XDP: XDP for containers_** donde explican con un mayor detalle esta limitación, como abordarla y por que está inducida.  [Enlace a la charla](https://netdevconf.info/0x13/session.html?talk-veth-xdp).
 
 ```bash
 
@@ -80,46 +83,72 @@ sudo ./xdp_loader -d dos -F --progsec xdp_case04
 
 ### Comprobación del funcionamiento
 
-> Añadir literatura
+
+La comprobación de funcionamiento de este programa XDP es bastante básica, vamos a generar paquetes desde el interior de la Network Namespace ``dos`` hacia la ``veth`` interna de la Network Namespace ``uno``. Para ello abriremos tres terminales, en cada una de ellas llevaremos a cabo una tarea:
+
 
 ```bash
-[xterm1] sudo ip netns exec dos ping {IP_veth0_uno}
-[xterm2] sudo ip netns exec uno tcpdump -l
-[xterm3] sudo ./xdp_stats -d dos
+
+# En esta terminal generaremos el ping hacia la interfaz de la Network Namespace "uno" desde la Network Namespace "dos"
+[Terminal:1] sudo ip netns exec dos ping {IP_veth0_uno}
+
+# En esta terminal pondremos a un sniffer a escuchar los paquetes que nos lleguen dentro de la Network Namespace "dos"
+[Terminal:2] sudo ip netns exec uno tcpdump -l
+
+# Por último, opcionalmente, podemos ejecutar el programa que actuaba como recolector de estadísticas sobre los códigos de retorno XDP
+[Terminal:3] sudo ./xdp_stats -d dos
 ```
+
+
 ## Forwarding semi-Hardcodeado (BPF maps)
+
+El escenario levantado es el siguiente, está compuesto de dos Network Namespace, y de dos pares de ``veth's`` las cuales utilizaremos para comunicar las dos network namespaces entre sí, a través del la Network namespace por defecto. En este caso el forwarding lo haremos desde la interfaz ``dos`` hacia la interfaz ``uno`` y viceversa, por lo que la comunicación será bidireccional.
+
 
 ![scenario2](../../../../img/use_cases/xdp/case04/scenario_02.png)
 
 ### Carga del programa  XDP
 
-> Añadir literatura
+Esta manera de hacer el forwarding no requiere de hardcodear datos en el propio programa XDP que irá al Kernel, si no, que se usarán los mapas BPF como medio para guardar datos de forwarding como son las ``ifindex`` y las MAC destino desde espacio de usuario para que posteriormente el programa anclado en el Kernel sea capaz de leer los mapas, obtener la información de forwarding y realizarlo en base a la información percibida de los mapas BPF.
+
+De nuevo, y como en este caso la comunicación será bidireccional debemos anclar dos _dummy program_ en los dos extremos donde van a llegar los paquetes, si no estás al tanto de esta limitación vuelva a esta [sección](https://github.com/davidcawork/TFG/blob/master/src/use_cases/xdp/case04/README.md#carga-del-programa--xdp) donde se menciona la limitación.
+
+Es importante señalar que los programas anclados previamente deben ser removidos, por lo que una opción sería hacer un clean del escenario haciendo uso del script dado ( ``sudo ./runenv.sh -c``) y empezar de nuevo.
+
 
 ```bash
+
+# Entramos en cada Network Namespace y anclamos los "dummy programs"
 sudo ip netns exec uno ./xdp_loader -d veth0 -F --progsec xdp_pass
 sudo ip netns exec dos ./xdp_loader -d veth0 -F --progsec xdp_pass
+
+# Anclamos el programa XDP en cada interfaz para conseguir un comunicación bidireccional 
 sudo ./xdp_loader -d uno -F --progsec xdp_case04_map
 sudo ./xdp_loader -d dos -F --progsec xdp_case04_map
 
-
- local src="uno"
- local dest="dos"
- local src_mac=$(ip netns exec $src cat /sys/class/net/veth0/address)
- local dest_mac=$(ip netns exec $dest cat /sys/class/net/veth0/address)
+# Almacenamos la información necesaria para realizar el forwarding 
+local src="uno"
+local dest="dos"
+local src_mac=$(ip netns exec $src cat /sys/class/net/veth0/address)
+local dest_mac=$(ip netns exec $dest cat /sys/class/net/veth0/address)
  
- # set bidirectional forwarding
- ./xdp_prog_user -d $src -r $dest --src-mac $src_mac --dest-mac $dest_mac
- ./xdp_prog_user -d $dest -r $src --src-mac $dest_mac --dest-mac $src_mac
+# Populamos los mapas BPF con la información útil para llevar a cabo el forwarding en ambas direcciones
+./xdp_prog_user -d $src -r $dest --src-mac $src_mac --dest-mac $dest_mac
+./xdp_prog_user -d $dest -r $src --src-mac $dest_mac --dest-mac $src_mac
+
 
 ```
 
 ### Comprobación del funcionamiento
 
-> Añadir literatura
+La comprobación de funcionamiento de este programa puede ser llevada a cabo desde un extremo u otro debido a que, si todo funciona correctamente, existirá una comunicación bidireccional. Por lo que nosotros haremos las pruebas desde la Network namepsace ``uno``  hacia la ``dos``.
 
 ```bash
-ping from veth0(uno) to veth0(dos) [ y viceversa..]
 
+# Hacemos un ping desde el interior de la Network namespace "uno" hacia la veth0 de la Network namespace "dos"
+ping  {IP_veth_dos} [ y viceversa..]
+
+# Comprobamos con el recolector de estadísticas que se están produciendo XDP_REDIRECT
 sudo ./xdp_stats -d uno
 
 ó
