@@ -16,11 +16,13 @@ sudo ./runenv.sh -c
 ``` 
 
 
-![scenario](../../../../img/use_cases/xdp/case04/scenario_01.png)
-![scenario1](../../../../img/use_cases/xdp/case04/scenario_02.png)
-![scenario2](../../../../img/use_cases/xdp/case04/scenario_03.png)
+
+
+
 
 ## Forwarding Hardcodeado
+
+![scenario](../../../../img/use_cases/xdp/case04/scenario_01.png)
 
 ### Carga del programa  XDP
 
@@ -44,6 +46,8 @@ sudo ./xdp_loader -d dos -F --progsec xdp_case04
 [xterm3] sudo ./xdp_stats -d dos
 ```
 ## Forwarding semi-Hardcodeado (BPF maps)
+
+![scenario2](../../../../img/use_cases/xdp/case04/scenario_02.png)
 
 ### Carga del programa  XDP
 
@@ -83,6 +87,8 @@ sudo ./xdp_stats -d dos
 ``` 
 
 ## Forwarding auto (Kernel FIBs)
+
+![scenario3](../../../../img/use_cases/xdp/case04/scenario_03.png)
 
 ### Carga del programa  XDP
 
