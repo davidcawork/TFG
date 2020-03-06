@@ -58,16 +58,22 @@ Antes de realizar la carga del programa **debemos obtener dos datos**, la **``if
     ...
     
     unsigned char dst[ETH_ALEN + 1] = {0x9a,0xde,0xaf,0xec,0x18,0x6e, '\0'} ;
-    unsigned ifindex = 6; 
+	unsigned ifindex = 6; 
 
     ...
 
 ```
 
+Una vez que tengamos hardcodeado los datos para realizar el forwarding deberemos recompilar el programa XDP para que el bytecode que anclemos a la interfaz ``dos`` haga correctamente el forwarding. Por ello, simplemente tenemos que hacer un **``make``** nuevamente. 
+
+Ahora si :smile: .. Ya tenemos todo preparado para anclar de nuevo el programa XDP! Recordemos que por el estar trabajando con interfaz ``veth's`` debemos anclar un dummy program en el extremo donde se vayan a recibir los paquetes, para más información de esta limitación le recomendamos que vuelva al [case03](https://github.com/davidcawork/TFG/tree/master/src/use_cases/xdp/case03) ó ver la charla de la [Netdev](https://netdevconf.info) llamada **_Veth XDP: XDP for containers_** donde explican con un mayor detalle esta limitación, como abordarla y por que está inducida.  [Enlace a la charla](https://netdevconf.info/0x13/session.html?talk-veth-xdp)
+
 ```bash
-Ir al prog_kern.c => ifindex (uno interface) | MAC (Entramos a la netns miramos la MAC de veth0)
-make
+
+# Entramos a la Network Namespace "uno" y anclamos el dummy program a la interfaz veth0
 sudo ip netns exec uno ./xdp_loader -d veth0 -F --progsec xdp_pass
+
+# Acto seguido, anclamos el programa a la interfaz "dos" como ya comentábamos antes
 sudo ./xdp_loader -d dos -F --progsec xdp_case04
 
 ```
