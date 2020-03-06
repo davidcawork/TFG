@@ -15,8 +15,7 @@
 
 |      **Task**     |     **Status**    | **Priority** |
 |:-------------:|:-------------:|:-------------:|
-| Ending the use_cases in xdp | ![underway](https://img.shields.io/badge/-underway-brightgreen) | ![medium](https://img.shields.io/badge/-medium-lightgrey) |
-| Develop p4 use cases | ![queued](https://img.shields.io/badge/-queued-orange) | ![medium](https://img.shields.io/badge/-medium-lightgrey) |
+| Develop p4 use cases | ![underway](https://img.shields.io/badge/-underway-brightgreen) | ![medium](https://img.shields.io/badge/-medium-lightgrey) |
 | Translate the contents of the repository into English | ![queued](https://img.shields.io/badge/-queued-orange) | ![low](https://img.shields.io/badge/-low-blue) |
 
 
