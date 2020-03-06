@@ -58,11 +58,12 @@ Antes de realizar la carga del programa **debemos obtener dos datos**, la **``if
     ...
     
     unsigned char dst[ETH_ALEN + 1] = {0x9a,0xde,0xaf,0xec,0x18,0x6e, '\0'} ;
-	unsigned ifindex = 6; 
+    unsigned ifindex = 6; 
 
     ...
 
 ```
+
 ```bash
 Ir al prog_kern.c => ifindex (uno interface) | MAC (Entramos a la netns miramos la MAC de veth0)
 make
