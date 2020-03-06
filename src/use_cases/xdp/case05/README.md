@@ -192,3 +192,6 @@ sudo ip netns exec dos tcpduml -l
 
 ## Fuentes
 
+* [Sk_buff](https://people.cs.clemson.edu/~westall/853/notes/skbuff.pdf)
+* [TC](http://man7.org/linux/man-pages/man8/tc.8.html)
+* [tc-bpf](https://man7.org/linux/man-pages/man8/tc-bpf.8.html)
