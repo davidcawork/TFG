@@ -133,8 +133,8 @@ local src_mac=$(ip netns exec $src cat /sys/class/net/veth0/address)
 local dest_mac=$(ip netns exec $dest cat /sys/class/net/veth0/address)
  
 # Populamos los mapas BPF con la información útil para llevar a cabo el forwarding en ambas direcciones
-./xdp_prog_user -d $src -r $dest --src-mac $src_mac --dest-mac $dest_mac
-./xdp_prog_user -d $dest -r $src --src-mac $dest_mac --dest-mac $src_mac
+./prog_user -d $src -r $dest --src-mac $src_mac --dest-mac $dest_mac
+./prog_user -d $dest -r $src --src-mac $dest_mac --dest-mac $src_mac
 
 
 ```
