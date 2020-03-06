@@ -1,10 +1,10 @@
 # XDP - Case05: Broadcast
 
-Por último, en este caso de uso exploraremos la capacidad de forwarding de XDP ( :joy: ). Por ello se ha intentado replicar un escenario básico de broadcast con Network Namespaces. Se ha planteado hacer uso de la herramienta [**arping**](http://man7.org/linux/man-pages/man8/arping.8.html) para emular una resolución ARP, generando ARP Request, estos llevan su MAC destino todo a FF's y su dominio de difusión englobaría todos aquellos nodos que operen hasta capa 2 ( hub, switch).
+Por último, en este caso de uso exploraremos la capacidad de forwarding de XDP ( :joy: ). Por ello se ha intentado replicar un escenario básico de broadcast con Network Namespaces. Se ha planteado hacer uso de la herramienta [**arping**](http://man7.org/linux/man-pages/man8/arping.8.html) para emular una resolución ARP, generando ARP Request, estos llevan su MAC destino todo a FF:FF:FF:FF:FF:FF y su dominio de difusión englobaría todos aquellos nodos de la red que operen hasta capa 2 ( como por ejemplo un hub, o un switch).
 
 ![scenario](../../../../img/use_cases/xdp/case05/scenario_01.png)
 
-El escenario propuesto para emular ese escenario ha sido el siguiente:
+El escenario propuesto para emular ese escenario ha sido el siguiente. Este estaría compuesto de tres Network Namespaces replicando así cada una de ellas un nodo independiente de la red, después, para intercomunicar cada "nodo" de la red, hemos hecho uso de ``veth's``. El supuesto switch será la Network Namespace llamado ``switch`` el cual requerirá de un programa XDP para poder actual como tal, ya que de no ser así sus interfaces tendrán todo el stack de red de Linux, implementará todas las capas, replicando así la funcionalidad de un hipotético host.
 
 ![scenario1](../../../../img/use_cases/xdp/case05/scenario_02.png)
 
@@ -42,7 +42,7 @@ Todas estas estructuras perteneces a un lista doblemente enlazada. Pero la organ
 
 Como ya habíamos dicho se trata de una lista doblemente enlazada como toda lista doblemente enlazada la estructura tiene un puntero que apunta al siguiente elemento de la lista y otro puntero que apunta al elemento anterior de la lista. Pero, una característica de esta estructura es que cada estructura `sk_buff` debe ser capaz de encontrar la cabeza de toda la lista rápidamente. Para implementar este requisito, se inserta una estructura extra del tipo `sk_buff_head` al principio de la lista. La definición de esta estructura `sk_buff_head` es la siguiente:
 
-```C=289
+```C
 struct sk_buff_head {
 	/* These two members must be first. */
 	struct sk_buff	*next;
@@ -52,18 +52,11 @@ struct sk_buff_head {
 	spinlock_t	lock;
 };
 ```
-El elemento `lock` se utiliza como cerrojo para prevenir accesos simultáneos a la lista, será un atributo crucial para lograr la atomicidad en la operaciones relativas a la lista. En cuanto al elemento `next` y `prev` sirven como elementos para recorrer la lista apuntando estos al primer buffer y al ultimo de ellos. 
-
-Al contener estos elementos, next y prev, la estructura `sk_buff_head` es completamente compatible en la lista doblemente enlazada. 
-
-Por último, el elemento `qlen` es para llevar el numero de elemento que hay en la lista en un momento dado.
+El elemento `lock` se utiliza como cerrojo para prevenir accesos simultáneos a la lista, será un atributo crucial para lograr la atomicidad en la operaciones relativas a la lista. En cuanto al elemento `next` y `prev` sirven como elementos para recorrer la lista apuntando estos al primer buffer y al ultimo de ellos. Al contener estos elementos, next y prev, la estructura `sk_buff_head` es completamente compatible en la lista doblemente enlazada.  Por último, el elemento `qlen` es para llevar el numero de elemento que hay en la lista en un momento dado.
 
 ![](https://i.imgur.com/uvOG20m.png)
 
-Por claridad del dibujo no se ha dibujado el enlace de cada elemento de la lista hacia la cabeza de la misma. Pero recordemos, no es una simple lista enlazada, cada elemento de lista tiene un puntero que apunta al primer elemento de la lista, con su parámetro `list`.
-
-Otros campos útiles de la estructura `sk_buff` son los siguientes:
-
+Por claridad del dibujo no se ha dibujado el enlace de cada elemento de la lista hacia la cabeza de la misma. Pero recordemos, no es una simple lista enlazada, cada elemento de lista tiene un puntero que apunta al primer elemento de la lista, con su parámetro `list`.Otros campos útiles de la estructura `sk_buff` son los siguientes:
 
 
 | Campo              | Explicación    |
