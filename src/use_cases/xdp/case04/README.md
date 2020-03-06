@@ -49,8 +49,20 @@ sudo ./runenv.sh -c
 
 ### Carga del programa  XDP
 
-> Añadir literatura
+Antes de realizar la carga del programa **debemos obtener dos datos**, la **``ifindex`` de la interfaz ``uno``** a la cual le vamos a mandar los paquetes generados desde el interior de la network namespace ``dos``, y la **MAC de la interfaz interna** de la Network namespace ``uno``, ya que será necesario que los paquetes que se dirijan a la interfaz ``uno`` lleven como MAC destino la de la ``veth0`` para que así los programas no sean descartados. Una vez tengamos estos datos anotados abriremos el programa xdp cuan cualquier editor de texto, e iremos a la declaración de variables y hardcoderemos tanto el ``ifindex`` como la MAC. Por ejemplo:
 
+```C 
+
+    /*  Para un ifindex: 6 y una MAC: 9A:DE:AF:EC:18:6E */
+
+    ...
+    
+    unsigned char dst[ETH_ALEN + 1] = {0x9a,0xde,0xaf,0xec,0x18,0x6e, '\0'} ;
+	unsigned ifindex = 6; 
+
+    ...
+
+```
 ```bash
 Ir al prog_kern.c => ifindex (uno interface) | MAC (Entramos a la netns miramos la MAC de veth0)
 make
