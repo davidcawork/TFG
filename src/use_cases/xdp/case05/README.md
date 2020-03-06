@@ -4,7 +4,7 @@ Por último, en este caso de uso exploraremos la capacidad de forwarding de XDP 
 
 ![scenario](../../../../img/use_cases/xdp/case05/scenario_01.png)
 
-El escenario propuesto para emular ese escenario ha sido el siguiente. Este estaría compuesto de tres Network Namespaces replicando así cada una de ellas un nodo independiente de la red, después, para intercomunicar cada "nodo" de la red, hemos hecho uso de ``veth's``. El supuesto switch será la Network Namespace llamado ``switch`` el cual requerirá de un programa XDP para poder actual como tal, ya que de no ser así sus interfaces tendrán todo el stack de red de Linux, implementará todas las capas, replicando así la funcionalidad de un hipotético host.
+El escenario propuesto para emular ese escenario ha sido el siguiente. Este estaría compuesto de tres Network Namespaces replicando así cada una de ellas un nodo independiente de la red, después, para intercomunicar cada "nodo" de la red, hemos hecho uso de ``veth's``. El supuesto switch será la Network Namespace llamada ``switch`` el cual requerirá de un programa XDP para poder actual como tal, ya que de no ser así sus interfaces tendrán todo el stack de red de Linux por encima de ellas, es decir, el nodo implementará todas las capas del modelo TCP/IP (DoD) ó OSI en su defecto, replicando así la funcionalidad de un hipotético host.
 
 ![scenario1](../../../../img/use_cases/xdp/case05/scenario_02.png)
 
