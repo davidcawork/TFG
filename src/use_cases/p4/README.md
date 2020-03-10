@@ -9,7 +9,7 @@ Para la instalación del entorno de P4 se ha dejado un script de instalación ba
 
 * Hemos tratado de instalar el entorno de p4 bajo Ubuntu 16.04 con un tipo de compilación multi núcleo, pero ha fallado en la compilación del ``bmv2`` por un error interno del compilador ``g++``.  Se han empleado 6 cores para la compilación (``make -j6``).
 
-> Por lo visto para conseguir una compilación multicore requería de mucha memoria RAM para conseguir una correcta sincronización entre los distintos threads. Por ello se ha modificado el script de instalación para que la compilación se haga unicamente con dos cores o uno solo.
+  * Por lo visto para conseguir una compilación multicore requería de mucha memoria RAM para conseguir una correcta sincronización entre los distintos threads. Por ello se ha modificado el script de instalación para que la compilación se haga unicamente con dos cores o uno solo.
 
 
 * Además, se han actualizado las dependencias de [``BMV2``](https://github.com/p4lang/behavioral-model), [``PI``](https://github.com/p4lang/PI) y [``P4C``](https://github.com/p4lang/p4c) a los últimos commits de Agosto de 2019 ya que la creación del script de instalación fue anterior a esta fecha.
