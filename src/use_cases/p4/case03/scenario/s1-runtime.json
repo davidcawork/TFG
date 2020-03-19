@@ -1,6 +1,6 @@
 {
   "target": "bmv2",
-  "p4info": "build/case01.p4.p4info.txt",
-  "bmv2_json": "build/case01.json",
+  "p4info": "build/case03.p4.p4info.txt",
+  "bmv2_json": "build/case03.json",
   "table_entries": []
 }
