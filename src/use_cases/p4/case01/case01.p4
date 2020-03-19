@@ -2,6 +2,23 @@
 #include <core.p4>
 #include <v1model.p4>
 
+
+/* SPDX-License-Identifier: GPL-2.0 
+ *
+ *
+ * Modified archive of the P4lang-project (github.com/p4lang/tutorials/) repository
+ * for purely academic purposes.
+ *
+ *	Author: David Carrascal <davidcawork@gmail.com>
+ *	Date:   19 March 2020
+ */
+
+
+
+/*************************************************************************
+***********************  M A C R O S   ***********************************
+*************************************************************************/
+
 const bit<16> TYPE_IPV4 = 0x800;
 
 /*************************************************************************
