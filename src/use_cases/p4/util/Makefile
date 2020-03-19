@@ -1,3 +1,12 @@
+# SPDX-License-Identifier: (GPL-2.0 OR BSD-2-Clause)
+#
+# Modified archive of the p4lang-project (github.com/p4lang/tutorials/) repository 
+# for purely academic purposes. 
+#
+# 	Author: David Carrascal <davidcawork@gmail.com>
+# 	Date:   10 March 2020
+
+
 BUILD_DIR = build
 PCAP_DIR = pcaps
 LOG_DIR = logs
@@ -5,7 +14,7 @@ LOG_DIR = logs
 P4C = p4c-bm2-ss
 P4C_ARGS += --p4runtime-files $(BUILD_DIR)/$(basename $@).p4.p4info.txt
 
-RUN_SCRIPT = ../../utils/run_exercise.py
+RUN_SCRIPT = ../utils/run_exercise.py
 
 ifndef TOPO
 TOPO = topology.json
