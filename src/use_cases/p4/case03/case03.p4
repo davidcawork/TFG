@@ -262,6 +262,8 @@ control MyComputeChecksum(inout headers  hdr, inout metadata meta) {
               hdr.ipv4.dstAddr },
             hdr.ipv4.hdrChecksum,
             HashAlgorithm.csum16);
+
+	update_checksum_with_payload(hdr.icmp.isValid(), {hdr.icmp.type, hdr.icmp.code} , hdr.icmp.checksum, HashAlgorithm.csum16);
     }
 }
 
@@ -283,7 +285,6 @@ control MyDeparser(packet_out packet, in headers hdr) {
 		packet.emit(hdr.ethernet);
 		packet.emit(hdr.ipv4);
 		packet.emit(hdr.icmp);
-		packet.emit(hdr.ethernet);
 		packet.emit(hdr.ipv6);
 		packet.emit(hdr.icmp6);
     }
