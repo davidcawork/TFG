@@ -171,7 +171,21 @@ control MyIngress(inout headers hdr,
     action drop() {
         mark_to_drop(standard_metadata);
     }
+
     
+    action echo (){
+        macAddr_t temp_mac = hdr.ethernet.srcAddr;
+    	ip4Addr_t temp_ip = hdr.ipv4.srcAddr;
+
+	hdr.ethernet.srcAddr = hdr.ethernet.dstAddr;
+        hdr.ethernet.dstAddr = temp_mac;
+
+ 	hdr.ipv4.srcAddr = hdr.ipv4.dstAddr;
+	hdr.ipv4.dstAddr = teamp_ip;
+ 
+	standard_metadata.egress_spec = standard_metadata.ingress_port;
+
+    }    
    
     apply {
         drop();
