@@ -26,6 +26,10 @@ const bit<16> ETHERTYPE_IPV6 = 0x86dd;
 /*	---	Layer 3 MACROS	     ---	*/
 const bit<8> IP_PROTOCOL_ICMP = 0x01;
 const bit<8> IP_PROTOCOL_ICMPv6 = 0x3a; 
+const bit<8> ICMP_ECHO_REQUEST_TYPE = 0x08;
+const bit<8> ICMP_ECHO_REQUEST_CODE = 0x00;
+const bit<8> ICMP_ECHO_REPLY_TYPE = 0x00;
+const bit<8> ICMP_ECHO_REPLY_CODE = 0x00;
 
 /*
  *   According to RFC 2460, the codes of the protocol immediately above,
@@ -135,7 +139,7 @@ parser MyParser(packet_in packet,
 
     state parse_ipv6 {
         packet.extract(hdr.ipv6);
-        transition select(){
+        transition select(hdr.ipv6.nextHdr){
 		IP_PROTOCOL_ICMPv6: parse_icmp6;
 		default: accept;
 	}
@@ -174,21 +178,56 @@ control MyIngress(inout headers hdr,
 
     
     action echo (){
+	/*	---	Auxiliary variables	---	*/
         macAddr_t temp_mac = hdr.ethernet.srcAddr;
     	ip4Addr_t temp_ip = hdr.ipv4.srcAddr;
 
+	/*      ---     Swap MACs     ---     */
 	hdr.ethernet.srcAddr = hdr.ethernet.dstAddr;
         hdr.ethernet.dstAddr = temp_mac;
 
+	/*      ---     Swap Ips     ---     */
  	hdr.ipv4.srcAddr = hdr.ipv4.dstAddr;
-	hdr.ipv4.dstAddr = teamp_ip;
- 
+	hdr.ipv4.dstAddr = temp_ip;
+  
+	/*      ---     Re-Write ICMP's type and code     ---     */
+	hdr.icmp.type = ICMP_ECHO_REPLY_TYPE;
+	hdr.icmp.code = ICMP_ECHO_REPLY_CODE;
+
+	/*      ---     Forward the packet to the ingress intf     ---     */
 	standard_metadata.egress_spec = standard_metadata.ingress_port;
 
     }    
+
+    action echo6() {
+	
+	/*      ---     Auxiliary variables     ---     */
+        macAddr_t temp_mac = hdr.ethernet.srcAddr;
+        ip6Addr_t temp_ip6 = hdr.ipv6.srcAddr;
+
+        /*      ---     Swap MACs     ---     */
+        hdr.ethernet.srcAddr = hdr.ethernet.dstAddr;
+        hdr.ethernet.dstAddr = temp_mac;
+
+        /*      ---     Swap Ips     ---     */
+        hdr.ipv6.srcAddr = hdr.ipv6.dstAddr;
+        hdr.ipv6.dstAddr = temp_ip6;
+
+        /*      ---     Re-Write ICMP's type and code     ---     */
+        hdr.icmp6.type = ICMP_ECHO_REPLY_TYPE;
+        hdr.icmp6.code = ICMP_ECHO_REPLY_CODE;
+
+        /*      ---     Forward the packet to the ingress intf     ---     */
+        standard_metadata.egress_spec = standard_metadata.ingress_port;
+
+    }
    
     apply {
-        drop();
+	if(hdr.ipv4.isValid() && hdr.icmp.isValid()){
+	        echo();
+	}else if (hdr.ipv6.isValid() && hdr.icmp6.isValid()){
+		echo6();
+	}
     }
 }
 
@@ -232,6 +271,21 @@ control MyComputeChecksum(inout headers  hdr, inout metadata meta) {
 
 control MyDeparser(packet_out packet, in headers hdr) {
     apply {
+
+	/*	Only the headers will be emitted in the case of having the
+	 *	validity bit at "1" so nothing happens by emitting all the
+ 	 * 	headers, since only the valid ones will be emitted. In the
+	 *	first instance, we wanted to apply a conditional structure
+ 	 * 	in this block of the v1switch architecture, but at the moment,
+	 * 	the use of conditional blocks in this block is not contemplated.
+	*/	
+
+		packet.emit(hdr.ethernet);
+		packet.emit(hdr.ipv4);
+		packet.emit(hdr.icmp);
+		packet.emit(hdr.ethernet);
+		packet.emit(hdr.ipv6);
+		packet.emit(hdr.icmp6);
     }
 }
 
