@@ -25,9 +25,10 @@ const bit<16> TYPE_IPV4 = 0x800;
 *********************** H E A D E R S  ***********************************
 *************************************************************************/
 
-typedef bit<9>  egressSpec_t;
-typedef bit<48> macAddr_t;
-typedef bit<32> ip4Addr_t;
+typedef bit<9>   egressSpec_t;
+typedef bit<48>  macAddr_t;
+typedef bit<32>  ip4Addr_t;
+typedef bit<128> ip6Addr_t;
 
 header ethernet_t {
     macAddr_t dstAddr;
@@ -50,6 +51,17 @@ header ipv4_t {
     ip4Addr_t dstAddr;
 }
 
+header ipv6_t {
+	bit<4> version;
+	bit<8> trafficClass;
+	bit<20> flowLabel;
+	bit<16> payloadLen;
+	bit<8> nextHdr;
+	bit<8> hopLimit;
+	ip6Addr_t srcAddr;
+	ip6Addr_t dstAddr;	
+}
+
 struct metadata {
     /* empty */
 }
@@ -57,6 +69,7 @@ struct metadata {
 struct headers {
     ethernet_t   ethernet;
     ipv4_t       ipv4;
+    ipv6_t	 ipv6;
 }
 
 /*************************************************************************
