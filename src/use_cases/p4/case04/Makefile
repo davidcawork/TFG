@@ -1,4 +1,4 @@
-PDX-License-Identifier: (GPL-2.0 OR BSD-2-Clause)
+# PDX-License-Identifier: (GPL-2.0 OR BSD-2-Clause)
 #
 # Modified archive of the p4lang-project (github.com/p4lang/tutorials/) repository 
 # for purely academic purposes. 
