@@ -19,8 +19,24 @@
 ***********************  M A C R O S   ***********************************
 *************************************************************************/
 
+/*	---	Layer 2 MACROS	     ---	*/
 const bit<16> ETHERTYPE_IPV4 = 0x0800;
 const bit<16> ETHERTYPE_IPV6 = 0x86dd;
+
+/*	---	Layer 3 MACROS	     ---	*/
+const bit<8> IP_PROTOCOL_ICMP = 0x01;
+const bit<8> IP_PROTOCOL_ICMPv6 = 0x3a; 
+
+/*
+ *   According to RFC 2460, the codes of the protocol immediately above,
+ *   layer 4, are the same as those used in IPv4. And I quote:
+ *
+ *   Next Header          8-bit selector.  Identifies the type of header
+ *                       immediately following the IPv6 header.  Uses the
+ *                       same values as the IPv4 Protocol field [RFC-1700
+ *                       et seq.].
+ *
+ */
 
 /*************************************************************************
 *********************** H E A D E R S  ***********************************
@@ -63,6 +79,18 @@ header ipv6_t {
 	ip6Addr_t dstAddr;	
 }
 
+header icmp_t {
+	bit<8> type;
+	bit<8> code;
+	bit<16> checksum;
+}
+
+header icmp6_t {
+	bit<8> type;
+	bit<8> code;
+	bit<16> checksum;
+}
+
 struct metadata {
     /* empty */
 }
@@ -71,6 +99,8 @@ struct headers {
     ethernet_t   ethernet;
     ipv4_t       ipv4;
     ipv6_t	 ipv6;
+    icmp_t       icmp;
+    icmp6_t      icmp6;
 }
 
 /*************************************************************************
@@ -97,12 +127,28 @@ parser MyParser(packet_in packet,
 
     state parse_ipv4 {
         packet.extract(hdr.ipv4);
-        transition accept;
+        transition select( hdr.ipv4.protocol){
+		IP_PROTOCOL_ICMP: parse_icmp;
+		default: accept;		
+	}
     }
 
     state parse_ipv6 {
         packet.extract(hdr.ipv6);
-        transition accept;
+        transition select(){
+		IP_PROTOCOL_ICMPv6: parse_icmp6;
+		default: accept;
+	}
+    }
+
+    state parse_icmp {
+    	packet.extract(hdr.icmp);
+	transition accept;	
+    }
+
+    state parse_icmp6 {
+    	packet.extract(hdr.icmp6);
+	transition accept;	
     }
 }
 
