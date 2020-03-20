@@ -19,7 +19,8 @@
 ***********************  M A C R O S   ***********************************
 *************************************************************************/
 
-const bit<16> TYPE_IPV4 = 0x800;
+const bit<16> ETHERTYPE_IPV4 = 0x0800;
+const bit<16> ETHERTYPE_IPV6 = 0x86dd;
 
 /*************************************************************************
 *********************** H E A D E R S  ***********************************
@@ -88,7 +89,8 @@ parser MyParser(packet_in packet,
     state parse_ethernet {
         packet.extract(hdr.ethernet);
         transition select(hdr.ethernet.etherType) {
-            TYPE_IPV4: parse_ipv4;
+            ETHERTYPE_IPV4: parse_ipv4;
+ 	    ETHERTYPE_IPV6: parse_ipv6;
             default: accept;
         }
     }
@@ -98,6 +100,10 @@ parser MyParser(packet_in packet,
         transition accept;
     }
 
+    state parse_ipv6 {
+        packet.extract(hdr.ipv6);
+        transition accept;
+    }
 }
 
 /*************************************************************************
