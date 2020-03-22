@@ -178,3 +178,8 @@ ping 10.0.2.2
 ```
 
 Si todo funciona correctamente deberíamos estar recibiendo respuesta a nuestro ping. Comprobar con Wireshark como el checksum de la cabecera ICMP viene correctamente calculado. 
+
+## Fuentes
+
+*	 [RFC 8200: Internet Protocol, Version 6 (IPv6) Specification](https://tools.ietf.org/html/rfc8200)
+*	 [RFC 792: ICMP](https://tools.ietf.org/html/rfc792)
