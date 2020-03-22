@@ -12,7 +12,7 @@ Para la compilación de nuestro programa p4 se hará uso del compilador [``p4c``
 
 
 <p align="center">
-    <img width="80%" src="../../../../img/use_cases/p4/case01/compilation_bmv2.png">
+    <img width="50%" src="../../../../img/use_cases/p4/case01/compilation_bmv2.png">
 </p>
 
 Por ejemplo el compilador de backend que ataca al [``BMV2``](https://github.com/p4lang/behavioral-model) genera un fichero ``*.json``. Este fichero será suficiente para establecer todo el datapath según lo programado en el programa p4. El target del compilador [``p4c``](https://github.com/p4lang/p4c) que utilizaremos es el [``p4c-bm2-ss``](https://github.com/p4lang/p4c/tree/master/backends/bmv2), P4 simple_switch - bmv2 , el cual soporta la arquitectura ``v1model``.
