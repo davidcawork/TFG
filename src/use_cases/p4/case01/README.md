@@ -53,6 +53,8 @@ sudo rm -rf build logs
 
 Una vez realizado el ``make run`` en este directorio, tendremos levantada la topología descrita para este caso de uso, la cual se puede apreciar en la siguiente figura. Como ya comentábamos anteriormente la topología puede encontrarse descrita bajo el directorio [``scenario``](scenario), en un fichero ``json`` llamado [``topology.json``](scenario/topology.json). En este fichero también se describe la localización de los archivos que describen el plano de control de cada "switch" de la topología. En todos los casos de uso se ha respetado los nombres tipo utilizados por la organización de P4Lang, ``sX-runtime.json``, donde **X** en número que ocupa dicho switch en la topología de [``Mininet``](https://github.com/mininet/mininet). 
 
+![scenario](../../../../img/use_cases/p4/case01/scenario.png)
+
 Volviendo de nuevo a la comprobación del funcionamiento del caso de uso, tendremos la CLI de [``Mininet``](https://github.com/mininet/mininet) abierta, por lo que abriremos una terminal para el ``host1`` y otra para el ``host2``.
 
 ```bash
