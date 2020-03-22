@@ -10,7 +10,7 @@ Debido a esto, el [``BMV2``](https://github.com/p4lang/behavioral-model) puede a
 
 Para la compilación de nuestro programa p4 se hará uso del compilador [``p4c``](https://github.com/p4lang/p4c). Este es el compilador de referencia para el lenguaje p4, es modular y permite escoger distintos targets para llevar a cabo la compilación. ¿Targets? Si, la compilación de los programas p4 se lleva a cabo en **dos etapas**, una etapa de compilación de frontend donde se genera un archivo ``*.p4info`` el cual recoge todos los atributos necesarios del programa p4 en tiempo de ejecución ( identificadores de tablas, su estructura, actions.. ), y una etapa de backend en el cual, se hace uso del archivo generado ``*.p4info`` para generar los archivos necesarios para atacar al target en cuestión.
 
-![imagen_compilacion](../../../../img/use_cases/p4/compilation_bmv2.png)
+![imagen_compilacion](../../../../img/use_cases/p4/case01/compilation_bmv2.png)
 
 Por ejemplo el compilador de backend que ataca al [``BMV2``](https://github.com/p4lang/behavioral-model) genera un fichero ``*.json``. Este fichero será suficiente para establecer todo el datapath según lo programado en el programa p4. El target del compilador [``p4c``](https://github.com/p4lang/p4c) que utilizaremos es el [``p4c-bm2-ss``](https://github.com/p4lang/p4c/tree/master/backends/bmv2), P4 simple_switch - bmv2 , el cual soporta la arquitectura ``v1model``.
 
