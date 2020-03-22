@@ -22,7 +22,7 @@ Por ejemplo el compilador de backend que ataca al [``BMV2``](https://github.com/
 Con la finalidad de poner en marcha del escenario, se ha dejado escrito un Makefile el cual  compilará nuestro programa p4, generando los ficheros ``*.p4info`` y ``*.json``. Acto seguido se lanzará un script llamado [``run_exercise.py``](https://github.com/davidcawork/TFG/blob/master/src/use_cases/p4/utils/run_exercise.py), el cual levantará toda la topología descrita en el fichero [``scenario/topology.json``](scenario/topology.json). Cada "switch" de la topología tendrá implementada toda la lógica descrita en nuestro programa p4 dentro de una instancia del [``BMV2``](https://github.com/p4lang/behavioral-model). A continuación se puede ver una imagen resumen del levantamiento de un único "switch".
 
 <p align="center">
-    <img width="80%" src="../../../../img/use_cases/p4/case01/setup.png">
+    <img src="../../../../img/use_cases/p4/case01/setup.png">
 </p>
 
 
