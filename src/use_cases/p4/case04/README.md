@@ -33,7 +33,7 @@ Por ejemplo, si yo quiero hacer forwarding de un paquete a un puerto en especifi
 
 Desde el programa p4 tenemos que definir el esqueleto de la tabla, indicando que _actions_ están disponibles, que parámetros reciben esas _actions_, que criterio de _match_ tendrá la tabla, sobre _keys_ se realizará el _lookup_ y cual es el número máximo de entradas en dicha tabla. A continuación, una [figura](https://github.com/p4lang/tutorials/blob/master/P4_tutorial.pdf) que resume bastante bien la funcionalidad de las tablas: 
 
-> figura tabla 
+![table](../../../../img/use_cases/p4/case04/table.png)
 
 Y desde el plano de control, via P4Runtime ó via json con los ficheros ``sX-runtime.json`` ( que se cargarán a través de la CLI-BMV2), se popularán las entradas de dicha tabla y los parámetros de las acciones a llevar a cabo cuando haya un hit con dicha entrada. En nuestro caso se asociarán IPs, a una acción de forwarding donde le pasaremos por que puerto tiene que salir el paquete y que MAC destino debe llevar.
 
