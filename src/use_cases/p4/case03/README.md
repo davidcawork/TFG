@@ -162,7 +162,7 @@ Una vez realizado el ``make run`` en este directorio, tendremos levantada la top
 Volviendo de nuevo a la comprobación del funcionamiento del caso de uso, tendremos la CLI de [``Mininet``](https://github.com/mininet/mininet) abierta, por lo que abriremos una terminal para el ``host1``.
 
 ```bash
-xterm h1
+mininet> xterm h1
 ```
 
 Una vez que tengamos la terminal abierta, procederemos a abrir Wireshark (En este caso recomiendo Wireshark ya que podremos filtrar y comprobar de una forma más sencilla la validez de los checksums). 
