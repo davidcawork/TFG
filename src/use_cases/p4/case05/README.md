@@ -1,5 +1,43 @@
 # P4 - Case05: Broadcast
 
+En este test desarrollaremos un programa p4 que haga Broadcast. En este caso unicamente haremos Broadcast a nivel de enlace, capa 2. La motivación de este caso de uso es ver la diferencia de dificultad respecto del entorno XDP donde tuvimos que anclar de manera adicional un bytecode eBPF en el [``TC``](http://man7.org/linux/man-pages/man8/tc.8.html) además de propio programa XDP anclado en la interfaz para lograr hacer un broadcast.
+
+Para conseguir hacer una difusión de los paquetes en p4 haremos uso de los llamados **grupos multicast**. Los grupos multicast se utilizan para difundir por una serie de números de puertos del "switch", si no sabe de donde salen estos números de puerto vuelva al [case04](https://github.com/davidcawork/TFG/tree/master/src/use_cases/p4/case04). Cada grupo multicast tiene un identificador único, y en él se definen una serie de replicas, es decir, cuantas copias del paquete se llevarán a cabo y que números de puertos se verán afectados.
+
+Los grupos multicast se definen en la información del plano de control del "switch", bien via P4Runtime ó via json con los ficheros ``sX-runtime.json``. A continuación, dejamos la definición del grupo multicast utilizado para este caso de uso.
+
+```json
+
+"multicast_group_entries" : [
+    {
+      "multicast_group_id" : 1,
+      "replicas" : [
+        {
+          "egress_port" : 1,
+          "instance" : 1
+        },
+        {
+          "egress_port" : 2,
+          "instance" : 1
+        },
+        {
+          "egress_port" : 3,
+          "instance" : 1
+        }
+      ]
+    }
+  ]
+
+```
+
+Con esta definición estamos indicando que todos los paquetes que pertenezcan al grupo multicast cuyo identificador sea **1**, generarán una copia del paquete por los puertos del "switch" 1, 2 y 3. Es decir por todos los puertos de nuestro "switch" para este caso de uso. Por tanto la acción de broadcast/multicast será la siguiente:
+
+```C
+action multicast() {
+        standard_metadata.mcast_grp = 1;
+}
+```
+Unicamente asignamos el paquete a dicho grupo multicast, y ya estaría. A mi parecer mucho más sencillo que con XDP, por tanto de necesitar probar protocolos que implementen la difusión como parte de su lógica es mucho más recomendable y viable hacer uso de p4. 
 
 ## Compilación y puesta en marcha del escenario
 
