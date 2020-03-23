@@ -1,9 +1,9 @@
 # P4 - Case04: Layer 3 Forwarding
 
 
-En este caso de uso trataremos de implementar un forwarding a nivel de red, capa 3, por ello nuestro hipotético "switch" será ahora un un router muy básico y con muy pocas funcionalidades :smirk:. Por ello conviene recordar las anotaciones que hicimos sobre el [``BMV2``](https://github.com/p4lang/behavioral-model) y por que no debemos definirlo unicamente como un soft-switch, ya que depende del programa p4 que porte para definir su datapath y su interfaz con el plano de control. 
+En este caso de uso trataremos de implementar un forwarding a nivel de red, capa 3, por ello nuestro hipotético "switch" será ahora un un router muy básico y con muy pocas funcionalidades :smirk:. Por ello conviene recordar las anotaciones que hicimos sobre el [``BMV2``](https://github.com/p4lang/behavioral-model) y por que no debemos definirlo únicamente como un soft-switch, ya que depende del programa p4 que porte para definir su datapath y su interfaz con el plano de control. 
 
-La motivación de este caso de uso es ver la relación que tiene el código de retorno XDP llamado ``XDP_REDIRECT`` con p4, y así ver su equivalente. En el anterior [caso de uso](https://github.com/davidcawork/TFG/blob/master/src/use_cases/p4/case03/) ya hacíamos uso de la información de metadatos para eligir el puerto de salida del paquete. Por lo que podríamos afirmar que este es el equivalente directo al  forwarding en XDP, solo que aquí en p4 nos resulta más sencillo ya que unicamente indicamos por número de puerto mientras que XDP debíamos obtener el ``ifindex`` de la interfaz a la cual íbamos hacer el reenvió. Dejamos aquí la sentencia: 
+La motivación de este caso de uso es ver la relación que tiene el código de retorno XDP llamado ``XDP_REDIRECT`` con p4, y así ver su equivalente. En el anterior [caso de uso](https://github.com/davidcawork/TFG/blob/master/src/use_cases/p4/case03/) ya hacíamos uso de la información de metadatos para eligir el puerto de salida del paquete. Por lo que podríamos afirmar que este es el equivalente directo al  forwarding en XDP, solo que aquí en p4 nos resulta más sencillo ya que únicamente indicamos por número de puerto mientras que XDP debíamos obtener el ``ifindex`` de la interfaz a la cual íbamos hacer el reenvío. Dejamos aquí la sentencia: 
 
 ```C
 
@@ -29,13 +29,13 @@ Una vez entendido de donde salen los números de puerto podemos preguntarnos lo 
 
 No puede, y tampoco es lógico que en un programa p4 donde defines el datapath ya estén preestablecidos los números de puerto posibles a manejar. Ya que si eso fuera así, tendríamos que tener distintos programas p4 por cada entidad con un número de puertos distintos ( unicamente para implementar un único datapath). No es viable. Por ello, toda la información relativa a los puertos (asociada al forwarding) generalmente suele venir desde el plano de control quien tiene constancia de los puertos de dicho "switch". 
 
-Por ejemplo, si yo quiero hacer forwarding de un paquete a un puerto en especifico dado su IP, necesitaremos que el plano de control nos indique el criterio a seguir, qué IPs están asociadas a según que puertos. Esta interfaz entre el plano de datos y el plano de control esta definidas por **tablas**.
+Por ejemplo, si yo quiero hacer forwarding de un paquete a un puerto en especifico dado su IP, necesitaremos que el plano de control nos indique el criterio a seguir, que IPs están asociadas a según que puertos. Esta interfaz entre el plano de datos y el plano de control esta definidas por **tablas**.
 
 Desde el programa p4 tenemos que definir el esqueleto de la tabla, indicando que _actions_ están disponibles, que parámetros reciben esas _actions_, que criterio de _match_ tendrá la tabla, sobre _keys_ se realizará el _lookup_ y cual es el número máximo de entradas en dicha tabla. A continuación, una [figura](https://github.com/p4lang/tutorials/blob/master/P4_tutorial.pdf) que resume bastante bien la funcionalidad de las tablas: 
 
 ![table](../../../../img/use_cases/p4/case04/table.png)
 
-Y desde el plano de control, via P4Runtime ó via json con los ficheros ``sX-runtime.json`` ( que se cargarán a través de la CLI-BMV2), se popularán las entradas de dicha tabla y los parámetros de las acciones a llevar a cabo cuando haya un hit con dicha entrada. En nuestro caso se asociarán IPs, a una acción de forwarding donde le pasaremos por que puerto tiene que salir el paquete y que MAC destino debe llevar.
+Y desde el plano de control, vía P4Runtime ó vía json con los ficheros ``sX-runtime.json`` ( que se cargarán a través de la CLI-BMV2), se popularán las entradas de dicha tabla y los parámetros de las acciones a llevar a cabo cuando haya un hit con dicha entrada. En nuestro caso se asociarán IPs, a una acción de forwarding donde le pasaremos por que puerto tiene que salir el paquete y que MAC destino debe llevar.
 
 Una vez entendidos los números de puerto, y el concepto de las tablas, debemos abordar el cómo hacer una acción de forwarding para reenviar nuestros paquetes. Esta acción de forwarding deberá se capaz de actualizar el puerto de salida, actualizar la MAC destino y decrementar en uno el campo ``ttl`` de la cabecera IP. A continuación se indica la acción propuesta para llevar a cabo dicho cometido:
 
