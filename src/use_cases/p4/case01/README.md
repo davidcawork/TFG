@@ -58,7 +58,7 @@ Una vez realizado el ``make run`` en este directorio, tendremos levantada la top
 Volviendo de nuevo a la comprobación del funcionamiento del caso de uso, tendremos la CLI de [``Mininet``](https://github.com/mininet/mininet) abierta, por lo que abriremos una terminal para el ``host1`` y otra para el ``host2``.
 
 ```bash
-xterm h1 h2
+mininet>  xterm h1 h2
 ```
 
 Ahora con ambas terminales abiertas, desde el h2 ponemos a escuchar por su interfaz. Podemos utilizar ``wireshark``, el sniffer que el usuario crea conveniente. En este caso por simplicidad yo utilizaré ``tcpdump``.
