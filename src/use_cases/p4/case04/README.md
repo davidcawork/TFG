@@ -104,6 +104,4 @@ De forma adicional, se podría hacer uso de un sniffer para comprobar que los pa
 
 *   [P4 tutorial](https://github.com/p4lang/tutorials)
 
-## Fuentes 
 
-*   [P4 tutorial](https://github.com/p4lang/tutorials)
