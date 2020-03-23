@@ -86,14 +86,23 @@ sudo rm -rf build logs
 
 ## Comprobación del funcionamiento
 
-Una vez realizado el ``make run`` en este directorio, tendremos levantada la topología descrita para este caso de uso, la cual se puede apreciar en la siguiente figura. Como en nuestro datapath no se contempla el manejo de ARP se ha añadido el ARP entry a pelo desde el fichero [``topology.json``](scenario/topology.json) consiguiendo así que no se genere la resolución ARP en el envión de los ICMP Request.
+Una vez realizado el ``make run`` en este directorio, tendremos levantada la topología descrita para este caso de uso, la cual se puede apreciar en la siguiente figura. Como en nuestro datapath no se contempla el manejo de ARP se ha añadido el ARP entry a pelo desde el fichero [``topology.json``](scenario/topology.json) consiguiendo así que no se genere la resolución ARP en el envión de los ICMP Request. Este arreglo es un poco "chapuzero" ya que le estamos indicándole un hipotético gateway que no existe, y estamos añadiendo un ARP entry con la MAC de dicho gateway, de esta forma todos los paquetes saldrán con la MAC destino indicada en la entry y no se producirá la resolución ARP. Al llegar al "switch" el paquete verá modificada su MAC destino en función de su IP destino, por lo que la "chapuza" no irá a más! :joy: 
 
 ![scenario](../../../../img/use_cases/p4/case04/scenario.png)
 
 
-Volviendo de nuevo a la comprobación del funcionamiento del caso de uso, tendremos la CLI de [``Mininet``]
+Volviendo de nuevo a la comprobación del funcionamiento del caso de uso, tendremos la CLI de [``Mininet``](https://github.com/mininet/mininet) abierta, por lo que simplemente probaremos la conectividad entre todos los host. Esto lo podemos hacer de la siguiente manera:
 
-> Todo
+```bash
+
+mininet> pingall
+```
+
+De forma adicional, se podría hacer uso de un sniffer para comprobar que los paquetes llegan con el campo ``ttl`` modificado, en función de los saltos que ha dado el paquete. :smile:
+
+## Fuentes 
+
+*   [P4 tutorial](https://github.com/p4lang/tutorials)
 
 ## Fuentes 
 
