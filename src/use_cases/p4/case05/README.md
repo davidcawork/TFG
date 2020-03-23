@@ -99,7 +99,7 @@ Una vez que estamos escuchando desde el host2 y host3, vamos a generar ARP Reque
 arping 10.0.2.2
 ```
 
-Si funciona correctamente se el paquete ARP Request debería haber llego tanto al host2 como el host3. Pero solo será el host2, en este caso, el que contestará ya que iab dirigido a este. Verá que al host3 solo le llega un ARP Request, y después se detiene, ¿El por qué :sweat_smile:? Esto es así ya que al completarse la resolución ARP el host1 ya conoce la dirección MAC del host2, por tanto los ARP Request que se generen a posteriori llevarán la MAC destino la del host2, entonces nuestro "switch" no lo difundirá por todos su puestos, se lo pasará directamente al host2. 
+Si funciona correctamente se el paquete ARP Request debería haber llego tanto al host2 como el host3. Pero solo será el host2, en este caso, el que contestará ya que iab dirigido a este. Verá que al host3 solo le llega un ARP Request, y después se detiene, ¿El por qué :sweat_smile:? Esto es así ya que al completarse la resolución ARP el host1 ya conoce la dirección MAC del host2, por tanto los ARP Request que se generen a posteriori llevarán la MAC destino la del host2, entonces nuestro "switch" no lo difundirá por todos su puertos, se lo pasará directamente al host2. 
 
 ## Fuentes
 
