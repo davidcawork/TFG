@@ -1,9 +1,9 @@
 # P4 - Case03: Echo server
 
 
-En este caso de uso desarrollaremos un servido de echo que responda todos os pings que le lleguen. Como tal el programa p4 no es suficiente para probar esta funcionalidad ya que requiere de una plataforma que sea capaz de soportar el lenguaje p4. Nosotros haremos uso de software switch llamado [``behavioral-model``](https://github.com/p4lang/behavioral-model), [``BMV2``](https://github.com/p4lang/behavioral-model) en adelante, para testear nuestros programas p4, y de [``Mininet``](https://github.com/mininet/mininet) como escenario para recrear nuestras topologías de Red. 
+En este caso de uso desarrollaremos un servidor de echo que responda todos los pings que le lleguen. Como tal el programa p4 no es suficiente para probar esta funcionalidad ya que requiere de una plataforma que sea capaz de soportar el lenguaje p4. Nosotros haremos uso de software switch llamado [``behavioral-model``](https://github.com/p4lang/behavioral-model), [``BMV2``](https://github.com/p4lang/behavioral-model) en adelante, para testear nuestros programas p4, y de [``Mininet``](https://github.com/mininet/mininet) como escenario para recrear nuestras topologías de Red. 
 
-Nuestro programa p4 deberá ser capaz de analizar los paquetes que le lleguen, parsearlos y filtrarlos. Y solo aquellos que filtremos serán los que deberemos responder. ¿Cómo los filtraremos? Añadiendo nuevos estados en nuestro parser que comprueben si las cabeceras ICMP están presentes. Por ello antes de nada debemos declaras las cabeceras ICMP necesarias.
+Nuestro programa p4 deberá ser capaz de analizar los paquetes que le lleguen, parsearlos y filtrarlos. Y solo aquellos que filtremos serán los que deberemos responder. ¿Cómo los filtraremos? Añadiendo nuevos estados en nuestro parser que comprueben si las cabeceras ICMP están presentes. Por ello antes de nada debemos declarar las cabeceras ICMP necesarias.
 
 ```C
 
@@ -37,7 +37,7 @@ header ipv6_t {
 }
  ```
 
- Ahora que ya tenemos las cabeceras unicamente debemos preocuparnos de definir las macros asociadas a los posibles _ethertypes_ que queremos manejar, IPv4 y IPv6. Y los códigos de protocolo de las cabeceras de red, para asegurarnos que sobre la cabecera de red unicamente procesaremos aquellos paquetes con ICMP. Se tuvo que consultar la RFC asociada a IPv6 para saber que codificación hacían con el campo de ``nextHeader`` y por lo visto utilizan los mismo valores que en IPv4. A continuación, la definición de dichas MACROS y un extracto de la RFC.
+ Ahora que ya tenemos las cabeceras únicamente debemos preocuparnos de definir las macros asociadas a los posibles _ethertypes_ que queremos manejar, IPv4 y IPv6. Y los códigos de protocolo de las cabeceras de red, para asegurarnos que sobre la cabecera de red únicamente procesaremos aquellos paquetes con ICMP. Se tuvo que consultar la RFC asociada a IPv6 para saber que codificación hacían con el campo de ``nextHeader`` y por lo visto utilizan los mismo valores que en IPv4. A continuación, la definición de dichas MACROS y un extracto de la RFC.
 
  ```C
 
@@ -66,9 +66,9 @@ const bit<8> ICMP_ECHO_REPLY_CODE = 0x00;
 
  ```
 
- Como se ha podido ver de forma adicional se han definido MACROS sobre los valores con los que vamos a estar trabajando (REQUEST y REPLY). De esta forma el código resultante de las actions será más interpretable y sostenible. Teniendo ya todas las herramientas necesarias para declarar los nuevos estados del parser, nos podemos poner a trabajar. El código del parser se puede consultar en la siguiente [linea](https://github.com/davidcawork/TFG/blob/master/src/use_cases/p4/case03/case03.p4#L114).
+ Como se ha podido ver de forma adicional se han definido MACROS sobre los valores con los que vamos a estar trabajando (REQUEST y REPLY). De esta forma el código resultante de las actions será más interpretable y sostenible. Teniendo ya todas las herramientas necesarias para declarar los nuevos estados del parser, nos podemos poner a trabajar. El código del parser se puede consultar en la siguiente [línea](https://github.com/davidcawork/TFG/blob/master/src/use_cases/p4/case03/case03.p4#L114).
 
-Bien :smile:, ahora que somos capaces de filtrar los paquetes que nso interesan, vamos a ver como hemos implementado la lógica de procesamiento de aquellos paquetes que ya han sido filtrados. Lo que nos interesa es interceptar todos los paquetes ICMP que lleguen a nuestro "switch" para así contestarlos desde el mismo "switch". Por ello haremos uso del **bit de validez** de las cabeceras que han sido parseadas correctamente, es decir, si el paquete contiene dichas cabeceras, de no contenerlas su bit de validez estará a ``false``. A continuación, mostramos la lógica de control del bloque Ingress:
+Bien :smile:, ahora que somos capaces de filtrar los paquetes que nos interesan, vamos a ver como hemos implementado la lógica de procesamiento de aquellos paquetes que ya han sido filtrados. Lo que nos interesa es interceptar todos los paquetes ICMP que lleguen a nuestro "switch" para así contestarlos desde el mismo "switch". Por ello haremos uso del **bit de validez** de las cabeceras que han sido parseadas correctamente, es decir, si el paquete contiene dichas cabeceras, de no contenerlas su bit de validez estará a ``false``. A continuación, mostramos la lógica de control del bloque Ingress:
 
 ```C
 
@@ -120,7 +120,7 @@ action echo (){
 
 ```
 
-Préstese atención a la ultima sentencia de la función donde le indicamos que saque el paquete por la misma interfaz por la cual ha entrado. Este es el equivalente directo al código de retorno en XDP, ``XDP_TX`` con el cual re-circulábamos el paquete de la misma forma a la interfaz de entrada.
+Préstese atención a la última sentencia de la función donde le indicamos que saque el paquete por la misma interfaz por la cual ha entrado. Este es el equivalente directo al código de retorno en XDP, ``XDP_TX`` con el cual re-circulábamos el paquete de la misma forma a la interfaz de entrada.
 
 Como curiosidad, comentar que el campo ``checksum`` de la cabecera ICMP debe ser re-calculado de nuevo por lo que se deberá hacer antes del Egress. Esto nos supuso un problema ya que continuamente nos estaba dando error con el disector de Wireshark, en el campo ``checksum``. Finalmente se vio que no había que incluir el campo checksum en la nueva suma del nuevo checksum (Hubiera estado genial que la RFC hubiera estado más clara al respecto :joy: ).
 
