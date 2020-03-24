@@ -19,3 +19,5 @@ Si la magnitud de ambas interfaces fuera inaccesible por su gran complejidad, se
 *   [Mininet-Wifi](https://github.com/intrig-unicamp/mininet-wifi)
 *   [P4 tutorials - Mininet-Wifi fork](https://github.com/ramonfontes/tutorials)
 *   [BMV2](https://github.com/p4lang/behavioral-model)
+*   [Medium and mobility behaviour insertion for 802.11 emulated networks -  wmediumd](https://core.ac.uk/download/pdf/41810121.pdf)
+*   [Design and implementation of a wireless network tap device for IEEE 802.11 wireless network emulation](https://ieeexplore.ieee.org/abstract/document/8330098)
