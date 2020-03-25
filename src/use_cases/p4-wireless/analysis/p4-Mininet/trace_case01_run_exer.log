@@ -1,0 +1,1867 @@
+run_exercise.py(376): if __name__ == '__main__':
+run_exercise.py(378):     setLogLevel("debug")
+run_exercise.py(380):     args = get_args()
+run_exercise.py(360):     cwd = os.getcwd()
+run_exercise.py(361):     default_logs = os.path.join(cwd, 'logs')
+run_exercise.py(362):     default_pcaps = os.path.join(cwd, 'pcaps')
+run_exercise.py(363):     parser = argparse.ArgumentParser()
+run_exercise.py(364):     parser.add_argument('-q', '--quiet', help='Suppress log messages.',
+run_exercise.py(365):                         action='store_true', required=False, default=False)
+run_exercise.py(366):     parser.add_argument('-t', '--topo', help='Path to topology json',
+run_exercise.py(367):                         type=str, required=False, default='./topology.json')
+run_exercise.py(368):     parser.add_argument('-l', '--log-dir', type=str, required=False, default=default_logs)
+run_exercise.py(369):     parser.add_argument('-p', '--pcap-dir', type=str, required=False, default=default_pcaps)
+run_exercise.py(370):     parser.add_argument('-j', '--switch_json', type=str, required=False)
+run_exercise.py(371):     parser.add_argument('-b', '--behavioral-exe', help='Path to behavioral executable',
+run_exercise.py(372):                                 type=str, required=False, default='simple_switch')
+run_exercise.py(373):     return parser.parse_args()
+run_exercise.py(381):     exercise = ExerciseRunner(args.topo, args.log_dir, args.pcap_dir,
+run_exercise.py(382):                               args.switch_json, args.behavioral_exe, args.quiet)
+run_exercise.py(168):         self.quiet = quiet
+run_exercise.py(169):         self.logger('Reading topology file.')
+run_exercise.py(142):         if not self.quiet:
+run_exercise.py(143):             print(' '.join(items))
+run_exercise.py(170):         with open(topo_file, 'r') as f:
+run_exercise.py(171):             topo = json.load(f)
+run_exercise.py(172):         self.hosts = topo['hosts']
+run_exercise.py(173):         self.switches = topo['switches']
+run_exercise.py(174):         self.links = self.parse_links(topo['links'])
+run_exercise.py(215):         links = []
+run_exercise.py(216):         for link in unparsed_links:
+run_exercise.py(218):             s, t, = link[0], link[1]
+run_exercise.py(219):             if s > t:
+run_exercise.py(222):             link_dict = {'node1':s,
+run_exercise.py(223):                         'node2':t,
+run_exercise.py(224):                         'latency':'0ms',
+run_exercise.py(225):                         'bandwidth':None
+run_exercise.py(227):             if len(link) > 2:
+run_exercise.py(229):             if len(link) > 3:
+run_exercise.py(232):             if link_dict['node1'][0] == 'h':
+run_exercise.py(233):                 assert link_dict['node2'][0] == 's', 'Hosts should be connected to switches, not ' + str(link_dict['node2'])
+run_exercise.py(234):             links.append(link_dict)
+run_exercise.py(216):         for link in unparsed_links:
+run_exercise.py(218):             s, t, = link[0], link[1]
+run_exercise.py(219):             if s > t:
+run_exercise.py(220):                 s,t = t,s
+run_exercise.py(222):             link_dict = {'node1':s,
+run_exercise.py(223):                         'node2':t,
+run_exercise.py(224):                         'latency':'0ms',
+run_exercise.py(225):                         'bandwidth':None
+run_exercise.py(227):             if len(link) > 2:
+run_exercise.py(229):             if len(link) > 3:
+run_exercise.py(232):             if link_dict['node1'][0] == 'h':
+run_exercise.py(233):                 assert link_dict['node2'][0] == 's', 'Hosts should be connected to switches, not ' + str(link_dict['node2'])
+run_exercise.py(234):             links.append(link_dict)
+run_exercise.py(216):         for link in unparsed_links:
+run_exercise.py(235):         return links
+run_exercise.py(177):         for dir_name in [log_dir, pcap_dir]:
+run_exercise.py(178):             if not os.path.isdir(dir_name):
+run_exercise.py(177):         for dir_name in [log_dir, pcap_dir]:
+run_exercise.py(178):             if not os.path.isdir(dir_name):
+run_exercise.py(177):         for dir_name in [log_dir, pcap_dir]:
+run_exercise.py(182):         self.log_dir = log_dir
+run_exercise.py(183):         self.pcap_dir = pcap_dir
+run_exercise.py(184):         self.switch_json = switch_json
+run_exercise.py(185):         self.bmv2_exe = bmv2_exe
+run_exercise.py(384):     exercise.run_exercise()
+run_exercise.py(194):         self.create_network()
+run_exercise.py(245):         self.logger("Building mininet topology.")
+run_exercise.py(142):         if not self.quiet:
+run_exercise.py(143):             print(' '.join(items))
+run_exercise.py(247):         defaultSwitchClass = configureP4Switch(
+run_exercise.py(248):                                 sw_path=self.bmv2_exe,
+run_exercise.py(249):                                 json_path=self.switch_json,
+run_exercise.py(250):                                 log_console=True,
+run_exercise.py(251):                                 pcap_dump=self.pcap_dir)
+run_exercise.py(41):     if "sw_path" in switch_args and 'grpc' in switch_args['sw_path']:
+run_exercise.py(43):         class ConfiguredP4RuntimeSwitch(P4RuntimeSwitch):
+run_exercise.py(43):         class ConfiguredP4RuntimeSwitch(P4RuntimeSwitch):
+run_exercise.py(44):             def __init__(self, *opts, **kwargs):
+run_exercise.py(48):             def describe(self):
+run_exercise.py(51):         return ConfiguredP4RuntimeSwitch
+run_exercise.py(253):         self.topo = ExerciseTopo(self.hosts, self.switches, self.links, self.log_dir, self.bmv2_exe, self.pcap_dir)
+run_exercise.py(72):         Topo.__init__(self, **opts)
+topo.py(109):   --- modulename: topo, funcname: __init__
+topo.py(20):  topo.py(21):  topo.py(110):  topo.py(111):  topo.py(112):  topo.py(114):  topo.py(115):   --- modulename: topo, funcname: build
+topo.py(119):  run_exercise.py(73):         host_links = []
+run_exercise.py(74):         switch_links = []
+run_exercise.py(77):         for link in links:
+run_exercise.py(78):             if link['node1'][0] == 'h':
+run_exercise.py(79):                 host_links.append(link)
+run_exercise.py(77):         for link in links:
+run_exercise.py(78):             if link['node1'][0] == 'h':
+run_exercise.py(79):                 host_links.append(link)
+run_exercise.py(77):         for link in links:
+run_exercise.py(83):         for sw, params in switches.iteritems():
+run_exercise.py(84):             if "program" in params:
+run_exercise.py(92):                 switchClass = None
+run_exercise.py(93):             self.addSwitch(sw, log_file="%s/%s.log" %(log_dir, sw), cls=switchClass)
+topo.py(143):  topo.py(145):   --- modulename: topo, funcname: addNode
+topo.py(126):   --- modulename: topo, funcname: add_node
+topo.py(28):  topo.py(29):  topo.py(30):  topo.py(127):  topo.py(146):  run_exercise.py(83):         for sw, params in switches.iteritems():
+run_exercise.py(95):         for link in host_links:
+run_exercise.py(96):             host_name = link['node1']
+run_exercise.py(97):             sw_name, sw_port = self.parse_switch_node(link['node2'])
+run_exercise.py(114):         assert(len(node.split('-')) == 2)
+run_exercise.py(115):         sw_name, sw_port = node.split('-')
+run_exercise.py(116):         try:
+run_exercise.py(117):             sw_port = int(sw_port[1:])
+run_exercise.py(120):         return sw_name, sw_port
+run_exercise.py(98):             host_ip = hosts[host_name]['ip']
+run_exercise.py(99):             host_mac = hosts[host_name]['mac']
+run_exercise.py(100):             self.addHost(host_name, ip=host_ip, mac=host_mac)
+topo.py(134):  topo.py(136):   --- modulename: topo, funcname: addNode
+topo.py(126):   --- modulename: topo, funcname: add_node
+topo.py(28):  topo.py(29):  topo.py(30):  topo.py(127):  run_exercise.py(101):             self.addLink(host_name, sw_name,
+run_exercise.py(102):                          delay=link['latency'], bw=link['bandwidth'],
+run_exercise.py(103):                          port2=sw_port)
+topo.py(154):  topo.py(156):   --- modulename: topo, funcname: addPort
+topo.py(223):  topo.py(224):  topo.py(225):  topo.py(227):  topo.py(228):   --- modulename: topo, funcname: isSwitch
+topo.py(170):  topo.py(229):  topo.py(230):  topo.py(233):  topo.py(234):  topo.py(235):  topo.py(157):  topo.py(158):  topo.py(159):   --- modulename: topo, funcname: add_edge
+topo.py(38):  topo.py(39):  topo.py(40):  topo.py(41):  topo.py(42):  topo.py(43):  topo.py(44):  topo.py(45):  topo.py(47):  topo.py(48):  topo.py(49):  topo.py(50):  topo.py(51):  run_exercise.py(95):         for link in host_links:
+run_exercise.py(96):             host_name = link['node1']
+run_exercise.py(97):             sw_name, sw_port = self.parse_switch_node(link['node2'])
+run_exercise.py(114):         assert(len(node.split('-')) == 2)
+run_exercise.py(115):         sw_name, sw_port = node.split('-')
+run_exercise.py(116):         try:
+run_exercise.py(117):             sw_port = int(sw_port[1:])
+run_exercise.py(120):         return sw_name, sw_port
+run_exercise.py(98):             host_ip = hosts[host_name]['ip']
+run_exercise.py(99):             host_mac = hosts[host_name]['mac']
+run_exercise.py(100):             self.addHost(host_name, ip=host_ip, mac=host_mac)
+topo.py(134):  topo.py(136):   --- modulename: topo, funcname: addNode
+topo.py(126):   --- modulename: topo, funcname: add_node
+topo.py(28):  topo.py(29):  topo.py(30):  topo.py(127):  run_exercise.py(101):             self.addLink(host_name, sw_name,
+run_exercise.py(102):                          delay=link['latency'], bw=link['bandwidth'],
+run_exercise.py(103):                          port2=sw_port)
+topo.py(154):  topo.py(156):   --- modulename: topo, funcname: addPort
+topo.py(223):  topo.py(224):  topo.py(225):  topo.py(227):  topo.py(228):   --- modulename: topo, funcname: isSwitch
+topo.py(170):  topo.py(229):  topo.py(230):  topo.py(233):  topo.py(234):  topo.py(235):  topo.py(157):  topo.py(158):  topo.py(159):   --- modulename: topo, funcname: add_edge
+topo.py(38):  topo.py(39):  topo.py(40):  topo.py(41):  topo.py(42):  topo.py(43):  topo.py(44):  topo.py(45):  topo.py(47):  topo.py(48):  topo.py(49):  topo.py(50):  topo.py(51):  run_exercise.py(95):         for link in host_links:
+run_exercise.py(105):         for link in switch_links:
+run_exercise.py(255):         self.net = Mininet(topo = self.topo,
+run_exercise.py(256):                       link = TCLink,
+run_exercise.py(257):                       host = P4Host,
+run_exercise.py(258):                       switch = defaultSwitchClass,
+run_exercise.py(259):                       controller = None)
+net.py(139):  net.py(140):  net.py(141):  net.py(142):  net.py(143):  net.py(144):  net.py(145):  net.py(146):   --- modulename: util, funcname: netParse
+util.py(402):  util.py(403):  util.py(404):  util.py(405):  util.py(410):   --- modulename: util, funcname: ipParse
+util.py(394):  util.py(394):  util.py(394):  util.py(394):  util.py(394):  util.py(395):  util.py(397):   --- modulename: util, funcname: ipNum
+util.py(378):  net.py(147):  net.py(149):  net.py(150):  net.py(151):  net.py(152):  net.py(153):  net.py(154):  net.py(155):  net.py(156):   --- modulename: util, funcname: numCores
+util.py(561):  util.py(563):  util.py(564):   --- modulename: util, funcname: quietRun
+util.py(198):   --- modulename: util, funcname: errRun
+util.py(126):  util.py(127):  util.py(128):  util.py(129):  util.py(132):  util.py(133):  util.py(135):  util.py(136):  util.py(137):  util.py(137):  util.py(137):  util.py(137):  util.py(137):  util.py(140):   --- modulename: log, funcname: newfn
+util.py(141):   --- modulename: subprocess, funcname: __init__
+util.py(144):  util.py(145):  util.py(146):  util.py(147):  util.py(148):   --- modulename: util, funcname: getincrementaldecoder
+util.py(50):  util.py(149):  util.py(150):  util.py(155):  util.py(156):  util.py(157):  util.py(158):  util.py(159):  util.py(160):  util.py(161):   --- modulename: util, funcname: decode
+util.py(28):  util.py(162):  util.py(164):  util.py(165):  util.py(166):  util.py(157):  util.py(155):  util.py(156):  util.py(157):  util.py(158):  util.py(159):  util.py(160):  util.py(161):   --- modulename: util, funcname: decode
+util.py(28):  util.py(162):  util.py(164):  util.py(165):  util.py(166):  util.py(157):  util.py(155):  util.py(156):  util.py(157):  util.py(158):  util.py(159):  util.py(160):  util.py(161):   --- modulename: util, funcname: decode
+util.py(28):  util.py(162):  util.py(164):  util.py(165):  util.py(166):  util.py(157):  util.py(155):  util.py(156):  util.py(157):  util.py(158):  util.py(159):  util.py(160):  util.py(161):   --- modulename: util, funcname: decode
+util.py(28):  util.py(162):  util.py(164):  util.py(165):  util.py(166):  util.py(157):  util.py(155):  util.py(156):  util.py(157):  util.py(158):  util.py(159):  util.py(160):  util.py(161):   --- modulename: util, funcname: decode
+util.py(28):  util.py(162):  util.py(164):  util.py(165):  util.py(166):  util.py(157):  util.py(155):  util.py(156):  util.py(157):  util.py(158):  util.py(159):  util.py(160):  util.py(173):  util.py(174):  util.py(177):  util.py(157):  util.py(155):  util.py(179):   --- modulename: subprocess, funcname: wait
+util.py(181):  util.py(182):  util.py(184):   --- modulename: log, funcname: newfn
+util.py(185):   --- modulename: subprocess, funcname: __del__
+util.py(565):  util.py(566):  net.py(157):  net.py(158):  net.py(159):  net.py(161):  net.py(162):  net.py(163):  net.py(164):  net.py(166):  net.py(168):  net.py(170):   --- modulename: net, funcname: init
+net.py(927):  net.py(929):   --- modulename: util, funcname: ensureRoot
+util.py(665):  util.py(668):  net.py(930):   --- modulename: util, funcname: fixLimits
+util.py(509):   --- modulename: log, funcname: newfn
+util.py(510):  util.py(511):   --- modulename: util, funcname: rlimitTestAndSet
+util.py(502):  util.py(503):  util.py(512):   --- modulename: util, funcname: rlimitTestAndSet
+util.py(502):  util.py(503):  util.py(504):  util.py(505):  util.py(514):   --- modulename: util, funcname: sysctlTestAndSet
+util.py(485):  util.py(486):  util.py(488):  util.py(489):  util.py(490):  util.py(492):  util.py(516):   --- modulename: util, funcname: sysctlTestAndSet
+util.py(485):  util.py(486):  util.py(488):  util.py(489):  util.py(490):  util.py(492):  util.py(517):   --- modulename: util, funcname: sysctlTestAndSet
+util.py(485):  util.py(486):  util.py(488):  util.py(489):  util.py(490):  util.py(492):  util.py(518):   --- modulename: util, funcname: sysctlTestAndSet
+util.py(485):  util.py(486):  util.py(488):  util.py(489):  util.py(490):  util.py(497):  util.py(498):  util.py(519):   --- modulename: util, funcname: sysctlTestAndSet
+util.py(485):  util.py(486):  util.py(488):  util.py(489):  util.py(490):  util.py(497):  util.py(498):  util.py(520):   --- modulename: util, funcname: sysctlTestAndSet
+util.py(485):  util.py(486):  util.py(488):  util.py(489):  util.py(490):  util.py(492):  util.py(522):   --- modulename: util, funcname: sysctlTestAndSet
+util.py(485):  util.py(486):  util.py(488):  util.py(489):  util.py(490):  util.py(492):  util.py(523):   --- modulename: util, funcname: sysctlTestAndSet
+util.py(485):  util.py(486):  util.py(488):  util.py(489):  util.py(490):  util.py(492):  util.py(524):   --- modulename: util, funcname: sysctlTestAndSet
+util.py(485):  util.py(486):  util.py(488):  util.py(489):  util.py(490):  util.py(492):  util.py(526):   --- modulename: util, funcname: sysctlTestAndSet
+util.py(485):  util.py(486):  util.py(488):  util.py(489):  util.py(490):  util.py(492):  util.py(528):   --- modulename: util, funcname: sysctlTestAndSet
+util.py(485):  util.py(486):  util.py(488):  util.py(489):  util.py(490):  util.py(492):  net.py(931):  net.py(172):  net.py(173):  net.py(174):   --- modulename: net, funcname: build
+net.py(501):  net.py(502):   --- modulename: net, funcname: buildFromTopo
+net.py(453):  net.py(456):   --- modulename: log, funcname: newfn
+net.py(458):  net.py(471):   --- modulename: log, funcname: newfn
+net.py(472):   --- modulename: topo, funcname: hosts
+topo.py(182):   --- modulename: topo, funcname: nodes
+topo.py(163):  topo.py(164):   --- modulename: topo, funcname: nodes
+topo.py(56):   --- modulename: topo, funcname: sorted
+topo.py(286):   --- modulename: util, funcname: natural
+util.py(550):  util.py(553):   --- modulename: re, funcname: split
+util.py(552):  util.py(553):   --- modulename: util, funcname: num
+util.py(552):  util.py(553):   --- modulename: util, funcname: num
+util.py(552):  util.py(553):   --- modulename: util, funcname: natural
+util.py(550):  util.py(553):   --- modulename: re, funcname: split
+util.py(552):  util.py(553):   --- modulename: util, funcname: num
+util.py(552):  util.py(553):   --- modulename: util, funcname: num
+util.py(552):  util.py(553):   --- modulename: util, funcname: natural
+util.py(550):  util.py(553):   --- modulename: re, funcname: split
+util.py(552):  util.py(553):   --- modulename: util, funcname: num
+util.py(552):  util.py(553):   --- modulename: util, funcname: num
+util.py(552):  util.py(553):   --- modulename: topo, funcname: isSwitch
+topo.py(170):  topo.py(182):   --- modulename: topo, funcname: isSwitch
+topo.py(170):  topo.py(182):   --- modulename: topo, funcname: isSwitch
+topo.py(170):  topo.py(182):  net.py(473):   --- modulename: topo, funcname: nodeInfo
+topo.py(271):   --- modulename: net, funcname: addHost
+net.py(213):  net.py(214):  net.py(215):   --- modulename: util, funcname: ipAdd
+util.py(386):  util.py(387):  util.py(388):  util.py(389):  util.py(390):   --- modulename: util, funcname: ipStr
+util.py(369):  util.py(370):  util.py(371):  util.py(372):  util.py(373):  net.py(216):  net.py(217):  net.py(219):  net.py(222):  net.py(223):  net.py(224):  net.py(225):  net.py(226):   --- modulename: node, funcname: __init__
+node.py(85):   --- modulename: node, funcname: checkSetup
+node.py(656):  node.py(657):   --- modulename: node, funcname: setup
+node.py(665):   --- modulename: moduledeps, funcname: pathCheck
+util.py(198):   --- modulename: util, funcname: errRun
+util.py(126):  util.py(127):  util.py(128):  util.py(129):  util.py(132):  util.py(133):  util.py(135):  util.py(136):  util.py(137):  util.py(137):  util.py(137):  util.py(140):   --- modulename: log, funcname: newfn
+util.py(141):   --- modulename: subprocess, funcname: __init__
+util.py(144):  util.py(145):  util.py(146):  util.py(147):  util.py(148):   --- modulename: util, funcname: getincrementaldecoder
+util.py(50):  util.py(149):  util.py(150):  util.py(155):  util.py(156):  util.py(157):  util.py(158):  util.py(159):  util.py(160):  util.py(161):   --- modulename: util, funcname: decode
+util.py(28):  util.py(162):  util.py(164):  util.py(165):  util.py(166):  util.py(157):  util.py(155):  util.py(156):  util.py(157):  util.py(158):  util.py(159):  util.py(160):  util.py(161):   --- modulename: util, funcname: decode
+util.py(28):  util.py(162):  util.py(164):  util.py(165):  util.py(166):  util.py(157):  util.py(155):  util.py(156):  util.py(157):  util.py(158):  util.py(159):  util.py(160):  util.py(161):   --- modulename: util, funcname: decode
+util.py(28):  util.py(162):  util.py(164):  util.py(165):  util.py(166):  util.py(157):  util.py(155):  util.py(156):  util.py(157):  util.py(158):  util.py(159):  util.py(160):  util.py(161):   --- modulename: util, funcname: decode
+util.py(28):  util.py(162):  util.py(164):  util.py(165):  util.py(166):  util.py(157):  util.py(155):  util.py(156):  util.py(157):  util.py(158):  util.py(159):  util.py(160):  util.py(161):   --- modulename: util, funcname: decode
+util.py(28):  util.py(162):  util.py(164):  util.py(165):  util.py(166):  util.py(157):  util.py(155):  util.py(156):  util.py(157):  util.py(158):  util.py(159):  util.py(160):  util.py(173):  util.py(174):  util.py(177):  util.py(157):  util.py(155):  util.py(179):   --- modulename: subprocess, funcname: wait
+util.py(181):  util.py(182):  util.py(184):   --- modulename: log, funcname: newfn
+util.py(185):   --- modulename: subprocess, funcname: __del__
+util.py(198):   --- modulename: util, funcname: errRun
+util.py(126):  util.py(127):  util.py(128):  util.py(129):  util.py(132):  util.py(133):  util.py(135):  util.py(136):  util.py(137):  util.py(137):  util.py(137):  util.py(140):   --- modulename: log, funcname: newfn
+util.py(141):   --- modulename: subprocess, funcname: __init__
+util.py(144):  util.py(145):  util.py(146):  util.py(147):  util.py(148):   --- modulename: util, funcname: getincrementaldecoder
+util.py(50):  util.py(149):  util.py(150):  util.py(155):  util.py(156):  util.py(157):  util.py(158):  util.py(159):  util.py(160):  util.py(161):   --- modulename: util, funcname: decode
+util.py(28):  util.py(162):  util.py(164):  util.py(165):  util.py(166):  util.py(157):  util.py(155):  util.py(156):  util.py(157):  util.py(158):  util.py(159):  util.py(160):  util.py(161):   --- modulename: util, funcname: decode
+util.py(28):  util.py(162):  util.py(164):  util.py(165):  util.py(166):  util.py(157):  util.py(155):  util.py(156):  util.py(157):  util.py(158):  util.py(159):  util.py(160):  util.py(161):   --- modulename: util, funcname: decode
+util.py(28):  util.py(162):  util.py(164):  util.py(165):  util.py(166):  util.py(157):  util.py(155):  util.py(156):  util.py(157):  util.py(158):  util.py(159):  util.py(160):  util.py(161):   --- modulename: util, funcname: decode
+util.py(28):  util.py(162):  util.py(164):  util.py(165):  util.py(166):  util.py(157):  util.py(155):  util.py(156):  util.py(157):  util.py(158):  util.py(159):  util.py(160):  util.py(161):   --- modulename: util, funcname: decode
+util.py(28):  util.py(162):  util.py(164):  util.py(165):  util.py(166):  util.py(157):  util.py(155):  util.py(156):  util.py(157):  util.py(158):  util.py(159):  util.py(160):  util.py(173):  util.py(174):  util.py(177):  util.py(157):  util.py(155):  util.py(179):   --- modulename: subprocess, funcname: wait
+util.py(181):  util.py(182):  util.py(184):   --- modulename: log, funcname: newfn
+util.py(185):   --- modulename: subprocess, funcname: __del__
+moduledeps.py(63):  node.py(658):  node.py(660):  node.py(656):  node.py(87):  node.py(88):  node.py(89):  node.py(92):  node.py(95):  node.py(97):  node.py(98):  node.py(100):  node.py(105):  node.py(106):  node.py(107):  node.py(110):   --- modulename: util, funcname: getincrementaldecoder
+util.py(50):  node.py(113):  node.py(114):   --- modulename: node, funcname: startShell
+node.py(134):  node.py(139):  node.py(140):  node.py(141):  node.py(145):  node.py(146):  node.py(147):  node.py(152):   --- modulename: pty, funcname: openpty
+node.py(153):  node.py(154):   --- modulename: node, funcname: _popen
+node.py(212):  node.py(213):   --- modulename: subprocess, funcname: __init__
+node.py(214):   --- modulename: log, funcname: newfn
+node.py(215):  node.py(157):  node.py(158):  node.py(159):  node.py(160):  node.py(161):  node.py(165):  node.py(166):  node.py(167):  node.py(168):  node.py(169):  node.py(170):  node.py(172):  node.py(173):   --- modulename: node, funcname: read
+node.py(238):  node.py(239):  node.py(240):  node.py(241):   --- modulename: util, funcname: decode
+util.py(28):  node.py(242):  node.py(243):  node.py(244):  node.py(248):  node.py(174):  node.py(176):  node.py(172):  node.py(173):   --- modulename: node, funcname: read
+node.py(238):  node.py(239):  node.py(240):  node.py(241):   --- modulename: util, funcname: decode
+util.py(28):  node.py(242):  node.py(243):  node.py(244):  node.py(248):  node.py(174):  node.py(176):  node.py(172):  node.py(173):   --- modulename: node, funcname: read
+node.py(238):  node.py(239):  node.py(240):  node.py(241):   --- modulename: util, funcname: decode
+util.py(28):  node.py(242):  node.py(243):  node.py(244):  node.py(248):  node.py(174):  node.py(176):  node.py(172):  node.py(173):   --- modulename: node, funcname: read
+node.py(238):  node.py(239):  node.py(240):  node.py(241):   --- modulename: util, funcname: decode
+util.py(28):  node.py(242):  node.py(243):  node.py(244):  node.py(248):  node.py(174):  node.py(176):  node.py(172):  node.py(173):   --- modulename: node, funcname: read
+node.py(238):  node.py(239):  node.py(240):  node.py(241):   --- modulename: util, funcname: decode
+util.py(28):  node.py(242):  node.py(243):  node.py(244):  node.py(248):  node.py(174):  node.py(176):  node.py(172):  node.py(173):   --- modulename: node, funcname: read
+node.py(238):  node.py(239):  node.py(240):  node.py(241):   --- modulename: util, funcname: decode
+util.py(28):  node.py(242):  node.py(243):  node.py(244):  node.py(248):  node.py(174):  node.py(175):  node.py(177):  node.py(179):   --- modulename: node, funcname: cmd
+node.py(372):  node.py(373):  node.py(374):   --- modulename: log, funcname: newfn
+node.py(375):  node.py(376):   --- modulename: node, funcname: sendCmd
+node.py(293):  node.py(294):  node.py(296):  node.py(299):  node.py(300):  node.py(302):  node.py(303):  node.py(303):  node.py(304):   --- modulename: re, funcname: search
+node.py(307):  node.py(309):  node.py(312):  node.py(314):   --- modulename: node, funcname: write
+node.py(264):   --- modulename: util, funcname: encode
+util.py(33):  node.py(315):  node.py(316):  node.py(377):   --- modulename: node, funcname: waitOutput
+node.py(361):  node.py(362):  node.py(363):  node.py(364):   --- modulename: node, funcname: monitor
+node.py(328):   --- modulename: node, funcname: waitReadable
+node.py(285):  node.py(286):  node.py(329):  node.py(331):   --- modulename: node, funcname: read
+node.py(238):  node.py(239):  node.py(240):  node.py(241):   --- modulename: util, funcname: decode
+util.py(28):  node.py(242):  node.py(243):  node.py(244):  node.py(248):  node.py(332):  node.py(334):  node.py(335):  node.py(347):  node.py(348):  node.py(349):  node.py(353):  node.py(365):  node.py(366):   --- modulename: log, funcname: newfn
+node.py(363):  node.py(367):  node.py(115):   --- modulename: node, funcname: mountPrivateDirs
+node.py(184):  node.py(185):  net.py(227):  net.py(228):  net.py(229):  net.py(474):   --- modulename: log, funcname: newfn
+net.py(472):  net.py(473):   --- modulename: topo, funcname: nodeInfo
+topo.py(271):   --- modulename: net, funcname: addHost
+net.py(213):  net.py(214):  net.py(215):   --- modulename: util, funcname: ipAdd
+util.py(386):  util.py(387):  util.py(388):  util.py(389):  util.py(390):   --- modulename: util, funcname: ipStr
+util.py(369):  util.py(370):  util.py(371):  util.py(372):  util.py(373):  net.py(216):  net.py(217):  net.py(219):  net.py(222):  net.py(223):  net.py(224):  net.py(225):  net.py(226):   --- modulename: node, funcname: __init__
+node.py(85):   --- modulename: node, funcname: checkSetup
+node.py(656):  node.py(87):  node.py(88):  node.py(89):  node.py(92):  node.py(95):  node.py(97):  node.py(98):  node.py(100):  node.py(105):  node.py(106):  node.py(107):  node.py(110):   --- modulename: util, funcname: getincrementaldecoder
+util.py(50):  node.py(113):  node.py(114):   --- modulename: node, funcname: startShell
+node.py(134):  node.py(139):  node.py(140):  node.py(141):  node.py(145):  node.py(146):  node.py(147):  node.py(152):   --- modulename: pty, funcname: openpty
+node.py(153):  node.py(154):   --- modulename: node, funcname: _popen
+node.py(212):  node.py(213):   --- modulename: subprocess, funcname: __init__
+node.py(214):   --- modulename: log, funcname: newfn
+node.py(215):  node.py(157):  node.py(158):  node.py(159):  node.py(160):  node.py(161):  node.py(165):  node.py(166):  node.py(167):  node.py(168):  node.py(169):  node.py(170):  node.py(172):  node.py(173):   --- modulename: node, funcname: read
+node.py(238):  node.py(239):  node.py(240):  node.py(241):   --- modulename: util, funcname: decode
+util.py(28):  node.py(242):  node.py(243):  node.py(244):  node.py(248):  node.py(174):  node.py(176):  node.py(172):  node.py(173):   --- modulename: node, funcname: read
+node.py(238):  node.py(239):  node.py(240):  node.py(241):   --- modulename: util, funcname: decode
+util.py(28):  node.py(242):  node.py(243):  node.py(244):  node.py(248):  node.py(174):  node.py(176):  node.py(172):  node.py(173):   --- modulename: node, funcname: read
+node.py(238):  node.py(239):  node.py(240):  node.py(241):   --- modulename: util, funcname: decode
+util.py(28):  node.py(242):  node.py(243):  node.py(244):  node.py(248):  node.py(174):  node.py(176):  node.py(172):  node.py(173):   --- modulename: node, funcname: read
+node.py(238):  node.py(239):  node.py(240):  node.py(241):   --- modulename: util, funcname: decode
+util.py(28):  node.py(242):  node.py(243):  node.py(244):  node.py(248):  node.py(174):  node.py(176):  node.py(172):  node.py(173):   --- modulename: node, funcname: read
+node.py(238):  node.py(239):  node.py(240):  node.py(241):   --- modulename: util, funcname: decode
+util.py(28):  node.py(242):  node.py(243):  node.py(244):  node.py(248):  node.py(174):  node.py(176):  node.py(172):  node.py(173):   --- modulename: node, funcname: read
+node.py(238):  node.py(239):  node.py(240):  node.py(241):   --- modulename: util, funcname: decode
+util.py(28):  node.py(242):  node.py(243):  node.py(244):  node.py(248):  node.py(174):  node.py(175):  node.py(177):  node.py(179):   --- modulename: node, funcname: cmd
+node.py(372):  node.py(373):  node.py(374):   --- modulename: log, funcname: newfn
+node.py(375):  node.py(376):   --- modulename: node, funcname: sendCmd
+node.py(293):  node.py(294):  node.py(296):  node.py(299):  node.py(300):  node.py(302):  node.py(303):  node.py(303):  node.py(304):   --- modulename: re, funcname: search
+node.py(307):  node.py(309):  node.py(312):  node.py(314):   --- modulename: node, funcname: write
+node.py(264):   --- modulename: util, funcname: encode
+util.py(33):  node.py(315):  node.py(316):  node.py(377):   --- modulename: node, funcname: waitOutput
+node.py(361):  node.py(362):  node.py(363):  node.py(364):   --- modulename: node, funcname: monitor
+node.py(328):   --- modulename: node, funcname: waitReadable
+node.py(285):  node.py(286):  node.py(329):  node.py(331):   --- modulename: node, funcname: read
+node.py(238):  node.py(239):  node.py(240):  node.py(241):   --- modulename: util, funcname: decode
+util.py(28):  node.py(242):  node.py(243):  node.py(244):  node.py(248):  node.py(332):  node.py(334):  node.py(335):  node.py(347):  node.py(348):  node.py(349):  node.py(353):  node.py(365):  node.py(366):   --- modulename: log, funcname: newfn
+node.py(363):  node.py(367):  node.py(115):   --- modulename: node, funcname: mountPrivateDirs
+node.py(184):  node.py(185):  net.py(227):  net.py(228):  net.py(229):  net.py(474):   --- modulename: log, funcname: newfn
+net.py(472):  net.py(476):   --- modulename: log, funcname: newfn
+net.py(477):   --- modulename: topo, funcname: switches
+topo.py(176):   --- modulename: topo, funcname: nodes
+topo.py(163):  topo.py(164):   --- modulename: topo, funcname: nodes
+topo.py(56):   --- modulename: topo, funcname: sorted
+topo.py(286):   --- modulename: util, funcname: natural
+util.py(550):  util.py(553):   --- modulename: re, funcname: split
+util.py(552):  util.py(553):   --- modulename: util, funcname: num
+util.py(552):  util.py(553):   --- modulename: util, funcname: num
+util.py(552):  util.py(553):   --- modulename: util, funcname: natural
+util.py(550):  util.py(553):   --- modulename: re, funcname: split
+util.py(552):  util.py(553):   --- modulename: util, funcname: num
+util.py(552):  util.py(553):   --- modulename: util, funcname: num
+util.py(552):  util.py(553):   --- modulename: util, funcname: natural
+util.py(550):  util.py(553):   --- modulename: re, funcname: split
+util.py(552):  util.py(553):   --- modulename: util, funcname: num
+util.py(552):  util.py(553):   --- modulename: util, funcname: num
+util.py(552):  util.py(553):   --- modulename: topo, funcname: isSwitch
+topo.py(170):  topo.py(176):   --- modulename: topo, funcname: isSwitch
+topo.py(170):  topo.py(176):   --- modulename: topo, funcname: isSwitch
+topo.py(170):  topo.py(176):  net.py(479):   --- modulename: topo, funcname: nodeInfo
+topo.py(271):  net.py(480):  net.py(481):  net.py(483):   --- modulename: net, funcname: addSwitch
+net.py(255):  net.py(256):  net.py(257):  net.py(258):  net.py(259):  net.py(260):   --- modulename: run_exercise, funcname: __init__
+run_exercise.py(45):                 kwargs.update(switch_args)
+run_exercise.py(46):                 P4RuntimeSwitch.__init__(self, *opts, **kwargs)
+p4runtime_switch.py(42):         Switch.__init__(self, name, **kwargs)
+node.py(892):   --- modulename: node, funcname: __init__
+node.py(85):   --- modulename: node, funcname: checkSetup
+node.py(656):  node.py(657):   --- modulename: p4_mininet, funcname: setup
+p4_mininet.py(105):         pass
+node.py(658):  node.py(660):  node.py(656):  node.py(87):  node.py(88):  node.py(89):  node.py(92):  node.py(95):  node.py(97):  node.py(98):  node.py(100):  node.py(105):  node.py(106):  node.py(107):  node.py(110):   --- modulename: util, funcname: getincrementaldecoder
+util.py(50):  node.py(113):  node.py(114):   --- modulename: node, funcname: startShell
+node.py(134):  node.py(139):  node.py(140):  node.py(145):  node.py(146):  node.py(147):  node.py(152):   --- modulename: pty, funcname: openpty
+node.py(153):  node.py(154):   --- modulename: node, funcname: _popen
+node.py(212):  node.py(213):   --- modulename: subprocess, funcname: __init__
+node.py(214):   --- modulename: log, funcname: newfn
+node.py(215):  node.py(157):  node.py(158):  node.py(159):  node.py(160):  node.py(161):  node.py(165):  node.py(166):  node.py(167):  node.py(168):  node.py(169):  node.py(170):  node.py(172):  node.py(173):   --- modulename: node, funcname: read
+node.py(238):  node.py(239):  node.py(240):  node.py(241):   --- modulename: util, funcname: decode
+util.py(28):  node.py(242):  node.py(243):  node.py(244):  node.py(248):  node.py(174):  node.py(176):  node.py(172):  node.py(173):   --- modulename: node, funcname: read
+node.py(238):  node.py(239):  node.py(240):  node.py(241):   --- modulename: util, funcname: decode
+util.py(28):  node.py(242):  node.py(243):  node.py(244):  node.py(248):  node.py(174):  node.py(176):  node.py(172):  node.py(173):   --- modulename: node, funcname: read
+node.py(238):  node.py(239):  node.py(240):  node.py(241):   --- modulename: util, funcname: decode
+util.py(28):  node.py(242):  node.py(243):  node.py(244):  node.py(248):  node.py(174):  node.py(176):  node.py(172):  node.py(173):   --- modulename: node, funcname: read
+node.py(238):  node.py(239):  node.py(240):  node.py(241):   --- modulename: util, funcname: decode
+util.py(28):  node.py(242):  node.py(243):  node.py(244):  node.py(248):  node.py(174):  node.py(176):  node.py(172):  node.py(173):   --- modulename: node, funcname: read
+node.py(238):  node.py(239):  node.py(240):  node.py(241):   --- modulename: util, funcname: decode
+util.py(28):  node.py(242):  node.py(243):  node.py(244):  node.py(248):  node.py(174):  node.py(176):  node.py(172):  node.py(173):   --- modulename: node, funcname: read
+node.py(238):  node.py(239):  node.py(240):  node.py(241):   --- modulename: util, funcname: decode
+util.py(28):  node.py(242):  node.py(243):  node.py(244):  node.py(248):  node.py(174):  node.py(175):  node.py(177):  node.py(179):   --- modulename: node, funcname: cmd
+node.py(372):  node.py(373):  node.py(374):   --- modulename: log, funcname: newfn
+node.py(375):  node.py(376):   --- modulename: node, funcname: sendCmd
+node.py(927):  node.py(928):  node.py(929):   --- modulename: node, funcname: sendCmd
+node.py(293):  node.py(294):  node.py(296):  node.py(299):  node.py(300):  node.py(302):  node.py(303):  node.py(303):  node.py(304):   --- modulename: re, funcname: search
+node.py(307):  node.py(309):  node.py(312):  node.py(314):   --- modulename: node, funcname: write
+node.py(264):   --- modulename: util, funcname: encode
+util.py(33):  node.py(315):  node.py(316):  node.py(377):   --- modulename: node, funcname: waitOutput
+node.py(361):  node.py(362):  node.py(363):  node.py(364):   --- modulename: node, funcname: monitor
+node.py(328):   --- modulename: node, funcname: waitReadable
+node.py(285):  node.py(286):  node.py(329):  node.py(331):   --- modulename: node, funcname: read
+node.py(238):  node.py(239):  node.py(240):  node.py(241):   --- modulename: util, funcname: decode
+util.py(28):  node.py(242):  node.py(243):  node.py(244):  node.py(248):  node.py(332):  node.py(334):  node.py(335):  node.py(347):  node.py(348):  node.py(349):  node.py(353):  node.py(365):  node.py(366):   --- modulename: log, funcname: newfn
+node.py(363):  node.py(367):  node.py(115):   --- modulename: node, funcname: mountPrivateDirs
+node.py(184):  node.py(185):  node.py(893):   --- modulename: node, funcname: defaultDpid
+node.py(901):  node.py(907):   --- modulename: re, funcname: findall
+node.py(908):  node.py(909):  node.py(915):  node.py(894):  node.py(895):  node.py(896):  node.py(897):   --- modulename: link, funcname: __init__
+link.py(41):  link.py(42):  link.py(43):  link.py(44):  link.py(45):  link.py(49):  link.py(50):  link.py(51):  link.py(53):  link.py(54):  link.py(55):  link.py(58):   --- modulename: node, funcname: addIntf
+node.py(443):  node.py(445):  node.py(446):  node.py(447):  node.py(448):   --- modulename: log, funcname: newfn
+node.py(449):  node.py(450):   --- modulename: link, funcname: __str__
+link.py(223):   --- modulename: log, funcname: newfn
+node.py(451):  link.py(60):  link.py(61):   --- modulename: link, funcname: config
+link.py(194):  link.py(195):   --- modulename: link, funcname: setParam
+link.py(170):  link.py(171):  link.py(172):  link.py(173):  link.py(196):   --- modulename: link, funcname: setParam
+link.py(170):  link.py(171):  link.py(172):  link.py(173):  link.py(197):   --- modulename: link, funcname: setParam
+link.py(170):  link.py(171):  link.py(172):  link.py(174):  link.py(176):  link.py(179):   --- modulename: link, funcname: isUp
+link.py(136):  link.py(137):   --- modulename: link, funcname: ifconfig
+link.py(69):   --- modulename: link, funcname: cmd
+link.py(65):   --- modulename: node, funcname: cmd
+node.py(372):  node.py(373):  node.py(374):   --- modulename: log, funcname: newfn
+node.py(375):  node.py(376):   --- modulename: node, funcname: sendCmd
+node.py(927):  node.py(928):  node.py(929):   --- modulename: node, funcname: sendCmd
+node.py(293):  node.py(294):  node.py(296):  node.py(299):  node.py(300):  node.py(302):  node.py(303):  node.py(303):  node.py(303):  node.py(303):  node.py(304):   --- modulename: re, funcname: search
+node.py(307):  node.py(309):  node.py(312):  node.py(314):   --- modulename: node, funcname: write
+node.py(264):   --- modulename: util, funcname: encode
+util.py(33):  node.py(315):  node.py(316):  node.py(377):   --- modulename: node, funcname: waitOutput
+node.py(361):  node.py(362):  node.py(363):  node.py(364):   --- modulename: node, funcname: monitor
+node.py(328):   --- modulename: node, funcname: waitReadable
+node.py(285):  node.py(286):  node.py(329):  node.py(331):   --- modulename: node, funcname: read
+node.py(238):  node.py(239):  node.py(240):  node.py(241):   --- modulename: util, funcname: decode
+util.py(28):  node.py(242):  node.py(243):  node.py(244):  node.py(248):  node.py(332):  node.py(334):  node.py(335):  node.py(347):  node.py(348):  node.py(349):  node.py(353):  node.py(365):  node.py(366):   --- modulename: log, funcname: newfn
+node.py(363):  node.py(367):  link.py(139):  link.py(143):  link.py(180):  link.py(181):  link.py(198):   --- modulename: link, funcname: setParam
+link.py(170):  link.py(171):  link.py(172):  link.py(173):  link.py(199):  p4runtime_switch.py(43):         assert (sw_path)
+p4runtime_switch.py(44):         self.sw_path = sw_path
+p4runtime_switch.py(46):         pathCheck(sw_path)
+util.py(198):   --- modulename: util, funcname: errRun
+util.py(126):  util.py(127):  util.py(128):  util.py(129):  util.py(132):  util.py(133):  util.py(135):  util.py(136):  util.py(137):  util.py(137):  util.py(137):  util.py(140):   --- modulename: log, funcname: newfn
+util.py(141):   --- modulename: subprocess, funcname: __init__
+util.py(144):  util.py(145):  util.py(146):  util.py(147):  util.py(148):   --- modulename: util, funcname: getincrementaldecoder
+util.py(50):  util.py(149):  util.py(150):  util.py(155):  util.py(156):  util.py(157):  util.py(158):  util.py(159):  util.py(160):  util.py(161):   --- modulename: util, funcname: decode
+util.py(28):  util.py(162):  util.py(164):  util.py(165):  util.py(166):  util.py(157):  util.py(155):  util.py(156):  util.py(157):  util.py(158):  util.py(159):  util.py(160):  util.py(161):   --- modulename: util, funcname: decode
+util.py(28):  util.py(162):  util.py(164):  util.py(165):  util.py(166):  util.py(157):  util.py(155):  util.py(156):  util.py(157):  util.py(158):  util.py(159):  util.py(160):  util.py(161):   --- modulename: util, funcname: decode
+util.py(28):  util.py(162):  util.py(164):  util.py(165):  util.py(166):  util.py(157):  util.py(155):  util.py(156):  util.py(157):  util.py(158):  util.py(159):  util.py(160):  util.py(161):   --- modulename: util, funcname: decode
+util.py(28):  util.py(162):  util.py(164):  util.py(165):  util.py(166):  util.py(157):  util.py(155):  util.py(156):  util.py(157):  util.py(158):  util.py(159):  util.py(160):  util.py(161):   --- modulename: util, funcname: decode
+util.py(28):  util.py(162):  util.py(164):  util.py(165):  util.py(166):  util.py(157):  util.py(155):  util.py(156):  util.py(157):  util.py(158):  util.py(159):  util.py(160):  util.py(173):  util.py(174):  util.py(177):  util.py(157):  util.py(155):  util.py(179):   --- modulename: subprocess, funcname: wait
+util.py(181):  util.py(182):  util.py(184):   --- modulename: log, funcname: newfn
+util.py(185):   --- modulename: subprocess, funcname: __del__
+moduledeps.py(63):  p4runtime_switch.py(48):         if json_path is not None:
+p4runtime_switch.py(50):             if not os.path.isfile(json_path):
+p4runtime_switch.py(53):             self.json_path = json_path
+p4runtime_switch.py(57):         if grpc_port is not None:
+p4runtime_switch.py(60):             self.grpc_port = P4RuntimeSwitch.next_grpc_port
+p4runtime_switch.py(61):             P4RuntimeSwitch.next_grpc_port += 1
+p4runtime_switch.py(63):         if thrift_port is not None:
+p4runtime_switch.py(66):             self.thrift_port = P4RuntimeSwitch.next_thrift_port
+p4runtime_switch.py(67):             P4RuntimeSwitch.next_thrift_port += 1
+p4runtime_switch.py(69):         if check_listening_on_port(self.grpc_port):
+p4runtime_switch.py(73):         self.verbose = verbose
+p4runtime_switch.py(74):         logfile = "/tmp/p4s.{}.log".format(self.name)
+p4runtime_switch.py(75):         self.output = open(logfile, 'w')
+p4runtime_switch.py(76):         self.pcap_dump = pcap_dump
+p4runtime_switch.py(77):         self.enable_debugger = enable_debugger
+p4runtime_switch.py(78):         self.log_console = log_console
+p4runtime_switch.py(79):         if log_file is not None:
+p4runtime_switch.py(80):             self.log_file = log_file
+p4runtime_switch.py(83):         if device_id is not None:
+p4runtime_switch.py(87):             self.device_id = P4Switch.device_id
+p4runtime_switch.py(88):             P4Switch.device_id += 1
+p4runtime_switch.py(89):         self.nanomsg = "ipc:///tmp/bm-{}-log.ipc".format(self.device_id)
+net.py(261):  net.py(263):  net.py(264):  net.py(265):  net.py(484):   --- modulename: log, funcname: newfn
+net.py(477):  net.py(486):   --- modulename: log, funcname: newfn
+net.py(487):  net.py(488):   --- modulename: topo, funcname: links
+topo.py(208):   --- modulename: topo, funcname: iterLinks
+topo.py(189):   --- modulename: topo, funcname: edges_iter
+topo.py(60):  topo.py(61):  topo.py(62):  topo.py(65):  topo.py(66):  topo.py(67):  topo.py(68):  topo.py(190):  topo.py(191):  topo.py(197):  topo.py(198):   --- modulename: topo, funcname: iterLinks
+topo.py(189):   --- modulename: topo, funcname: edges_iter
+topo.py(65):  topo.py(61):  topo.py(60):  topo.py(61):  topo.py(62):  topo.py(64):  topo.py(61):  topo.py(62):  topo.py(64):  topo.py(61):  topo.py(60):  topo.py(61):  topo.py(62):  topo.py(65):  topo.py(66):  topo.py(67):  topo.py(68):  topo.py(190):  topo.py(191):  topo.py(197):  topo.py(198):   --- modulename: topo, funcname: iterLinks
+topo.py(189):   --- modulename: topo, funcname: edges_iter
+topo.py(65):  topo.py(61):  topo.py(60):  topo.py(209):  topo.py(212):  topo.py(213):   --- modulename: topo, funcname: <lambda>
+topo.py(213):   --- modulename: util, funcname: naturalSeq
+util.py(557):   --- modulename: util, funcname: natural
+util.py(550):  util.py(553):   --- modulename: re, funcname: split
+util.py(552):  util.py(553):   --- modulename: util, funcname: num
+util.py(552):  util.py(553):   --- modulename: util, funcname: num
+util.py(552):  util.py(553):  util.py(557):   --- modulename: util, funcname: natural
+util.py(550):  util.py(553):   --- modulename: re, funcname: split
+util.py(552):  util.py(553):   --- modulename: util, funcname: num
+util.py(552):  util.py(553):   --- modulename: util, funcname: num
+util.py(552):  util.py(553):  util.py(557):   --- modulename: topo, funcname: <lambda>
+topo.py(213):   --- modulename: util, funcname: naturalSeq
+util.py(557):   --- modulename: util, funcname: natural
+util.py(550):  util.py(553):   --- modulename: re, funcname: split
+util.py(552):  util.py(553):   --- modulename: util, funcname: num
+util.py(552):  util.py(553):   --- modulename: util, funcname: num
+util.py(552):  util.py(553):  util.py(557):   --- modulename: util, funcname: natural
+util.py(550):  util.py(553):   --- modulename: re, funcname: split
+util.py(552):  util.py(553):   --- modulename: util, funcname: num
+util.py(552):  util.py(553):   --- modulename: util, funcname: num
+util.py(552):  util.py(553):  util.py(557):  net.py(489):   --- modulename: net, funcname: addLink
+net.py(386):   --- modulename: net, funcname: __getitem__
+net.py(337):  net.py(387):   --- modulename: net, funcname: __getitem__
+net.py(337):  net.py(388):  net.py(390):  net.py(391):  net.py(392):  net.py(393):  net.py(394):  net.py(395):  net.py(397):   --- modulename: net, funcname: randMac
+net.py(372):   --- modulename: random, funcname: randint
+net.py(373):   --- modulename: util, funcname: macColonHex
+util.py(363):   --- modulename: util, funcname: _colonHex
+util.py(352):  util.py(353):  util.py(354):  util.py(355):  util.py(353):  util.py(354):  util.py(355):  util.py(353):  util.py(354):  util.py(355):  util.py(353):  util.py(354):  util.py(355):  util.py(353):  util.py(354):  util.py(355):  util.py(353):  util.py(354):  util.py(355):  util.py(353):  util.py(356):  util.py(357):  net.py(398):   --- modulename: net, funcname: randMac
+net.py(372):   --- modulename: random, funcname: randint
+net.py(373):   --- modulename: util, funcname: macColonHex
+util.py(363):   --- modulename: util, funcname: _colonHex
+util.py(352):  util.py(353):  util.py(354):  util.py(355):  util.py(353):  util.py(354):  util.py(355):  util.py(353):  util.py(354):  util.py(355):  util.py(353):  util.py(354):  util.py(355):  util.py(353):  util.py(354):  util.py(355):  util.py(353):  util.py(354):  util.py(355):  util.py(353):  util.py(356):  util.py(357):  net.py(399):  net.py(400):   --- modulename: link, funcname: __init__
+link.py(555):  link.py(556):  link.py(557):   --- modulename: link, funcname: __init__
+link.py(427):  link.py(428):  link.py(429):  link.py(430):  link.py(431):  link.py(432):  link.py(433):  link.py(435):  link.py(437):  link.py(438):   --- modulename: link, funcname: intfName
+link.py(478):  link.py(479):  link.py(439):  link.py(440):   --- modulename: link, funcname: intfName
+link.py(478):  link.py(479):  link.py(443):  link.py(444):  link.py(446):  link.py(447):  link.py(448):  link.py(449):  link.py(450):  link.py(451):   --- modulename: link, funcname: makeIntfPair
+link.py(494):  link.py(495):  link.py(496):   --- modulename: util, funcname: makeIntfPair
+util.py(245):  util.py(246):  util.py(247):  util.py(248):  util.py(253):  util.py(254):  util.py(259):  util.py(264):   --- modulename: node, funcname: cmd
+node.py(372):  node.py(373):  node.py(374):   --- modulename: log, funcname: newfn
+node.py(375):  node.py(376):   --- modulename: node, funcname: sendCmd
+node.py(293):  node.py(294):  node.py(296):  node.py(299):  node.py(300):  node.py(302):  node.py(303):  node.py(303):  node.py(304):   --- modulename: re, funcname: search
+node.py(307):  node.py(309):  node.py(312):  node.py(314):   --- modulename: node, funcname: write
+node.py(264):   --- modulename: util, funcname: encode
+util.py(33):  node.py(315):  node.py(316):  node.py(377):   --- modulename: node, funcname: waitOutput
+node.py(361):  node.py(362):  node.py(363):  node.py(364):   --- modulename: node, funcname: monitor
+node.py(328):   --- modulename: node, funcname: waitReadable
+node.py(285):  node.py(286):  node.py(329):  node.py(331):   --- modulename: node, funcname: read
+node.py(238):  node.py(239):  node.py(240):  node.py(241):   --- modulename: util, funcname: decode
+util.py(28):  node.py(242):  node.py(243):  node.py(244):  node.py(248):  node.py(332):  node.py(334):  node.py(335):  node.py(347):  node.py(348):  node.py(349):  node.py(353):  node.py(365):  node.py(366):   --- modulename: log, funcname: newfn
+node.py(363):  node.py(367):  util.py(265):  link.py(455):  link.py(457):  link.py(460):  link.py(461):   --- modulename: link, funcname: __init__
+link.py(41):  link.py(42):  link.py(43):  link.py(44):  link.py(45):  link.py(49):  link.py(53):  link.py(54):  link.py(55):  link.py(56):   --- modulename: node, funcname: addIntf
+node.py(443):  node.py(445):  node.py(446):  node.py(447):  node.py(448):   --- modulename: log, funcname: newfn
+node.py(449):  node.py(450):   --- modulename: link, funcname: __str__
+link.py(223):   --- modulename: link, funcname: __str__
+link.py(223):   --- modulename: log, funcname: newfn
+node.py(451):  node.py(452):   --- modulename: log, funcname: newfn
+link.py(223):   --- modulename: log, funcname: <genexpr>
+node.py(453):   --- modulename: link, funcname: _ignore
+link.py(473):  link.py(60):  link.py(61):   --- modulename: link, funcname: config
+link.py(336):  link.py(338):   --- modulename: link, funcname: config
+link.py(194):  link.py(195):   --- modulename: link, funcname: setParam
+link.py(170):  link.py(171):  link.py(172):  link.py(173):  link.py(196):   --- modulename: link, funcname: setParam
+link.py(170):  link.py(171):  link.py(172):  link.py(173):  link.py(197):   --- modulename: link, funcname: setParam
+link.py(170):  link.py(171):  link.py(172):  link.py(174):  link.py(176):  link.py(179):   --- modulename: link, funcname: isUp
+link.py(136):  link.py(137):   --- modulename: link, funcname: ifconfig
+link.py(69):   --- modulename: link, funcname: cmd
+link.py(65):   --- modulename: node, funcname: cmd
+node.py(372):  node.py(373):  node.py(374):   --- modulename: log, funcname: newfn
+node.py(375):  node.py(376):   --- modulename: node, funcname: sendCmd
+node.py(293):  node.py(294):  node.py(296):  node.py(299):  node.py(300):  node.py(302):  node.py(303):  node.py(303):  node.py(303):  node.py(303):  node.py(304):   --- modulename: re, funcname: search
+node.py(307):  node.py(309):  node.py(312):  node.py(314):   --- modulename: node, funcname: write
+node.py(264):   --- modulename: util, funcname: encode
+util.py(33):  node.py(315):  node.py(316):  node.py(377):   --- modulename: node, funcname: waitOutput
+node.py(361):  node.py(362):  node.py(363):  node.py(364):   --- modulename: node, funcname: monitor
+node.py(328):   --- modulename: node, funcname: waitReadable
+node.py(285):  node.py(286):  node.py(329):  node.py(331):   --- modulename: node, funcname: read
+node.py(238):  node.py(239):  node.py(240):  node.py(241):   --- modulename: util, funcname: decode
+util.py(28):  node.py(242):  node.py(243):  node.py(244):  node.py(248):  node.py(332):  node.py(334):  node.py(335):  node.py(347):  node.py(348):  node.py(349):  node.py(353):  node.py(365):  node.py(366):   --- modulename: log, funcname: newfn
+node.py(363):  node.py(367):  link.py(139):  link.py(143):  link.py(180):  link.py(181):  link.py(198):   --- modulename: link, funcname: setParam
+link.py(170):  link.py(171):  link.py(172):  link.py(173):  link.py(199):  link.py(340):  link.py(345):  link.py(346):   --- modulename: link, funcname: on
+link.py(342):  link.py(347):   --- modulename: link, funcname: on
+link.py(342):  link.py(348):   --- modulename: link, funcname: on
+link.py(342):   --- modulename: link, funcname: cmd
+link.py(65):   --- modulename: node, funcname: cmd
+node.py(372):  node.py(373):  node.py(374):   --- modulename: link, funcname: __repr__
+link.py(220):   --- modulename: log, funcname: newfn
+node.py(375):  node.py(376):   --- modulename: node, funcname: sendCmd
+node.py(293):  node.py(294):  node.py(296):  node.py(299):  node.py(300):  node.py(302):  node.py(303):  node.py(303):   --- modulename: link, funcname: __str__
+link.py(223):  node.py(303):  node.py(303):  node.py(303):  node.py(303):  node.py(303):  node.py(303):  node.py(303):  node.py(304):   --- modulename: re, funcname: search
+node.py(307):  node.py(309):  node.py(312):  node.py(314):   --- modulename: node, funcname: write
+node.py(264):   --- modulename: util, funcname: encode
+util.py(33):  node.py(315):  node.py(316):  node.py(377):   --- modulename: node, funcname: waitOutput
+node.py(361):  node.py(362):  node.py(363):  node.py(364):   --- modulename: node, funcname: monitor
+node.py(328):   --- modulename: node, funcname: waitReadable
+node.py(285):  node.py(286):  node.py(329):  node.py(331):   --- modulename: node, funcname: read
+node.py(238):  node.py(239):  node.py(240):  node.py(241):   --- modulename: util, funcname: decode
+util.py(28):  node.py(242):  node.py(243):  node.py(244):  node.py(248):  node.py(332):  node.py(334):  node.py(335):  node.py(347):  node.py(348):  node.py(349):  node.py(353):  node.py(365):  node.py(366):   --- modulename: log, funcname: newfn
+node.py(363):  node.py(367):  link.py(352):  link.py(357):   --- modulename: link, funcname: tc
+link.py(310):   --- modulename: link, funcname: __str__
+link.py(223):   --- modulename: link, funcname: __str__
+link.py(223):  link.py(311):   --- modulename: log, funcname: newfn
+link.py(312):   --- modulename: link, funcname: cmd
+link.py(65):   --- modulename: node, funcname: cmd
+node.py(372):  node.py(373):  node.py(374):   --- modulename: log, funcname: newfn
+node.py(375):  node.py(376):   --- modulename: node, funcname: sendCmd
+node.py(293):  node.py(294):  node.py(296):  node.py(299):  node.py(300):  node.py(302):  node.py(303):  node.py(303):  node.py(304):   --- modulename: re, funcname: search
+node.py(307):  node.py(309):  node.py(312):  node.py(314):   --- modulename: node, funcname: write
+node.py(264):   --- modulename: util, funcname: encode
+util.py(33):  node.py(315):  node.py(316):  node.py(377):   --- modulename: node, funcname: waitOutput
+node.py(361):  node.py(362):  node.py(363):  node.py(364):   --- modulename: node, funcname: monitor
+node.py(328):   --- modulename: node, funcname: waitReadable
+node.py(285):  node.py(286):  node.py(329):  node.py(331):   --- modulename: node, funcname: read
+node.py(238):  node.py(239):  node.py(240):  node.py(241):   --- modulename: util, funcname: decode
+util.py(28):  node.py(242):  node.py(243):  node.py(244):  node.py(248):  node.py(332):  node.py(334):  node.py(335):  node.py(347):  node.py(348):  node.py(349):  node.py(353):  node.py(365):  node.py(366):   --- modulename: log, funcname: newfn
+node.py(363):  node.py(367):  link.py(358):  link.py(361):  link.py(364):  link.py(365):  link.py(366):  link.py(367):  link.py(368):   --- modulename: link, funcname: bwCmds
+link.py(239):  link.py(241):  link.py(244):  link.py(284):  link.py(369):  link.py(372):  link.py(373):  link.py(374):  link.py(375):   --- modulename: link, funcname: delayCmds
+link.py(290):  link.py(291):  link.py(295):  link.py(296):  link.py(297):  link.py(298):  link.py(299):  link.py(300):  link.py(301):  link.py(303):  link.py(304):  link.py(305):  link.py(306):  link.py(376):  link.py(382):  link.py(383):  link.py(384):  link.py(385):   --- modulename: log, funcname: newfn
+link.py(388):   --- modulename: log, funcname: newfn
+link.py(389):   --- modulename: link, funcname: tc
+link.py(310):   --- modulename: link, funcname: __str__
+link.py(223):   --- modulename: link, funcname: __str__
+link.py(223):  link.py(311):   --- modulename: log, funcname: newfn
+link.py(312):   --- modulename: link, funcname: cmd
+link.py(65):   --- modulename: node, funcname: cmd
+node.py(372):  node.py(373):  node.py(374):   --- modulename: log, funcname: newfn
+node.py(375):  node.py(376):   --- modulename: node, funcname: sendCmd
+node.py(293):  node.py(294):  node.py(296):  node.py(299):  node.py(300):  node.py(302):  node.py(303):  node.py(303):  node.py(304):   --- modulename: re, funcname: search
+node.py(307):  node.py(309):  node.py(312):  node.py(314):   --- modulename: node, funcname: write
+node.py(264):   --- modulename: util, funcname: encode
+util.py(33):  node.py(315):  node.py(316):  node.py(377):   --- modulename: node, funcname: waitOutput
+node.py(361):  node.py(362):  node.py(363):  node.py(364):   --- modulename: node, funcname: monitor
+node.py(328):   --- modulename: node, funcname: waitReadable
+node.py(285):  node.py(286):  node.py(329):  node.py(331):   --- modulename: node, funcname: read
+node.py(238):  node.py(239):  node.py(240):  node.py(241):   --- modulename: util, funcname: decode
+util.py(28):  node.py(242):  node.py(243):  node.py(244):  node.py(248):  node.py(332):  node.py(334):  node.py(335):  node.py(347):  node.py(348):  node.py(349):  node.py(353):  node.py(365):  node.py(366):   --- modulename: log, funcname: newfn
+node.py(363):  node.py(367):  link.py(389):  link.py(390):  link.py(391):  link.py(390):  link.py(393):   --- modulename: log, funcname: newfn
+link.py(394):   --- modulename: log, funcname: newfn
+link.py(395):  link.py(396):  link.py(398):  link.py(462):  link.py(463):   --- modulename: link, funcname: __init__
+link.py(41):  link.py(42):  link.py(43):  link.py(44):  link.py(45):  link.py(49):  link.py(53):  link.py(54):  link.py(55):  link.py(56):   --- modulename: node, funcname: addIntf
+node.py(443):  node.py(445):  node.py(446):  node.py(447):  node.py(448):   --- modulename: log, funcname: newfn
+node.py(449):  node.py(450):   --- modulename: link, funcname: __str__
+link.py(223):   --- modulename: link, funcname: __str__
+link.py(223):   --- modulename: log, funcname: newfn
+node.py(451):  link.py(60):  link.py(61):   --- modulename: link, funcname: config
+link.py(336):  link.py(338):   --- modulename: link, funcname: config
+link.py(194):  link.py(195):   --- modulename: link, funcname: setParam
+link.py(170):  link.py(171):  link.py(172):  link.py(173):  link.py(196):   --- modulename: link, funcname: setParam
+link.py(170):  link.py(171):  link.py(172):  link.py(173):  link.py(197):   --- modulename: link, funcname: setParam
+link.py(170):  link.py(171):  link.py(172):  link.py(174):  link.py(176):  link.py(179):   --- modulename: link, funcname: isUp
+link.py(136):  link.py(137):   --- modulename: link, funcname: ifconfig
+link.py(69):   --- modulename: link, funcname: cmd
+link.py(65):   --- modulename: node, funcname: cmd
+node.py(372):  node.py(373):  node.py(374):   --- modulename: log, funcname: newfn
+node.py(375):  node.py(376):   --- modulename: node, funcname: sendCmd
+node.py(927):  node.py(928):  node.py(929):   --- modulename: node, funcname: sendCmd
+node.py(293):  node.py(294):  node.py(296):  node.py(299):  node.py(300):  node.py(302):  node.py(303):  node.py(303):  node.py(303):  node.py(303):  node.py(304):   --- modulename: re, funcname: search
+node.py(307):  node.py(309):  node.py(312):  node.py(314):   --- modulename: node, funcname: write
+node.py(264):   --- modulename: util, funcname: encode
+util.py(33):  node.py(315):  node.py(316):  node.py(377):   --- modulename: node, funcname: waitOutput
+node.py(361):  node.py(362):  node.py(363):  node.py(364):   --- modulename: node, funcname: monitor
+node.py(328):   --- modulename: node, funcname: waitReadable
+node.py(285):  node.py(286):  node.py(329):  node.py(331):   --- modulename: node, funcname: read
+node.py(238):  node.py(239):  node.py(240):  node.py(241):   --- modulename: util, funcname: decode
+util.py(28):  node.py(242):  node.py(243):  node.py(244):  node.py(248):  node.py(332):  node.py(334):  node.py(335):  node.py(347):  node.py(348):  node.py(349):  node.py(353):  node.py(365):  node.py(366):   --- modulename: log, funcname: newfn
+node.py(363):  node.py(367):  link.py(139):  link.py(143):  link.py(180):  link.py(181):  link.py(198):   --- modulename: link, funcname: setParam
+link.py(170):  link.py(171):  link.py(172):  link.py(173):  link.py(199):  link.py(340):  link.py(345):  link.py(346):   --- modulename: link, funcname: on
+link.py(342):  link.py(347):   --- modulename: link, funcname: on
+link.py(342):  link.py(348):   --- modulename: link, funcname: on
+link.py(342):   --- modulename: link, funcname: cmd
+link.py(65):   --- modulename: node, funcname: cmd
+node.py(372):  node.py(373):  node.py(374):   --- modulename: link, funcname: __repr__
+link.py(220):   --- modulename: log, funcname: newfn
+node.py(375):  node.py(376):   --- modulename: node, funcname: sendCmd
+node.py(927):  node.py(928):  node.py(929):   --- modulename: node, funcname: sendCmd
+node.py(293):  node.py(294):  node.py(296):  node.py(299):  node.py(300):  node.py(302):  node.py(303):  node.py(303):   --- modulename: link, funcname: __str__
+link.py(223):  node.py(303):  node.py(303):  node.py(303):  node.py(303):  node.py(303):  node.py(303):  node.py(303):  node.py(304):   --- modulename: re, funcname: search
+node.py(307):  node.py(309):  node.py(312):  node.py(314):   --- modulename: node, funcname: write
+node.py(264):   --- modulename: util, funcname: encode
+util.py(33):  node.py(315):  node.py(316):  node.py(377):   --- modulename: node, funcname: waitOutput
+node.py(361):  node.py(362):  node.py(363):  node.py(364):   --- modulename: node, funcname: monitor
+node.py(328):   --- modulename: node, funcname: waitReadable
+node.py(285):  node.py(286):  node.py(329):  node.py(331):   --- modulename: node, funcname: read
+node.py(238):  node.py(239):  node.py(240):  node.py(241):   --- modulename: util, funcname: decode
+util.py(28):  node.py(242):  node.py(243):  node.py(244):  node.py(248):  node.py(332):  node.py(334):  node.py(335):  node.py(347):  node.py(348):  node.py(349):  node.py(353):  node.py(365):  node.py(366):   --- modulename: log, funcname: newfn
+node.py(363):  node.py(367):  link.py(352):  link.py(357):   --- modulename: link, funcname: tc
+link.py(310):   --- modulename: link, funcname: __str__
+link.py(223):   --- modulename: link, funcname: __str__
+link.py(223):  link.py(311):   --- modulename: log, funcname: newfn
+link.py(312):   --- modulename: link, funcname: cmd
+link.py(65):   --- modulename: node, funcname: cmd
+node.py(372):  node.py(373):  node.py(374):   --- modulename: log, funcname: newfn
+node.py(375):  node.py(376):   --- modulename: node, funcname: sendCmd
+node.py(927):  node.py(928):  node.py(929):   --- modulename: node, funcname: sendCmd
+node.py(293):  node.py(294):  node.py(296):  node.py(299):  node.py(300):  node.py(302):  node.py(303):  node.py(303):  node.py(304):   --- modulename: re, funcname: search
+node.py(307):  node.py(309):  node.py(312):  node.py(314):   --- modulename: node, funcname: write
+node.py(264):   --- modulename: util, funcname: encode
+util.py(33):  node.py(315):  node.py(316):  node.py(377):   --- modulename: node, funcname: waitOutput
+node.py(361):  node.py(362):  node.py(363):  node.py(364):   --- modulename: node, funcname: monitor
+node.py(328):   --- modulename: node, funcname: waitReadable
+node.py(285):  node.py(286):  node.py(329):  node.py(331):   --- modulename: node, funcname: read
+node.py(238):  node.py(239):  node.py(240):  node.py(241):   --- modulename: util, funcname: decode
+util.py(28):  node.py(242):  node.py(243):  node.py(244):  node.py(248):  node.py(332):  node.py(334):  node.py(335):  node.py(347):  node.py(348):  node.py(349):  node.py(353):  node.py(365):  node.py(366):   --- modulename: log, funcname: newfn
+node.py(363):  node.py(367):  link.py(358):  link.py(361):  link.py(364):  link.py(365):  link.py(366):  link.py(367):  link.py(368):   --- modulename: link, funcname: bwCmds
+link.py(239):  link.py(241):  link.py(244):  link.py(284):  link.py(369):  link.py(372):  link.py(373):  link.py(374):  link.py(375):   --- modulename: link, funcname: delayCmds
+link.py(290):  link.py(291):  link.py(295):  link.py(296):  link.py(297):  link.py(298):  link.py(299):  link.py(300):  link.py(301):  link.py(303):  link.py(304):  link.py(305):  link.py(306):  link.py(376):  link.py(382):  link.py(383):  link.py(384):  link.py(385):   --- modulename: log, funcname: newfn
+link.py(388):   --- modulename: log, funcname: newfn
+link.py(389):   --- modulename: link, funcname: tc
+link.py(310):   --- modulename: link, funcname: __str__
+link.py(223):   --- modulename: link, funcname: __str__
+link.py(223):  link.py(311):   --- modulename: log, funcname: newfn
+link.py(312):   --- modulename: link, funcname: cmd
+link.py(65):   --- modulename: node, funcname: cmd
+node.py(372):  node.py(373):  node.py(374):   --- modulename: log, funcname: newfn
+node.py(375):  node.py(376):   --- modulename: node, funcname: sendCmd
+node.py(927):  node.py(928):  node.py(929):   --- modulename: node, funcname: sendCmd
+node.py(293):  node.py(294):  node.py(296):  node.py(299):  node.py(300):  node.py(302):  node.py(303):  node.py(303):  node.py(304):   --- modulename: re, funcname: search
+node.py(307):  node.py(309):  node.py(312):  node.py(314):   --- modulename: node, funcname: write
+node.py(264):   --- modulename: util, funcname: encode
+util.py(33):  node.py(315):  node.py(316):  node.py(377):   --- modulename: node, funcname: waitOutput
+node.py(361):  node.py(362):  node.py(363):  node.py(364):   --- modulename: node, funcname: monitor
+node.py(328):   --- modulename: node, funcname: waitReadable
+node.py(285):  node.py(286):  node.py(329):  node.py(331):   --- modulename: node, funcname: read
+node.py(238):  node.py(239):  node.py(240):  node.py(241):   --- modulename: util, funcname: decode
+util.py(28):  node.py(242):  node.py(243):  node.py(244):  node.py(248):  node.py(332):  node.py(334):  node.py(335):  node.py(347):  node.py(348):  node.py(349):  node.py(353):  node.py(365):  node.py(366):   --- modulename: log, funcname: newfn
+node.py(363):  node.py(367):  link.py(389):  link.py(390):  link.py(391):  link.py(390):  link.py(393):   --- modulename: log, funcname: newfn
+link.py(394):   --- modulename: log, funcname: newfn
+link.py(395):  link.py(396):  link.py(398):  link.py(466):  net.py(401):  net.py(402):  net.py(490):   --- modulename: log, funcname: newfn
+net.py(488):  net.py(489):   --- modulename: net, funcname: addLink
+net.py(386):   --- modulename: net, funcname: __getitem__
+net.py(337):  net.py(387):   --- modulename: net, funcname: __getitem__
+net.py(337):  net.py(388):  net.py(390):  net.py(391):  net.py(392):  net.py(393):  net.py(394):  net.py(395):  net.py(397):   --- modulename: net, funcname: randMac
+net.py(372):   --- modulename: random, funcname: randint
+net.py(373):   --- modulename: util, funcname: macColonHex
+util.py(363):   --- modulename: util, funcname: _colonHex
+util.py(352):  util.py(353):  util.py(354):  util.py(355):  util.py(353):  util.py(354):  util.py(355):  util.py(353):  util.py(354):  util.py(355):  util.py(353):  util.py(354):  util.py(355):  util.py(353):  util.py(354):  util.py(355):  util.py(353):  util.py(354):  util.py(355):  util.py(353):  util.py(356):  util.py(357):  net.py(398):   --- modulename: net, funcname: randMac
+net.py(372):   --- modulename: random, funcname: randint
+net.py(373):   --- modulename: util, funcname: macColonHex
+util.py(363):   --- modulename: util, funcname: _colonHex
+util.py(352):  util.py(353):  util.py(354):  util.py(355):  util.py(353):  util.py(354):  util.py(355):  util.py(353):  util.py(354):  util.py(355):  util.py(353):  util.py(354):  util.py(355):  util.py(353):  util.py(354):  util.py(355):  util.py(353):  util.py(354):  util.py(355):  util.py(353):  util.py(356):  util.py(357):  net.py(399):  net.py(400):   --- modulename: link, funcname: __init__
+link.py(555):  link.py(556):  link.py(557):   --- modulename: link, funcname: __init__
+link.py(427):  link.py(428):  link.py(429):  link.py(430):  link.py(431):  link.py(432):  link.py(433):  link.py(435):  link.py(437):  link.py(438):   --- modulename: link, funcname: intfName
+link.py(478):  link.py(479):  link.py(439):  link.py(440):   --- modulename: link, funcname: intfName
+link.py(478):  link.py(479):  link.py(443):  link.py(444):  link.py(446):  link.py(447):  link.py(448):  link.py(449):  link.py(450):  link.py(451):   --- modulename: link, funcname: makeIntfPair
+link.py(494):  link.py(495):  link.py(496):   --- modulename: util, funcname: makeIntfPair
+util.py(245):  util.py(246):  util.py(247):  util.py(248):  util.py(253):  util.py(254):  util.py(259):  util.py(264):   --- modulename: node, funcname: cmd
+node.py(372):  node.py(373):  node.py(374):   --- modulename: log, funcname: newfn
+node.py(375):  node.py(376):   --- modulename: node, funcname: sendCmd
+node.py(293):  node.py(294):  node.py(296):  node.py(299):  node.py(300):  node.py(302):  node.py(303):  node.py(303):  node.py(304):   --- modulename: re, funcname: search
+node.py(307):  node.py(309):  node.py(312):  node.py(314):   --- modulename: node, funcname: write
+node.py(264):   --- modulename: util, funcname: encode
+util.py(33):  node.py(315):  node.py(316):  node.py(377):   --- modulename: node, funcname: waitOutput
+node.py(361):  node.py(362):  node.py(363):  node.py(364):   --- modulename: node, funcname: monitor
+node.py(328):   --- modulename: node, funcname: waitReadable
+node.py(285):  node.py(286):  node.py(329):  node.py(331):   --- modulename: node, funcname: read
+node.py(238):  node.py(239):  node.py(240):  node.py(241):   --- modulename: util, funcname: decode
+util.py(28):  node.py(242):  node.py(243):  node.py(244):  node.py(248):  node.py(332):  node.py(334):  node.py(335):  node.py(347):  node.py(348):  node.py(349):  node.py(353):  node.py(365):  node.py(366):   --- modulename: log, funcname: newfn
+node.py(363):  node.py(367):  util.py(265):  link.py(455):  link.py(457):  link.py(460):  link.py(461):   --- modulename: link, funcname: __init__
+link.py(41):  link.py(42):  link.py(43):  link.py(44):  link.py(45):  link.py(49):  link.py(53):  link.py(54):  link.py(55):  link.py(56):   --- modulename: node, funcname: addIntf
+node.py(443):  node.py(445):  node.py(446):  node.py(447):  node.py(448):   --- modulename: log, funcname: newfn
+node.py(449):  node.py(450):   --- modulename: link, funcname: __str__
+link.py(223):   --- modulename: link, funcname: __str__
+link.py(223):   --- modulename: log, funcname: newfn
+node.py(451):  node.py(452):   --- modulename: log, funcname: newfn
+link.py(223):   --- modulename: log, funcname: <genexpr>
+node.py(453):   --- modulename: link, funcname: _ignore
+link.py(473):  link.py(60):  link.py(61):   --- modulename: link, funcname: config
+link.py(336):  link.py(338):   --- modulename: link, funcname: config
+link.py(194):  link.py(195):   --- modulename: link, funcname: setParam
+link.py(170):  link.py(171):  link.py(172):  link.py(173):  link.py(196):   --- modulename: link, funcname: setParam
+link.py(170):  link.py(171):  link.py(172):  link.py(173):  link.py(197):   --- modulename: link, funcname: setParam
+link.py(170):  link.py(171):  link.py(172):  link.py(174):  link.py(176):  link.py(179):   --- modulename: link, funcname: isUp
+link.py(136):  link.py(137):   --- modulename: link, funcname: ifconfig
+link.py(69):   --- modulename: link, funcname: cmd
+link.py(65):   --- modulename: node, funcname: cmd
+node.py(372):  node.py(373):  node.py(374):   --- modulename: log, funcname: newfn
+node.py(375):  node.py(376):   --- modulename: node, funcname: sendCmd
+node.py(293):  node.py(294):  node.py(296):  node.py(299):  node.py(300):  node.py(302):  node.py(303):  node.py(303):  node.py(303):  node.py(303):  node.py(304):   --- modulename: re, funcname: search
+node.py(307):  node.py(309):  node.py(312):  node.py(314):   --- modulename: node, funcname: write
+node.py(264):   --- modulename: util, funcname: encode
+util.py(33):  node.py(315):  node.py(316):  node.py(377):   --- modulename: node, funcname: waitOutput
+node.py(361):  node.py(362):  node.py(363):  node.py(364):   --- modulename: node, funcname: monitor
+node.py(328):   --- modulename: node, funcname: waitReadable
+node.py(285):  node.py(286):  node.py(329):  node.py(331):   --- modulename: node, funcname: read
+node.py(238):  node.py(239):  node.py(240):  node.py(241):   --- modulename: util, funcname: decode
+util.py(28):  node.py(242):  node.py(243):  node.py(244):  node.py(248):  node.py(332):  node.py(334):  node.py(335):  node.py(347):  node.py(348):  node.py(349):  node.py(353):  node.py(365):  node.py(366):   --- modulename: log, funcname: newfn
+node.py(363):  node.py(367):  link.py(139):  link.py(143):  link.py(180):  link.py(181):  link.py(198):   --- modulename: link, funcname: setParam
+link.py(170):  link.py(171):  link.py(172):  link.py(173):  link.py(199):  link.py(340):  link.py(345):  link.py(346):   --- modulename: link, funcname: on
+link.py(342):  link.py(347):   --- modulename: link, funcname: on
+link.py(342):  link.py(348):   --- modulename: link, funcname: on
+link.py(342):   --- modulename: link, funcname: cmd
+link.py(65):   --- modulename: node, funcname: cmd
+node.py(372):  node.py(373):  node.py(374):   --- modulename: link, funcname: __repr__
+link.py(220):   --- modulename: log, funcname: newfn
+node.py(375):  node.py(376):   --- modulename: node, funcname: sendCmd
+node.py(293):  node.py(294):  node.py(296):  node.py(299):  node.py(300):  node.py(302):  node.py(303):  node.py(303):   --- modulename: link, funcname: __str__
+link.py(223):  node.py(303):  node.py(303):  node.py(303):  node.py(303):  node.py(303):  node.py(303):  node.py(303):  node.py(304):   --- modulename: re, funcname: search
+node.py(307):  node.py(309):  node.py(312):  node.py(314):   --- modulename: node, funcname: write
+node.py(264):   --- modulename: util, funcname: encode
+util.py(33):  node.py(315):  node.py(316):  node.py(377):   --- modulename: node, funcname: waitOutput
+node.py(361):  node.py(362):  node.py(363):  node.py(364):   --- modulename: node, funcname: monitor
+node.py(328):   --- modulename: node, funcname: waitReadable
+node.py(285):  node.py(286):  node.py(329):  node.py(331):   --- modulename: node, funcname: read
+node.py(238):  node.py(239):  node.py(240):  node.py(241):   --- modulename: util, funcname: decode
+util.py(28):  node.py(242):  node.py(243):  node.py(244):  node.py(248):  node.py(332):  node.py(334):  node.py(335):  node.py(347):  node.py(348):  node.py(349):  node.py(353):  node.py(365):  node.py(366):   --- modulename: log, funcname: newfn
+node.py(363):  node.py(367):  link.py(352):  link.py(357):   --- modulename: link, funcname: tc
+link.py(310):   --- modulename: link, funcname: __str__
+link.py(223):   --- modulename: link, funcname: __str__
+link.py(223):  link.py(311):   --- modulename: log, funcname: newfn
+link.py(312):   --- modulename: link, funcname: cmd
+link.py(65):   --- modulename: node, funcname: cmd
+node.py(372):  node.py(373):  node.py(374):   --- modulename: log, funcname: newfn
+node.py(375):  node.py(376):   --- modulename: node, funcname: sendCmd
+node.py(293):  node.py(294):  node.py(296):  node.py(299):  node.py(300):  node.py(302):  node.py(303):  node.py(303):  node.py(304):   --- modulename: re, funcname: search
+node.py(307):  node.py(309):  node.py(312):  node.py(314):   --- modulename: node, funcname: write
+node.py(264):   --- modulename: util, funcname: encode
+util.py(33):  node.py(315):  node.py(316):  node.py(377):   --- modulename: node, funcname: waitOutput
+node.py(361):  node.py(362):  node.py(363):  node.py(364):   --- modulename: node, funcname: monitor
+node.py(328):   --- modulename: node, funcname: waitReadable
+node.py(285):  node.py(286):  node.py(329):  node.py(331):   --- modulename: node, funcname: read
+node.py(238):  node.py(239):  node.py(240):  node.py(241):   --- modulename: util, funcname: decode
+util.py(28):  node.py(242):  node.py(243):  node.py(244):  node.py(248):  node.py(332):  node.py(334):  node.py(335):  node.py(347):  node.py(348):  node.py(349):  node.py(353):  node.py(365):  node.py(366):   --- modulename: log, funcname: newfn
+node.py(363):  node.py(367):  link.py(358):  link.py(361):  link.py(364):  link.py(365):  link.py(366):  link.py(367):  link.py(368):   --- modulename: link, funcname: bwCmds
+link.py(239):  link.py(241):  link.py(244):  link.py(284):  link.py(369):  link.py(372):  link.py(373):  link.py(374):  link.py(375):   --- modulename: link, funcname: delayCmds
+link.py(290):  link.py(291):  link.py(295):  link.py(296):  link.py(297):  link.py(298):  link.py(299):  link.py(300):  link.py(301):  link.py(303):  link.py(304):  link.py(305):  link.py(306):  link.py(376):  link.py(382):  link.py(383):  link.py(384):  link.py(385):   --- modulename: log, funcname: newfn
+link.py(388):   --- modulename: log, funcname: newfn
+link.py(389):   --- modulename: link, funcname: tc
+link.py(310):   --- modulename: link, funcname: __str__
+link.py(223):   --- modulename: link, funcname: __str__
+link.py(223):  link.py(311):   --- modulename: log, funcname: newfn
+link.py(312):   --- modulename: link, funcname: cmd
+link.py(65):   --- modulename: node, funcname: cmd
+node.py(372):  node.py(373):  node.py(374):   --- modulename: log, funcname: newfn
+node.py(375):  node.py(376):   --- modulename: node, funcname: sendCmd
+node.py(293):  node.py(294):  node.py(296):  node.py(299):  node.py(300):  node.py(302):  node.py(303):  node.py(303):  node.py(304):   --- modulename: re, funcname: search
+node.py(307):  node.py(309):  node.py(312):  node.py(314):   --- modulename: node, funcname: write
+node.py(264):   --- modulename: util, funcname: encode
+util.py(33):  node.py(315):  node.py(316):  node.py(377):   --- modulename: node, funcname: waitOutput
+node.py(361):  node.py(362):  node.py(363):  node.py(364):   --- modulename: node, funcname: monitor
+node.py(328):   --- modulename: node, funcname: waitReadable
+node.py(285):  node.py(286):  node.py(329):  node.py(331):   --- modulename: node, funcname: read
+node.py(238):  node.py(239):  node.py(240):  node.py(241):   --- modulename: util, funcname: decode
+util.py(28):  node.py(242):  node.py(243):  node.py(244):  node.py(248):  node.py(332):  node.py(334):  node.py(335):  node.py(347):  node.py(348):  node.py(349):  node.py(353):  node.py(365):  node.py(366):   --- modulename: log, funcname: newfn
+node.py(363):  node.py(367):  link.py(389):  link.py(390):  link.py(391):  link.py(390):  link.py(393):   --- modulename: log, funcname: newfn
+link.py(394):   --- modulename: log, funcname: newfn
+link.py(395):  link.py(396):  link.py(398):  link.py(462):  link.py(463):   --- modulename: link, funcname: __init__
+link.py(41):  link.py(42):  link.py(43):  link.py(44):  link.py(45):  link.py(49):  link.py(53):  link.py(54):  link.py(55):  link.py(56):   --- modulename: node, funcname: addIntf
+node.py(443):  node.py(445):  node.py(446):  node.py(447):  node.py(448):   --- modulename: log, funcname: newfn
+node.py(449):  node.py(450):   --- modulename: link, funcname: __str__
+link.py(223):   --- modulename: link, funcname: __str__
+link.py(223):   --- modulename: log, funcname: newfn
+node.py(451):  link.py(60):  link.py(61):   --- modulename: link, funcname: config
+link.py(336):  link.py(338):   --- modulename: link, funcname: config
+link.py(194):  link.py(195):   --- modulename: link, funcname: setParam
+link.py(170):  link.py(171):  link.py(172):  link.py(173):  link.py(196):   --- modulename: link, funcname: setParam
+link.py(170):  link.py(171):  link.py(172):  link.py(173):  link.py(197):   --- modulename: link, funcname: setParam
+link.py(170):  link.py(171):  link.py(172):  link.py(174):  link.py(176):  link.py(179):   --- modulename: link, funcname: isUp
+link.py(136):  link.py(137):   --- modulename: link, funcname: ifconfig
+link.py(69):   --- modulename: link, funcname: cmd
+link.py(65):   --- modulename: node, funcname: cmd
+node.py(372):  node.py(373):  node.py(374):   --- modulename: log, funcname: newfn
+node.py(375):  node.py(376):   --- modulename: node, funcname: sendCmd
+node.py(927):  node.py(928):  node.py(929):   --- modulename: node, funcname: sendCmd
+node.py(293):  node.py(294):  node.py(296):  node.py(299):  node.py(300):  node.py(302):  node.py(303):  node.py(303):  node.py(303):  node.py(303):  node.py(304):   --- modulename: re, funcname: search
+node.py(307):  node.py(309):  node.py(312):  node.py(314):   --- modulename: node, funcname: write
+node.py(264):   --- modulename: util, funcname: encode
+util.py(33):  node.py(315):  node.py(316):  node.py(377):   --- modulename: node, funcname: waitOutput
+node.py(361):  node.py(362):  node.py(363):  node.py(364):   --- modulename: node, funcname: monitor
+node.py(328):   --- modulename: node, funcname: waitReadable
+node.py(285):  node.py(286):  node.py(329):  node.py(331):   --- modulename: node, funcname: read
+node.py(238):  node.py(239):  node.py(240):  node.py(241):   --- modulename: util, funcname: decode
+util.py(28):  node.py(242):  node.py(243):  node.py(244):  node.py(248):  node.py(332):  node.py(334):  node.py(335):  node.py(347):  node.py(348):  node.py(349):  node.py(353):  node.py(365):  node.py(366):   --- modulename: log, funcname: newfn
+node.py(363):  node.py(367):  link.py(139):  link.py(143):  link.py(180):  link.py(181):  link.py(198):   --- modulename: link, funcname: setParam
+link.py(170):  link.py(171):  link.py(172):  link.py(173):  link.py(199):  link.py(340):  link.py(345):  link.py(346):   --- modulename: link, funcname: on
+link.py(342):  link.py(347):   --- modulename: link, funcname: on
+link.py(342):  link.py(348):   --- modulename: link, funcname: on
+link.py(342):   --- modulename: link, funcname: cmd
+link.py(65):   --- modulename: node, funcname: cmd
+node.py(372):  node.py(373):  node.py(374):   --- modulename: link, funcname: __repr__
+link.py(220):   --- modulename: log, funcname: newfn
+node.py(375):  node.py(376):   --- modulename: node, funcname: sendCmd
+node.py(927):  node.py(928):  node.py(929):   --- modulename: node, funcname: sendCmd
+node.py(293):  node.py(294):  node.py(296):  node.py(299):  node.py(300):  node.py(302):  node.py(303):  node.py(303):   --- modulename: link, funcname: __str__
+link.py(223):  node.py(303):  node.py(303):  node.py(303):  node.py(303):  node.py(303):  node.py(303):  node.py(303):  node.py(304):   --- modulename: re, funcname: search
+node.py(307):  node.py(309):  node.py(312):  node.py(314):   --- modulename: node, funcname: write
+node.py(264):   --- modulename: util, funcname: encode
+util.py(33):  node.py(315):  node.py(316):  node.py(377):   --- modulename: node, funcname: waitOutput
+node.py(361):  node.py(362):  node.py(363):  node.py(364):   --- modulename: node, funcname: monitor
+node.py(328):   --- modulename: node, funcname: waitReadable
+node.py(285):  node.py(286):  node.py(329):  node.py(331):   --- modulename: node, funcname: read
+node.py(238):  node.py(239):  node.py(240):  node.py(241):   --- modulename: util, funcname: decode
+util.py(28):  node.py(242):  node.py(243):  node.py(244):  node.py(248):  node.py(332):  node.py(334):  node.py(335):  node.py(347):  node.py(348):  node.py(349):  node.py(353):  node.py(365):  node.py(366):   --- modulename: log, funcname: newfn
+node.py(363):  node.py(367):  link.py(352):  link.py(357):   --- modulename: link, funcname: tc
+link.py(310):   --- modulename: link, funcname: __str__
+link.py(223):   --- modulename: link, funcname: __str__
+link.py(223):  link.py(311):   --- modulename: log, funcname: newfn
+link.py(312):   --- modulename: link, funcname: cmd
+link.py(65):   --- modulename: node, funcname: cmd
+node.py(372):  node.py(373):  node.py(374):   --- modulename: log, funcname: newfn
+node.py(375):  node.py(376):   --- modulename: node, funcname: sendCmd
+node.py(927):  node.py(928):  node.py(929):   --- modulename: node, funcname: sendCmd
+node.py(293):  node.py(294):  node.py(296):  node.py(299):  node.py(300):  node.py(302):  node.py(303):  node.py(303):  node.py(304):   --- modulename: re, funcname: search
+node.py(307):  node.py(309):  node.py(312):  node.py(314):   --- modulename: node, funcname: write
+node.py(264):   --- modulename: util, funcname: encode
+util.py(33):  node.py(315):  node.py(316):  node.py(377):   --- modulename: node, funcname: waitOutput
+node.py(361):  node.py(362):  node.py(363):  node.py(364):   --- modulename: node, funcname: monitor
+node.py(328):   --- modulename: node, funcname: waitReadable
+node.py(285):  node.py(286):  node.py(329):  node.py(331):   --- modulename: node, funcname: read
+node.py(238):  node.py(239):  node.py(240):  node.py(241):   --- modulename: util, funcname: decode
+util.py(28):  node.py(242):  node.py(243):  node.py(244):  node.py(248):  node.py(332):  node.py(334):  node.py(335):  node.py(347):  node.py(348):  node.py(349):  node.py(353):  node.py(365):  node.py(366):   --- modulename: log, funcname: newfn
+node.py(363):  node.py(367):  link.py(358):  link.py(361):  link.py(364):  link.py(365):  link.py(366):  link.py(367):  link.py(368):   --- modulename: link, funcname: bwCmds
+link.py(239):  link.py(241):  link.py(244):  link.py(284):  link.py(369):  link.py(372):  link.py(373):  link.py(374):  link.py(375):   --- modulename: link, funcname: delayCmds
+link.py(290):  link.py(291):  link.py(295):  link.py(296):  link.py(297):  link.py(298):  link.py(299):  link.py(300):  link.py(301):  link.py(303):  link.py(304):  link.py(305):  link.py(306):  link.py(376):  link.py(382):  link.py(383):  link.py(384):  link.py(385):   --- modulename: log, funcname: newfn
+link.py(388):   --- modulename: log, funcname: newfn
+link.py(389):   --- modulename: link, funcname: tc
+link.py(310):   --- modulename: link, funcname: __str__
+link.py(223):   --- modulename: link, funcname: __str__
+link.py(223):  link.py(311):   --- modulename: log, funcname: newfn
+link.py(312):   --- modulename: link, funcname: cmd
+link.py(65):   --- modulename: node, funcname: cmd
+node.py(372):  node.py(373):  node.py(374):   --- modulename: log, funcname: newfn
+node.py(375):  node.py(376):   --- modulename: node, funcname: sendCmd
+node.py(927):  node.py(928):  node.py(929):   --- modulename: node, funcname: sendCmd
+node.py(293):  node.py(294):  node.py(296):  node.py(299):  node.py(300):  node.py(302):  node.py(303):  node.py(303):  node.py(304):   --- modulename: re, funcname: search
+node.py(307):  node.py(309):  node.py(312):  node.py(314):   --- modulename: node, funcname: write
+node.py(264):   --- modulename: util, funcname: encode
+util.py(33):  node.py(315):  node.py(316):  node.py(377):   --- modulename: node, funcname: waitOutput
+node.py(361):  node.py(362):  node.py(363):  node.py(364):   --- modulename: node, funcname: monitor
+node.py(328):   --- modulename: node, funcname: waitReadable
+node.py(285):  node.py(286):  node.py(329):  node.py(331):   --- modulename: node, funcname: read
+node.py(238):  node.py(239):  node.py(240):  node.py(241):   --- modulename: util, funcname: decode
+util.py(28):  node.py(242):  node.py(243):  node.py(244):  node.py(248):  node.py(332):  node.py(334):  node.py(335):  node.py(347):  node.py(348):  node.py(349):  node.py(353):  node.py(365):  node.py(366):   --- modulename: log, funcname: newfn
+node.py(363):  node.py(367):  link.py(389):  link.py(390):  link.py(391):  link.py(390):  link.py(393):   --- modulename: log, funcname: newfn
+link.py(394):   --- modulename: log, funcname: newfn
+link.py(395):  link.py(396):  link.py(398):  link.py(466):  net.py(401):  net.py(402):  net.py(490):   --- modulename: log, funcname: newfn
+net.py(488):  net.py(492):   --- modulename: log, funcname: newfn
+net.py(503):  net.py(505):   --- modulename: log, funcname: newfn
+net.py(506):   --- modulename: net, funcname: configHosts
+net.py(430):  net.py(431):   --- modulename: log, funcname: newfn
+net.py(432):   --- modulename: node, funcname: defaultIntf
+node.py(466):  node.py(467):  node.py(468):  net.py(433):  net.py(434):   --- modulename: node, funcname: configDefault
+node.py(619):  node.py(620):   --- modulename: p4_mininet, funcname: config
+p4_mininet.py(32):         r = super(Host, self).config(**params)
+node.py(609):  node.py(610):   --- modulename: node, funcname: setParam
+node.py(583):  node.py(584):  node.py(586):  node.py(587):  node.py(589):  node.py(591):  node.py(594):   --- modulename: node, funcname: setMAC
+node.py(549):   --- modulename: node, funcname: intf
+node.py(482):  node.py(483):   --- modulename: node, funcname: defaultIntf
+node.py(466):  node.py(467):  node.py(468):   --- modulename: link, funcname: setMAC
+link.py(88):  link.py(90):   --- modulename: link, funcname: ifconfig
+link.py(69):   --- modulename: link, funcname: cmd
+link.py(65):   --- modulename: node, funcname: cmd
+node.py(372):  node.py(373):  node.py(374):   --- modulename: log, funcname: newfn
+node.py(375):  node.py(376):   --- modulename: node, funcname: sendCmd
+node.py(293):  node.py(294):  node.py(296):  node.py(299):  node.py(300):  node.py(302):  node.py(303):  node.py(303):  node.py(303):  node.py(303):  node.py(304):   --- modulename: re, funcname: search
+node.py(307):  node.py(309):  node.py(312):  node.py(314):   --- modulename: node, funcname: write
+node.py(264):   --- modulename: util, funcname: encode
+util.py(33):  node.py(315):  node.py(316):  node.py(377):   --- modulename: node, funcname: waitOutput
+node.py(361):  node.py(362):  node.py(363):  node.py(364):   --- modulename: node, funcname: monitor
+node.py(328):   --- modulename: node, funcname: waitReadable
+node.py(285):  node.py(286):  node.py(329):  node.py(331):   --- modulename: node, funcname: read
+node.py(238):  node.py(239):  node.py(240):  node.py(241):   --- modulename: util, funcname: decode
+util.py(28):  node.py(242):  node.py(243):  node.py(244):  node.py(248):  node.py(332):  node.py(334):  node.py(335):  node.py(347):  node.py(348):  node.py(349):  node.py(353):  node.py(365):  node.py(366):   --- modulename: log, funcname: newfn
+node.py(363):  node.py(367):   --- modulename: link, funcname: ifconfig
+link.py(69):   --- modulename: link, funcname: cmd
+link.py(65):   --- modulename: node, funcname: cmd
+node.py(372):  node.py(373):  node.py(374):   --- modulename: log, funcname: newfn
+node.py(375):  node.py(376):   --- modulename: node, funcname: sendCmd
+node.py(293):  node.py(294):  node.py(296):  node.py(299):  node.py(300):  node.py(302):  node.py(303):  node.py(303):  node.py(303):  node.py(303):  node.py(303):  node.py(303):  node.py(304):   --- modulename: re, funcname: search
+node.py(307):  node.py(309):  node.py(312):  node.py(314):   --- modulename: node, funcname: write
+node.py(264):   --- modulename: util, funcname: encode
+util.py(33):  node.py(315):  node.py(316):  node.py(377):   --- modulename: node, funcname: waitOutput
+node.py(361):  node.py(362):  node.py(363):  node.py(364):   --- modulename: node, funcname: monitor
+node.py(328):   --- modulename: node, funcname: waitReadable
+node.py(285):  node.py(286):  node.py(329):  node.py(331):   --- modulename: node, funcname: read
+node.py(238):  node.py(239):  node.py(240):  node.py(241):   --- modulename: util, funcname: decode
+util.py(28):  node.py(242):  node.py(243):  node.py(244):  node.py(248):  node.py(332):  node.py(334):  node.py(335):  node.py(347):  node.py(348):  node.py(349):  node.py(353):  node.py(365):  node.py(366):   --- modulename: log, funcname: newfn
+node.py(363):  node.py(367):  link.py(91):   --- modulename: link, funcname: ifconfig
+link.py(69):   --- modulename: link, funcname: cmd
+link.py(65):   --- modulename: node, funcname: cmd
+node.py(372):  node.py(373):  node.py(374):   --- modulename: log, funcname: newfn
+node.py(375):  node.py(376):   --- modulename: node, funcname: sendCmd
+node.py(293):  node.py(294):  node.py(296):  node.py(299):  node.py(300):  node.py(302):  node.py(303):  node.py(303):  node.py(303):  node.py(303):  node.py(304):   --- modulename: re, funcname: search
+node.py(307):  node.py(309):  node.py(312):  node.py(314):   --- modulename: node, funcname: write
+node.py(264):   --- modulename: util, funcname: encode
+util.py(33):  node.py(315):  node.py(316):  node.py(377):   --- modulename: node, funcname: waitOutput
+node.py(361):  node.py(362):  node.py(363):  node.py(364):   --- modulename: node, funcname: monitor
+node.py(328):   --- modulename: node, funcname: waitReadable
+node.py(285):  node.py(286):  node.py(329):  node.py(331):   --- modulename: node, funcname: read
+node.py(238):  node.py(239):  node.py(240):  node.py(241):   --- modulename: util, funcname: decode
+util.py(28):  node.py(242):  node.py(243):  node.py(244):  node.py(248):  node.py(332):  node.py(334):  node.py(335):  node.py(347):  node.py(348):  node.py(349):  node.py(353):  node.py(365):  node.py(366):   --- modulename: log, funcname: newfn
+node.py(363):  node.py(367):  node.py(595):  node.py(596):  node.py(611):   --- modulename: node, funcname: setParam
+node.py(583):  node.py(584):  node.py(586):  node.py(587):  node.py(589):  node.py(591):  node.py(594):   --- modulename: node, funcname: setIP
+node.py(557):   --- modulename: node, funcname: intf
+node.py(482):  node.py(483):   --- modulename: node, funcname: defaultIntf
+node.py(466):  node.py(467):  node.py(468):   --- modulename: link, funcname: setIP
+link.py(75):  link.py(76):  link.py(77):   --- modulename: link, funcname: ifconfig
+link.py(69):   --- modulename: link, funcname: cmd
+link.py(65):   --- modulename: node, funcname: cmd
+node.py(372):  node.py(373):  node.py(374):   --- modulename: log, funcname: newfn
+node.py(375):  node.py(376):   --- modulename: node, funcname: sendCmd
+node.py(293):  node.py(294):  node.py(296):  node.py(299):  node.py(300):  node.py(302):  node.py(303):  node.py(303):  node.py(303):  node.py(303):  node.py(303):  node.py(304):   --- modulename: re, funcname: search
+node.py(307):  node.py(309):  node.py(312):  node.py(314):   --- modulename: node, funcname: write
+node.py(264):   --- modulename: util, funcname: encode
+util.py(33):  node.py(315):  node.py(316):  node.py(377):   --- modulename: node, funcname: waitOutput
+node.py(361):  node.py(362):  node.py(363):  node.py(364):   --- modulename: node, funcname: monitor
+node.py(328):   --- modulename: node, funcname: waitReadable
+node.py(285):  node.py(286):  node.py(329):  node.py(331):   --- modulename: node, funcname: read
+node.py(238):  node.py(239):  node.py(240):  node.py(241):   --- modulename: util, funcname: decode
+util.py(28):  node.py(242):  node.py(243):  node.py(244):  node.py(248):  node.py(332):  node.py(334):  node.py(335):  node.py(347):  node.py(348):  node.py(349):  node.py(353):  node.py(365):  node.py(366):   --- modulename: log, funcname: newfn
+node.py(363):  node.py(367):  node.py(595):  node.py(596):  node.py(612):   --- modulename: node, funcname: setParam
+node.py(583):  node.py(584):  node.py(585):  node.py(614):   --- modulename: node, funcname: cmd
+node.py(372):  node.py(373):  node.py(374):   --- modulename: log, funcname: newfn
+node.py(375):  node.py(376):   --- modulename: node, funcname: sendCmd
+node.py(293):  node.py(294):  node.py(296):  node.py(299):  node.py(300):  node.py(302):  node.py(303):  node.py(303):  node.py(304):   --- modulename: re, funcname: search
+node.py(307):  node.py(309):  node.py(312):  node.py(314):   --- modulename: node, funcname: write
+node.py(264):   --- modulename: util, funcname: encode
+util.py(33):  node.py(315):  node.py(316):  node.py(377):   --- modulename: node, funcname: waitOutput
+node.py(361):  node.py(362):  node.py(363):  node.py(364):   --- modulename: node, funcname: monitor
+node.py(328):   --- modulename: node, funcname: waitReadable
+node.py(285):  node.py(286):  node.py(329):  node.py(331):   --- modulename: node, funcname: read
+node.py(238):  node.py(239):  node.py(240):  node.py(241):   --- modulename: util, funcname: decode
+util.py(28):  node.py(242):  node.py(243):  node.py(244):  node.py(248):  node.py(332):  node.py(334):  node.py(335):  node.py(347):  node.py(348):  node.py(349):  node.py(353):  node.py(365):  node.py(366):   --- modulename: log, funcname: newfn
+node.py(363):  node.py(367):  node.py(615):  p4_mininet.py(34):         self.defaultIntf().rename("eth0")
+node.py(466):  node.py(467):  node.py(468):   --- modulename: link, funcname: rename
+link.py(149):  link.py(151):  link.py(152):   --- modulename: link, funcname: ifconfig
+link.py(69):   --- modulename: link, funcname: cmd
+link.py(65):   --- modulename: node, funcname: cmd
+node.py(372):  node.py(373):  node.py(374):   --- modulename: log, funcname: newfn
+node.py(375):  node.py(376):   --- modulename: node, funcname: sendCmd
+node.py(293):  node.py(294):  node.py(296):  node.py(299):  node.py(300):  node.py(302):  node.py(303):  node.py(303):  node.py(303):  node.py(303):  node.py(304):   --- modulename: re, funcname: search
+node.py(307):  node.py(309):  node.py(312):  node.py(314):   --- modulename: node, funcname: write
+node.py(264):   --- modulename: util, funcname: encode
+util.py(33):  node.py(315):  node.py(316):  node.py(377):   --- modulename: node, funcname: waitOutput
+node.py(361):  node.py(362):  node.py(363):  node.py(364):   --- modulename: node, funcname: monitor
+node.py(328):   --- modulename: node, funcname: waitReadable
+node.py(285):  node.py(286):  node.py(329):  node.py(331):   --- modulename: node, funcname: read
+node.py(238):  node.py(239):  node.py(240):  node.py(241):   --- modulename: util, funcname: decode
+util.py(28):  node.py(242):  node.py(243):  node.py(244):  node.py(248):  node.py(332):  node.py(334):  node.py(335):  node.py(347):  node.py(348):  node.py(349):  node.py(353):  node.py(365):  node.py(366):   --- modulename: log, funcname: newfn
+node.py(363):  node.py(367):  link.py(153):   --- modulename: link, funcname: cmd
+link.py(65):   --- modulename: node, funcname: cmd
+node.py(372):  node.py(373):  node.py(374):   --- modulename: log, funcname: newfn
+node.py(375):  node.py(376):   --- modulename: node, funcname: sendCmd
+node.py(293):  node.py(294):  node.py(296):  node.py(299):  node.py(300):  node.py(302):  node.py(303):  node.py(303):  node.py(303):  node.py(303):  node.py(303):  node.py(304):   --- modulename: re, funcname: search
+node.py(307):  node.py(309):  node.py(312):  node.py(314):   --- modulename: node, funcname: write
+node.py(264):   --- modulename: util, funcname: encode
+util.py(33):  node.py(315):  node.py(316):  node.py(377):   --- modulename: node, funcname: waitOutput
+node.py(361):  node.py(362):  node.py(363):  node.py(364):   --- modulename: node, funcname: monitor
+node.py(328):   --- modulename: node, funcname: waitReadable
+node.py(285):  node.py(286):  node.py(329):  node.py(331):   --- modulename: node, funcname: read
+node.py(238):  node.py(239):  node.py(240):  node.py(241):   --- modulename: util, funcname: decode
+util.py(28):  node.py(242):  node.py(243):  node.py(244):  node.py(248):  node.py(332):  node.py(334):  node.py(335):  node.py(347):  node.py(348):  node.py(349):  node.py(353):  node.py(365):  node.py(366):   --- modulename: log, funcname: newfn
+node.py(363):  node.py(367):  link.py(154):  link.py(155):   --- modulename: link, funcname: ifconfig
+link.py(69):   --- modulename: link, funcname: cmd
+link.py(65):   --- modulename: node, funcname: cmd
+node.py(372):  node.py(373):  node.py(374):   --- modulename: log, funcname: newfn
+node.py(375):  node.py(376):   --- modulename: node, funcname: sendCmd
+node.py(293):  node.py(294):  node.py(296):  node.py(299):  node.py(300):  node.py(302):  node.py(303):  node.py(303):  node.py(303):  node.py(303):  node.py(304):   --- modulename: re, funcname: search
+node.py(307):  node.py(309):  node.py(312):  node.py(314):   --- modulename: node, funcname: write
+node.py(264):   --- modulename: util, funcname: encode
+util.py(33):  node.py(315):  node.py(316):  node.py(377):   --- modulename: node, funcname: waitOutput
+node.py(361):  node.py(362):  node.py(363):  node.py(364):   --- modulename: node, funcname: monitor
+node.py(328):   --- modulename: node, funcname: waitReadable
+node.py(285):  node.py(286):  node.py(329):  node.py(331):   --- modulename: node, funcname: read
+node.py(238):  node.py(239):  node.py(240):  node.py(241):   --- modulename: util, funcname: decode
+util.py(28):  node.py(242):  node.py(243):  node.py(244):  node.py(248):  node.py(332):  node.py(334):  node.py(335):  node.py(347):  node.py(348):  node.py(349):  node.py(353):  node.py(365):  node.py(366):   --- modulename: log, funcname: newfn
+node.py(363):  node.py(367):  link.py(156):  p4_mininet.py(36):         for off in ["rx", "tx", "sg"]:
+p4_mininet.py(37):             cmd = "/sbin/ethtool --offload eth0 %s off" % off
+p4_mininet.py(38):             self.cmd(cmd)
+node.py(372):  node.py(373):  node.py(374):   --- modulename: log, funcname: newfn
+node.py(375):  node.py(376):   --- modulename: node, funcname: sendCmd
+node.py(293):  node.py(294):  node.py(296):  node.py(299):  node.py(300):  node.py(302):  node.py(303):  node.py(303):  node.py(304):   --- modulename: re, funcname: search
+node.py(307):  node.py(309):  node.py(312):  node.py(314):   --- modulename: node, funcname: write
+node.py(264):   --- modulename: util, funcname: encode
+util.py(33):  node.py(315):  node.py(316):  node.py(377):   --- modulename: node, funcname: waitOutput
+node.py(361):  node.py(362):  node.py(363):  node.py(364):   --- modulename: node, funcname: monitor
+node.py(328):   --- modulename: node, funcname: waitReadable
+node.py(285):  node.py(286):  node.py(329):  node.py(331):   --- modulename: node, funcname: read
+node.py(238):  node.py(239):  node.py(240):  node.py(241):   --- modulename: util, funcname: decode
+util.py(28):  node.py(242):  node.py(243):  node.py(244):  node.py(248):  node.py(332):  node.py(334):  node.py(335):  node.py(347):  node.py(348):  node.py(349):  node.py(353):  node.py(365):  node.py(366):   --- modulename: log, funcname: newfn
+node.py(363):  node.py(367):  p4_mininet.py(36):         for off in ["rx", "tx", "sg"]:
+p4_mininet.py(37):             cmd = "/sbin/ethtool --offload eth0 %s off" % off
+p4_mininet.py(38):             self.cmd(cmd)
+node.py(372):  node.py(373):  node.py(374):   --- modulename: log, funcname: newfn
+node.py(375):  node.py(376):   --- modulename: node, funcname: sendCmd
+node.py(293):  node.py(294):  node.py(296):  node.py(299):  node.py(300):  node.py(302):  node.py(303):  node.py(303):  node.py(304):   --- modulename: re, funcname: search
+node.py(307):  node.py(309):  node.py(312):  node.py(314):   --- modulename: node, funcname: write
+node.py(264):   --- modulename: util, funcname: encode
+util.py(33):  node.py(315):  node.py(316):  node.py(377):   --- modulename: node, funcname: waitOutput
+node.py(361):  node.py(362):  node.py(363):  node.py(364):   --- modulename: node, funcname: monitor
+node.py(328):   --- modulename: node, funcname: waitReadable
+node.py(285):  node.py(286):  node.py(329):  node.py(331):   --- modulename: node, funcname: read
+node.py(238):  node.py(239):  node.py(240):  node.py(241):   --- modulename: util, funcname: decode
+util.py(28):  node.py(242):  node.py(243):  node.py(244):  node.py(248):  node.py(332):  node.py(334):  node.py(335):  node.py(347):  node.py(348):  node.py(349):  node.py(353):  node.py(365):  node.py(366):   --- modulename: log, funcname: newfn
+node.py(363):  node.py(367):  p4_mininet.py(36):         for off in ["rx", "tx", "sg"]:
+p4_mininet.py(37):             cmd = "/sbin/ethtool --offload eth0 %s off" % off
+p4_mininet.py(38):             self.cmd(cmd)
+node.py(372):  node.py(373):  node.py(374):   --- modulename: log, funcname: newfn
+node.py(375):  node.py(376):   --- modulename: node, funcname: sendCmd
+node.py(293):  node.py(294):  node.py(296):  node.py(299):  node.py(300):  node.py(302):  node.py(303):  node.py(303):  node.py(304):   --- modulename: re, funcname: search
+node.py(307):  node.py(309):  node.py(312):  node.py(314):   --- modulename: node, funcname: write
+node.py(264):   --- modulename: util, funcname: encode
+util.py(33):  node.py(315):  node.py(316):  node.py(377):   --- modulename: node, funcname: waitOutput
+node.py(361):  node.py(362):  node.py(363):  node.py(364):   --- modulename: node, funcname: monitor
+node.py(328):   --- modulename: node, funcname: waitReadable
+node.py(285):  node.py(286):  node.py(329):  node.py(331):   --- modulename: node, funcname: read
+node.py(238):  node.py(239):  node.py(240):  node.py(241):   --- modulename: util, funcname: decode
+util.py(28):  node.py(242):  node.py(243):  node.py(244):  node.py(248):  node.py(332):  node.py(334):  node.py(335):  node.py(347):  node.py(348):  node.py(349):  node.py(353):  node.py(365):  node.py(366):   --- modulename: log, funcname: newfn
+node.py(363):  node.py(367):  p4_mininet.py(36):         for off in ["rx", "tx", "sg"]:
+p4_mininet.py(41):         self.cmd("sysctl -w net.ipv6.conf.all.disable_ipv6=1")
+node.py(372):  node.py(373):  node.py(374):   --- modulename: log, funcname: newfn
+node.py(375):  node.py(376):   --- modulename: node, funcname: sendCmd
+node.py(293):  node.py(294):  node.py(296):  node.py(299):  node.py(300):  node.py(302):  node.py(303):  node.py(303):  node.py(304):   --- modulename: re, funcname: search
+node.py(307):  node.py(309):  node.py(312):  node.py(314):   --- modulename: node, funcname: write
+node.py(264):   --- modulename: util, funcname: encode
+util.py(33):  node.py(315):  node.py(316):  node.py(377):   --- modulename: node, funcname: waitOutput
+node.py(361):  node.py(362):  node.py(363):  node.py(364):   --- modulename: node, funcname: monitor
+node.py(328):   --- modulename: node, funcname: waitReadable
+node.py(285):  node.py(286):  node.py(329):  node.py(331):   --- modulename: node, funcname: read
+node.py(238):  node.py(239):  node.py(240):  node.py(241):   --- modulename: util, funcname: decode
+util.py(28):  node.py(242):  node.py(243):  node.py(244):  node.py(248):  node.py(332):  node.py(334):  node.py(335):  node.py(347):  node.py(348):  node.py(349):  node.py(353):  node.py(365):  node.py(366):   --- modulename: log, funcname: newfn
+node.py(363):  node.py(367):  p4_mininet.py(42):         self.cmd("sysctl -w net.ipv6.conf.default.disable_ipv6=1")
+node.py(372):  node.py(373):  node.py(374):   --- modulename: log, funcname: newfn
+node.py(375):  node.py(376):   --- modulename: node, funcname: sendCmd
+node.py(293):  node.py(294):  node.py(296):  node.py(299):  node.py(300):  node.py(302):  node.py(303):  node.py(303):  node.py(304):   --- modulename: re, funcname: search
+node.py(307):  node.py(309):  node.py(312):  node.py(314):   --- modulename: node, funcname: write
+node.py(264):   --- modulename: util, funcname: encode
+util.py(33):  node.py(315):  node.py(316):  node.py(377):   --- modulename: node, funcname: waitOutput
+node.py(361):  node.py(362):  node.py(363):  node.py(364):   --- modulename: node, funcname: monitor
+node.py(328):   --- modulename: node, funcname: waitReadable
+node.py(285):  node.py(286):  node.py(329):  node.py(331):   --- modulename: node, funcname: read
+node.py(238):  node.py(239):  node.py(240):  node.py(241):   --- modulename: util, funcname: decode
+util.py(28):  node.py(242):  node.py(243):  node.py(244):  node.py(248):  node.py(332):  node.py(334):  node.py(335):  node.py(347):  node.py(348):  node.py(349):  node.py(353):  node.py(365):  node.py(366):   --- modulename: log, funcname: newfn
+node.py(363):  node.py(367):  p4_mininet.py(43):         self.cmd("sysctl -w net.ipv6.conf.lo.disable_ipv6=1")
+node.py(372):  node.py(373):  node.py(374):   --- modulename: log, funcname: newfn
+node.py(375):  node.py(376):   --- modulename: node, funcname: sendCmd
+node.py(293):  node.py(294):  node.py(296):  node.py(299):  node.py(300):  node.py(302):  node.py(303):  node.py(303):  node.py(304):   --- modulename: re, funcname: search
+node.py(307):  node.py(309):  node.py(312):  node.py(314):   --- modulename: node, funcname: write
+node.py(264):   --- modulename: util, funcname: encode
+util.py(33):  node.py(315):  node.py(316):  node.py(377):   --- modulename: node, funcname: waitOutput
+node.py(361):  node.py(362):  node.py(363):  node.py(364):   --- modulename: node, funcname: monitor
+node.py(328):   --- modulename: node, funcname: waitReadable
+node.py(285):  node.py(286):  node.py(329):  node.py(331):   --- modulename: node, funcname: read
+node.py(238):  node.py(239):  node.py(240):  node.py(241):   --- modulename: util, funcname: decode
+util.py(28):  node.py(242):  node.py(243):  node.py(244):  node.py(248):  node.py(332):  node.py(334):  node.py(335):  node.py(347):  node.py(348):  node.py(349):  node.py(353):  node.py(365):  node.py(366):   --- modulename: log, funcname: newfn
+node.py(363):  node.py(367):  p4_mininet.py(45):         return r
+net.py(430):  net.py(431):   --- modulename: log, funcname: newfn
+net.py(432):   --- modulename: node, funcname: defaultIntf
+node.py(466):  node.py(467):  node.py(468):  net.py(433):  net.py(434):   --- modulename: node, funcname: configDefault
+node.py(619):  node.py(620):   --- modulename: p4_mininet, funcname: config
+p4_mininet.py(32):         r = super(Host, self).config(**params)
+node.py(609):  node.py(610):   --- modulename: node, funcname: setParam
+node.py(583):  node.py(584):  node.py(586):  node.py(587):  node.py(589):  node.py(591):  node.py(594):   --- modulename: node, funcname: setMAC
+node.py(549):   --- modulename: node, funcname: intf
+node.py(482):  node.py(483):   --- modulename: node, funcname: defaultIntf
+node.py(466):  node.py(467):  node.py(468):   --- modulename: link, funcname: setMAC
+link.py(88):  link.py(90):   --- modulename: link, funcname: ifconfig
+link.py(69):   --- modulename: link, funcname: cmd
+link.py(65):   --- modulename: node, funcname: cmd
+node.py(372):  node.py(373):  node.py(374):   --- modulename: log, funcname: newfn
+node.py(375):  node.py(376):   --- modulename: node, funcname: sendCmd
+node.py(293):  node.py(294):  node.py(296):  node.py(299):  node.py(300):  node.py(302):  node.py(303):  node.py(303):  node.py(303):  node.py(303):  node.py(304):   --- modulename: re, funcname: search
+node.py(307):  node.py(309):  node.py(312):  node.py(314):   --- modulename: node, funcname: write
+node.py(264):   --- modulename: util, funcname: encode
+util.py(33):  node.py(315):  node.py(316):  node.py(377):   --- modulename: node, funcname: waitOutput
+node.py(361):  node.py(362):  node.py(363):  node.py(364):   --- modulename: node, funcname: monitor
+node.py(328):   --- modulename: node, funcname: waitReadable
+node.py(285):  node.py(286):  node.py(329):  node.py(331):   --- modulename: node, funcname: read
+node.py(238):  node.py(239):  node.py(240):  node.py(241):   --- modulename: util, funcname: decode
+util.py(28):  node.py(242):  node.py(243):  node.py(244):  node.py(248):  node.py(332):  node.py(334):  node.py(335):  node.py(347):  node.py(348):  node.py(349):  node.py(353):  node.py(365):  node.py(366):   --- modulename: log, funcname: newfn
+node.py(363):  node.py(367):   --- modulename: link, funcname: ifconfig
+link.py(69):   --- modulename: link, funcname: cmd
+link.py(65):   --- modulename: node, funcname: cmd
+node.py(372):  node.py(373):  node.py(374):   --- modulename: log, funcname: newfn
+node.py(375):  node.py(376):   --- modulename: node, funcname: sendCmd
+node.py(293):  node.py(294):  node.py(296):  node.py(299):  node.py(300):  node.py(302):  node.py(303):  node.py(303):  node.py(303):  node.py(303):  node.py(303):  node.py(303):  node.py(304):   --- modulename: re, funcname: search
+node.py(307):  node.py(309):  node.py(312):  node.py(314):   --- modulename: node, funcname: write
+node.py(264):   --- modulename: util, funcname: encode
+util.py(33):  node.py(315):  node.py(316):  node.py(377):   --- modulename: node, funcname: waitOutput
+node.py(361):  node.py(362):  node.py(363):  node.py(364):   --- modulename: node, funcname: monitor
+node.py(328):   --- modulename: node, funcname: waitReadable
+node.py(285):  node.py(286):  node.py(329):  node.py(331):   --- modulename: node, funcname: read
+node.py(238):  node.py(239):  node.py(240):  node.py(241):   --- modulename: util, funcname: decode
+util.py(28):  node.py(242):  node.py(243):  node.py(244):  node.py(248):  node.py(332):  node.py(334):  node.py(335):  node.py(347):  node.py(348):  node.py(349):  node.py(353):  node.py(365):  node.py(366):   --- modulename: log, funcname: newfn
+node.py(363):  node.py(367):  link.py(91):   --- modulename: link, funcname: ifconfig
+link.py(69):   --- modulename: link, funcname: cmd
+link.py(65):   --- modulename: node, funcname: cmd
+node.py(372):  node.py(373):  node.py(374):   --- modulename: log, funcname: newfn
+node.py(375):  node.py(376):   --- modulename: node, funcname: sendCmd
+node.py(293):  node.py(294):  node.py(296):  node.py(299):  node.py(300):  node.py(302):  node.py(303):  node.py(303):  node.py(303):  node.py(303):  node.py(304):   --- modulename: re, funcname: search
+node.py(307):  node.py(309):  node.py(312):  node.py(314):   --- modulename: node, funcname: write
+node.py(264):   --- modulename: util, funcname: encode
+util.py(33):  node.py(315):  node.py(316):  node.py(377):   --- modulename: node, funcname: waitOutput
+node.py(361):  node.py(362):  node.py(363):  node.py(364):   --- modulename: node, funcname: monitor
+node.py(328):   --- modulename: node, funcname: waitReadable
+node.py(285):  node.py(286):  node.py(329):  node.py(331):   --- modulename: node, funcname: read
+node.py(238):  node.py(239):  node.py(240):  node.py(241):   --- modulename: util, funcname: decode
+util.py(28):  node.py(242):  node.py(243):  node.py(244):  node.py(248):  node.py(332):  node.py(334):  node.py(335):  node.py(347):  node.py(348):  node.py(349):  node.py(353):  node.py(365):  node.py(366):   --- modulename: log, funcname: newfn
+node.py(363):  node.py(367):  node.py(595):  node.py(596):  node.py(611):   --- modulename: node, funcname: setParam
+node.py(583):  node.py(584):  node.py(586):  node.py(587):  node.py(589):  node.py(591):  node.py(594):   --- modulename: node, funcname: setIP
+node.py(557):   --- modulename: node, funcname: intf
+node.py(482):  node.py(483):   --- modulename: node, funcname: defaultIntf
+node.py(466):  node.py(467):  node.py(468):   --- modulename: link, funcname: setIP
+link.py(75):  link.py(76):  link.py(77):   --- modulename: link, funcname: ifconfig
+link.py(69):   --- modulename: link, funcname: cmd
+link.py(65):   --- modulename: node, funcname: cmd
+node.py(372):  node.py(373):  node.py(374):   --- modulename: log, funcname: newfn
+node.py(375):  node.py(376):   --- modulename: node, funcname: sendCmd
+node.py(293):  node.py(294):  node.py(296):  node.py(299):  node.py(300):  node.py(302):  node.py(303):  node.py(303):  node.py(303):  node.py(303):  node.py(303):  node.py(304):   --- modulename: re, funcname: search
+node.py(307):  node.py(309):  node.py(312):  node.py(314):   --- modulename: node, funcname: write
+node.py(264):   --- modulename: util, funcname: encode
+util.py(33):  node.py(315):  node.py(316):  node.py(377):   --- modulename: node, funcname: waitOutput
+node.py(361):  node.py(362):  node.py(363):  node.py(364):   --- modulename: node, funcname: monitor
+node.py(328):   --- modulename: node, funcname: waitReadable
+node.py(285):  node.py(286):  node.py(329):  node.py(331):   --- modulename: node, funcname: read
+node.py(238):  node.py(239):  node.py(240):  node.py(241):   --- modulename: util, funcname: decode
+util.py(28):  node.py(242):  node.py(243):  node.py(244):  node.py(248):  node.py(332):  node.py(334):  node.py(335):  node.py(347):  node.py(348):  node.py(349):  node.py(353):  node.py(365):  node.py(366):   --- modulename: log, funcname: newfn
+node.py(363):  node.py(367):  node.py(595):  node.py(596):  node.py(612):   --- modulename: node, funcname: setParam
+node.py(583):  node.py(584):  node.py(585):  node.py(614):   --- modulename: node, funcname: cmd
+node.py(372):  node.py(373):  node.py(374):   --- modulename: log, funcname: newfn
+node.py(375):  node.py(376):   --- modulename: node, funcname: sendCmd
+node.py(293):  node.py(294):  node.py(296):  node.py(299):  node.py(300):  node.py(302):  node.py(303):  node.py(303):  node.py(304):   --- modulename: re, funcname: search
+node.py(307):  node.py(309):  node.py(312):  node.py(314):   --- modulename: node, funcname: write
+node.py(264):   --- modulename: util, funcname: encode
+util.py(33):  node.py(315):  node.py(316):  node.py(377):   --- modulename: node, funcname: waitOutput
+node.py(361):  node.py(362):  node.py(363):  node.py(364):   --- modulename: node, funcname: monitor
+node.py(328):   --- modulename: node, funcname: waitReadable
+node.py(285):  node.py(286):  node.py(329):  node.py(331):   --- modulename: node, funcname: read
+node.py(238):  node.py(239):  node.py(240):  node.py(241):   --- modulename: util, funcname: decode
+util.py(28):  node.py(242):  node.py(243):  node.py(244):  node.py(248):  node.py(332):  node.py(334):  node.py(335):  node.py(347):  node.py(348):  node.py(349):  node.py(353):  node.py(365):  node.py(366):   --- modulename: log, funcname: newfn
+node.py(363):  node.py(367):  node.py(615):  p4_mininet.py(34):         self.defaultIntf().rename("eth0")
+node.py(466):  node.py(467):  node.py(468):   --- modulename: link, funcname: rename
+link.py(149):  link.py(151):  link.py(152):   --- modulename: link, funcname: ifconfig
+link.py(69):   --- modulename: link, funcname: cmd
+link.py(65):   --- modulename: node, funcname: cmd
+node.py(372):  node.py(373):  node.py(374):   --- modulename: log, funcname: newfn
+node.py(375):  node.py(376):   --- modulename: node, funcname: sendCmd
+node.py(293):  node.py(294):  node.py(296):  node.py(299):  node.py(300):  node.py(302):  node.py(303):  node.py(303):  node.py(303):  node.py(303):  node.py(304):   --- modulename: re, funcname: search
+node.py(307):  node.py(309):  node.py(312):  node.py(314):   --- modulename: node, funcname: write
+node.py(264):   --- modulename: util, funcname: encode
+util.py(33):  node.py(315):  node.py(316):  node.py(377):   --- modulename: node, funcname: waitOutput
+node.py(361):  node.py(362):  node.py(363):  node.py(364):   --- modulename: node, funcname: monitor
+node.py(328):   --- modulename: node, funcname: waitReadable
+node.py(285):  node.py(286):  node.py(329):  node.py(331):   --- modulename: node, funcname: read
+node.py(238):  node.py(239):  node.py(240):  node.py(241):   --- modulename: util, funcname: decode
+util.py(28):  node.py(242):  node.py(243):  node.py(244):  node.py(248):  node.py(332):  node.py(334):  node.py(335):  node.py(347):  node.py(348):  node.py(349):  node.py(353):  node.py(365):  node.py(366):   --- modulename: log, funcname: newfn
+node.py(363):  node.py(367):  link.py(153):   --- modulename: link, funcname: cmd
+link.py(65):   --- modulename: node, funcname: cmd
+node.py(372):  node.py(373):  node.py(374):   --- modulename: log, funcname: newfn
+node.py(375):  node.py(376):   --- modulename: node, funcname: sendCmd
+node.py(293):  node.py(294):  node.py(296):  node.py(299):  node.py(300):  node.py(302):  node.py(303):  node.py(303):  node.py(303):  node.py(303):  node.py(303):  node.py(304):   --- modulename: re, funcname: search
+node.py(307):  node.py(309):  node.py(312):  node.py(314):   --- modulename: node, funcname: write
+node.py(264):   --- modulename: util, funcname: encode
+util.py(33):  node.py(315):  node.py(316):  node.py(377):   --- modulename: node, funcname: waitOutput
+node.py(361):  node.py(362):  node.py(363):  node.py(364):   --- modulename: node, funcname: monitor
+node.py(328):   --- modulename: node, funcname: waitReadable
+node.py(285):  node.py(286):  node.py(329):  node.py(331):   --- modulename: node, funcname: read
+node.py(238):  node.py(239):  node.py(240):  node.py(241):   --- modulename: util, funcname: decode
+util.py(28):  node.py(242):  node.py(243):  node.py(244):  node.py(248):  node.py(332):  node.py(334):  node.py(335):  node.py(347):  node.py(348):  node.py(349):  node.py(353):  node.py(365):  node.py(366):   --- modulename: log, funcname: newfn
+node.py(363):  node.py(367):  link.py(154):  link.py(155):   --- modulename: link, funcname: ifconfig
+link.py(69):   --- modulename: link, funcname: cmd
+link.py(65):   --- modulename: node, funcname: cmd
+node.py(372):  node.py(373):  node.py(374):   --- modulename: log, funcname: newfn
+node.py(375):  node.py(376):   --- modulename: node, funcname: sendCmd
+node.py(293):  node.py(294):  node.py(296):  node.py(299):  node.py(300):  node.py(302):  node.py(303):  node.py(303):  node.py(303):  node.py(303):  node.py(304):   --- modulename: re, funcname: search
+node.py(307):  node.py(309):  node.py(312):  node.py(314):   --- modulename: node, funcname: write
+node.py(264):   --- modulename: util, funcname: encode
+util.py(33):  node.py(315):  node.py(316):  node.py(377):   --- modulename: node, funcname: waitOutput
+node.py(361):  node.py(362):  node.py(363):  node.py(364):   --- modulename: node, funcname: monitor
+node.py(328):   --- modulename: node, funcname: waitReadable
+node.py(285):  node.py(286):  node.py(329):  node.py(331):   --- modulename: node, funcname: read
+node.py(238):  node.py(239):  node.py(240):  node.py(241):   --- modulename: util, funcname: decode
+util.py(28):  node.py(242):  node.py(243):  node.py(244):  node.py(248):  node.py(332):  node.py(334):  node.py(335):  node.py(347):  node.py(348):  node.py(349):  node.py(353):  node.py(365):  node.py(366):   --- modulename: log, funcname: newfn
+node.py(363):  node.py(367):  link.py(156):  p4_mininet.py(36):         for off in ["rx", "tx", "sg"]:
+p4_mininet.py(37):             cmd = "/sbin/ethtool --offload eth0 %s off" % off
+p4_mininet.py(38):             self.cmd(cmd)
+node.py(372):  node.py(373):  node.py(374):   --- modulename: log, funcname: newfn
+node.py(375):  node.py(376):   --- modulename: node, funcname: sendCmd
+node.py(293):  node.py(294):  node.py(296):  node.py(299):  node.py(300):  node.py(302):  node.py(303):  node.py(303):  node.py(304):   --- modulename: re, funcname: search
+node.py(307):  node.py(309):  node.py(312):  node.py(314):   --- modulename: node, funcname: write
+node.py(264):   --- modulename: util, funcname: encode
+util.py(33):  node.py(315):  node.py(316):  node.py(377):   --- modulename: node, funcname: waitOutput
+node.py(361):  node.py(362):  node.py(363):  node.py(364):   --- modulename: node, funcname: monitor
+node.py(328):   --- modulename: node, funcname: waitReadable
+node.py(285):  node.py(286):  node.py(329):  node.py(331):   --- modulename: node, funcname: read
+node.py(238):  node.py(239):  node.py(240):  node.py(241):   --- modulename: util, funcname: decode
+util.py(28):  node.py(242):  node.py(243):  node.py(244):  node.py(248):  node.py(332):  node.py(334):  node.py(335):  node.py(347):  node.py(348):  node.py(349):  node.py(353):  node.py(365):  node.py(366):   --- modulename: log, funcname: newfn
+node.py(363):  node.py(367):  p4_mininet.py(36):         for off in ["rx", "tx", "sg"]:
+p4_mininet.py(37):             cmd = "/sbin/ethtool --offload eth0 %s off" % off
+p4_mininet.py(38):             self.cmd(cmd)
+node.py(372):  node.py(373):  node.py(374):   --- modulename: log, funcname: newfn
+node.py(375):  node.py(376):   --- modulename: node, funcname: sendCmd
+node.py(293):  node.py(294):  node.py(296):  node.py(299):  node.py(300):  node.py(302):  node.py(303):  node.py(303):  node.py(304):   --- modulename: re, funcname: search
+node.py(307):  node.py(309):  node.py(312):  node.py(314):   --- modulename: node, funcname: write
+node.py(264):   --- modulename: util, funcname: encode
+util.py(33):  node.py(315):  node.py(316):  node.py(377):   --- modulename: node, funcname: waitOutput
+node.py(361):  node.py(362):  node.py(363):  node.py(364):   --- modulename: node, funcname: monitor
+node.py(328):   --- modulename: node, funcname: waitReadable
+node.py(285):  node.py(286):  node.py(329):  node.py(331):   --- modulename: node, funcname: read
+node.py(238):  node.py(239):  node.py(240):  node.py(241):   --- modulename: util, funcname: decode
+util.py(28):  node.py(242):  node.py(243):  node.py(244):  node.py(248):  node.py(332):  node.py(334):  node.py(335):  node.py(347):  node.py(348):  node.py(349):  node.py(353):  node.py(365):  node.py(366):   --- modulename: log, funcname: newfn
+node.py(363):  node.py(367):  p4_mininet.py(36):         for off in ["rx", "tx", "sg"]:
+p4_mininet.py(37):             cmd = "/sbin/ethtool --offload eth0 %s off" % off
+p4_mininet.py(38):             self.cmd(cmd)
+node.py(372):  node.py(373):  node.py(374):   --- modulename: log, funcname: newfn
+node.py(375):  node.py(376):   --- modulename: node, funcname: sendCmd
+node.py(293):  node.py(294):  node.py(296):  node.py(299):  node.py(300):  node.py(302):  node.py(303):  node.py(303):  node.py(304):   --- modulename: re, funcname: search
+node.py(307):  node.py(309):  node.py(312):  node.py(314):   --- modulename: node, funcname: write
+node.py(264):   --- modulename: util, funcname: encode
+util.py(33):  node.py(315):  node.py(316):  node.py(377):   --- modulename: node, funcname: waitOutput
+node.py(361):  node.py(362):  node.py(363):  node.py(364):   --- modulename: node, funcname: monitor
+node.py(328):   --- modulename: node, funcname: waitReadable
+node.py(285):  node.py(286):  node.py(329):  node.py(331):   --- modulename: node, funcname: read
+node.py(238):  node.py(239):  node.py(240):  node.py(241):   --- modulename: util, funcname: decode
+util.py(28):  node.py(242):  node.py(243):  node.py(244):  node.py(248):  node.py(332):  node.py(334):  node.py(335):  node.py(347):  node.py(348):  node.py(349):  node.py(353):  node.py(365):  node.py(366):   --- modulename: log, funcname: newfn
+node.py(363):  node.py(367):  p4_mininet.py(36):         for off in ["rx", "tx", "sg"]:
+p4_mininet.py(41):         self.cmd("sysctl -w net.ipv6.conf.all.disable_ipv6=1")
+node.py(372):  node.py(373):  node.py(374):   --- modulename: log, funcname: newfn
+node.py(375):  node.py(376):   --- modulename: node, funcname: sendCmd
+node.py(293):  node.py(294):  node.py(296):  node.py(299):  node.py(300):  node.py(302):  node.py(303):  node.py(303):  node.py(304):   --- modulename: re, funcname: search
+node.py(307):  node.py(309):  node.py(312):  node.py(314):   --- modulename: node, funcname: write
+node.py(264):   --- modulename: util, funcname: encode
+util.py(33):  node.py(315):  node.py(316):  node.py(377):   --- modulename: node, funcname: waitOutput
+node.py(361):  node.py(362):  node.py(363):  node.py(364):   --- modulename: node, funcname: monitor
+node.py(328):   --- modulename: node, funcname: waitReadable
+node.py(285):  node.py(286):  node.py(329):  node.py(331):   --- modulename: node, funcname: read
+node.py(238):  node.py(239):  node.py(240):  node.py(241):   --- modulename: util, funcname: decode
+util.py(28):  node.py(242):  node.py(243):  node.py(244):  node.py(248):  node.py(332):  node.py(334):  node.py(335):  node.py(347):  node.py(348):  node.py(349):  node.py(353):  node.py(365):  node.py(366):   --- modulename: log, funcname: newfn
+node.py(363):  node.py(367):  p4_mininet.py(42):         self.cmd("sysctl -w net.ipv6.conf.default.disable_ipv6=1")
+node.py(372):  node.py(373):  node.py(374):   --- modulename: log, funcname: newfn
+node.py(375):  node.py(376):   --- modulename: node, funcname: sendCmd
+node.py(293):  node.py(294):  node.py(296):  node.py(299):  node.py(300):  node.py(302):  node.py(303):  node.py(303):  node.py(304):   --- modulename: re, funcname: search
+node.py(307):  node.py(309):  node.py(312):  node.py(314):   --- modulename: node, funcname: write
+node.py(264):   --- modulename: util, funcname: encode
+util.py(33):  node.py(315):  node.py(316):  node.py(377):   --- modulename: node, funcname: waitOutput
+node.py(361):  node.py(362):  node.py(363):  node.py(364):   --- modulename: node, funcname: monitor
+node.py(328):   --- modulename: node, funcname: waitReadable
+node.py(285):  node.py(286):  node.py(329):  node.py(331):   --- modulename: node, funcname: read
+node.py(238):  node.py(239):  node.py(240):  node.py(241):   --- modulename: util, funcname: decode
+util.py(28):  node.py(242):  node.py(243):  node.py(244):  node.py(248):  node.py(332):  node.py(334):  node.py(335):  node.py(347):  node.py(348):  node.py(349):  node.py(353):  node.py(365):  node.py(366):   --- modulename: log, funcname: newfn
+node.py(363):  node.py(367):  p4_mininet.py(43):         self.cmd("sysctl -w net.ipv6.conf.lo.disable_ipv6=1")
+node.py(372):  node.py(373):  node.py(374):   --- modulename: log, funcname: newfn
+node.py(375):  node.py(376):   --- modulename: node, funcname: sendCmd
+node.py(293):  node.py(294):  node.py(296):  node.py(299):  node.py(300):  node.py(302):  node.py(303):  node.py(303):  node.py(304):   --- modulename: re, funcname: search
+node.py(307):  node.py(309):  node.py(312):  node.py(314):   --- modulename: node, funcname: write
+node.py(264):   --- modulename: util, funcname: encode
+util.py(33):  node.py(315):  node.py(316):  node.py(377):   --- modulename: node, funcname: waitOutput
+node.py(361):  node.py(362):  node.py(363):  node.py(364):   --- modulename: node, funcname: monitor
+node.py(328):   --- modulename: node, funcname: waitReadable
+node.py(285):  node.py(286):  node.py(329):  node.py(331):   --- modulename: node, funcname: read
+node.py(238):  node.py(239):  node.py(240):  node.py(241):   --- modulename: util, funcname: decode
+util.py(28):  node.py(242):  node.py(243):  node.py(244):  node.py(248):  node.py(332):  node.py(334):  node.py(335):  node.py(347):  node.py(348):  node.py(349):  node.py(353):  node.py(365):  node.py(366):   --- modulename: log, funcname: newfn
+node.py(363):  node.py(367):  p4_mininet.py(45):         return r
+net.py(430):  net.py(444):   --- modulename: log, funcname: newfn
+net.py(507):  net.py(509):  net.py(511):  run_exercise.py(195):         self.net.start()
+net.py(539):  net.py(541):   --- modulename: log, funcname: newfn
+net.py(542):  net.py(545):   --- modulename: log, funcname: newfn
+net.py(546):   --- modulename: log, funcname: newfn
+net.py(547):  net.py(548):   --- modulename: log, funcname: newfn
+net.py(549):   --- modulename: p4runtime_switch, funcname: start
+p4runtime_switch.py(101):         info("Starting P4 switch {}.\n".format(self.name))
+p4runtime_switch.py(102):         args = [self.sw_path]
+p4runtime_switch.py(103):         for port, intf in self.intfs.items():
+p4runtime_switch.py(104):             if not intf.IP():
+link.py(128):  p4runtime_switch.py(103):         for port, intf in self.intfs.items():
+p4runtime_switch.py(104):             if not intf.IP():
+link.py(128):  p4runtime_switch.py(105):                 args.extend(['-i', str(port) + "@" + intf.name])
+p4runtime_switch.py(103):         for port, intf in self.intfs.items():
+p4runtime_switch.py(104):             if not intf.IP():
+link.py(128):  p4runtime_switch.py(105):                 args.extend(['-i', str(port) + "@" + intf.name])
+p4runtime_switch.py(103):         for port, intf in self.intfs.items():
+p4runtime_switch.py(106):         if self.pcap_dump:
+p4runtime_switch.py(107):             args.append("--pcap %s" % self.pcap_dump)
+p4runtime_switch.py(108):         if self.nanomsg:
+p4runtime_switch.py(109):             args.extend(['--nanolog', self.nanomsg])
+p4runtime_switch.py(110):         args.extend(['--device-id', str(self.device_id)])
+p4runtime_switch.py(111):         P4Switch.device_id += 1
+p4runtime_switch.py(112):         if self.json_path:
+p4runtime_switch.py(113):             args.append(self.json_path)
+p4runtime_switch.py(116):         if self.enable_debugger:
+p4runtime_switch.py(118):         if self.log_console:
+p4runtime_switch.py(119):             args.append("--log-console")
+p4runtime_switch.py(120):         if self.thrift_port:
+p4runtime_switch.py(121):             args.append('--thrift-port ' + str(self.thrift_port))
+p4runtime_switch.py(122):         if self.grpc_port:
+p4runtime_switch.py(123):             args.append("-- --grpc-server-addr 0.0.0.0:" + str(self.grpc_port))
+p4runtime_switch.py(124):         cmd = ' '.join(args)
+p4runtime_switch.py(125):         info(cmd + "\n")
+p4runtime_switch.py(128):         pid = None
+p4runtime_switch.py(129):         with tempfile.NamedTemporaryFile() as f:
+p4runtime_switch.py(130):             self.cmd(cmd + ' >' + self.log_file + ' 2>&1 & echo $! >> ' + f.name)
+node.py(372):  node.py(373):  node.py(374):   --- modulename: log, funcname: newfn
+node.py(375):  node.py(376):   --- modulename: node, funcname: sendCmd
+node.py(927):  node.py(928):  node.py(929):   --- modulename: node, funcname: sendCmd
+node.py(293):  node.py(294):  node.py(296):  node.py(299):  node.py(300):  node.py(302):  node.py(303):  node.py(303):  node.py(304):   --- modulename: re, funcname: search
+node.py(307):  node.py(309):  node.py(312):  node.py(314):   --- modulename: node, funcname: write
+node.py(264):   --- modulename: util, funcname: encode
+util.py(33):  node.py(315):  node.py(316):  node.py(377):   --- modulename: node, funcname: waitOutput
+node.py(361):  node.py(362):  node.py(363):  node.py(364):   --- modulename: node, funcname: monitor
+node.py(328):   --- modulename: node, funcname: waitReadable
+node.py(285):  node.py(286):  node.py(329):  node.py(331):   --- modulename: node, funcname: read
+node.py(238):  node.py(239):  node.py(240):  node.py(241):   --- modulename: util, funcname: decode
+util.py(28):  node.py(242):  node.py(243):  node.py(244):  node.py(248):  node.py(332):  node.py(334):  node.py(335):  node.py(347):  node.py(348):  node.py(349):  node.py(353):  node.py(365):  node.py(366):   --- modulename: log, funcname: newfn
+node.py(363):  node.py(367):  p4runtime_switch.py(131):             pid = int(f.read())
+p4runtime_switch.py(132):         debug("P4 switch {} PID is {}.\n".format(self.name, pid))
+p4runtime_switch.py(133):         if not self.check_switch_started(pid):
+p4runtime_switch.py(93):         for _ in range(SWITCH_START_TIMEOUT * 2):
+p4runtime_switch.py(94):             if not os.path.exists(os.path.join("/proc", str(pid))):
+p4runtime_switch.py(96):             if check_listening_on_port(self.grpc_port):
+p4runtime_switch.py(97):                 return True
+p4runtime_switch.py(136):         info("P4 switch {} has been started.\n".format(self.name))
+net.py(547):  net.py(550):  net.py(551):  net.py(552):  net.py(553):   --- modulename: net, funcname: <lambda>
+net.py(553):  net.py(554):  net.py(555):  net.py(553):  net.py(558):   --- modulename: log, funcname: newfn
+net.py(559):  run_exercise.py(196):         sleep(1)
+run_exercise.py(199):         self.program_hosts()
+run_exercise.py(310):         for host_name, host_info in self.hosts.items():
+run_exercise.py(311):             h = self.net.get(host_name)
+net.py(332):   --- modulename: net, funcname: getNodeByName
+net.py(326):  net.py(327):  run_exercise.py(312):             if "commands" in host_info:
+run_exercise.py(313):                 for cmd in host_info["commands"]:
+run_exercise.py(314):                     h.cmd(cmd)
+node.py(372):  node.py(373):  node.py(374):   --- modulename: log, funcname: newfn
+node.py(375):  node.py(376):   --- modulename: node, funcname: sendCmd
+node.py(293):  node.py(294):  node.py(296):  node.py(299):  node.py(300):  node.py(302):  node.py(303):  node.py(303):  node.py(304):   --- modulename: re, funcname: search
+node.py(307):  node.py(309):  node.py(312):  node.py(314):   --- modulename: node, funcname: write
+node.py(264):   --- modulename: util, funcname: encode
+util.py(33):  node.py(315):  node.py(316):  node.py(377):   --- modulename: node, funcname: waitOutput
+node.py(361):  node.py(362):  node.py(363):  node.py(364):   --- modulename: node, funcname: monitor
+node.py(328):   --- modulename: node, funcname: waitReadable
+node.py(285):  node.py(286):  node.py(329):  node.py(331):   --- modulename: node, funcname: read
+node.py(238):  node.py(239):  node.py(240):  node.py(241):   --- modulename: util, funcname: decode
+util.py(28):  node.py(242):  node.py(243):  node.py(244):  node.py(248):  node.py(332):  node.py(334):  node.py(335):  node.py(347):  node.py(348):  node.py(349):  node.py(353):  node.py(365):  node.py(366):   --- modulename: log, funcname: newfn
+node.py(363):  node.py(367):  run_exercise.py(313):                 for cmd in host_info["commands"]:
+run_exercise.py(310):         for host_name, host_info in self.hosts.items():
+run_exercise.py(311):             h = self.net.get(host_name)
+net.py(332):   --- modulename: net, funcname: getNodeByName
+net.py(326):  net.py(327):  run_exercise.py(312):             if "commands" in host_info:
+run_exercise.py(313):                 for cmd in host_info["commands"]:
+run_exercise.py(314):                     h.cmd(cmd)
+node.py(372):  node.py(373):  node.py(374):   --- modulename: log, funcname: newfn
+node.py(375):  node.py(376):   --- modulename: node, funcname: sendCmd
+node.py(293):  node.py(294):  node.py(296):  node.py(299):  node.py(300):  node.py(302):  node.py(303):  node.py(303):  node.py(304):   --- modulename: re, funcname: search
+node.py(307):  node.py(309):  node.py(312):  node.py(314):   --- modulename: node, funcname: write
+node.py(264):   --- modulename: util, funcname: encode
+util.py(33):  node.py(315):  node.py(316):  node.py(377):   --- modulename: node, funcname: waitOutput
+node.py(361):  node.py(362):  node.py(363):  node.py(364):   --- modulename: node, funcname: monitor
+node.py(328):   --- modulename: node, funcname: waitReadable
+node.py(285):  node.py(286):  node.py(329):  node.py(331):   --- modulename: node, funcname: read
+node.py(238):  node.py(239):  node.py(240):  node.py(241):   --- modulename: util, funcname: decode
+util.py(28):  node.py(242):  node.py(243):  node.py(244):  node.py(248):  node.py(332):  node.py(334):  node.py(335):  node.py(347):  node.py(348):  node.py(349):  node.py(353):  node.py(365):  node.py(366):   --- modulename: log, funcname: newfn
+node.py(363):  node.py(367):  run_exercise.py(313):                 for cmd in host_info["commands"]:
+run_exercise.py(310):         for host_name, host_info in self.hosts.items():
+run_exercise.py(200):         self.program_switches()
+run_exercise.py(301):         for sw_name, sw_dict in self.switches.iteritems():
+run_exercise.py(302):             if 'cli_input' in sw_dict:
+run_exercise.py(304):             if 'runtime_json' in sw_dict:
+run_exercise.py(305):                 self.program_switch_p4runtime(sw_name, sw_dict)
+run_exercise.py(265):         sw_obj = self.net.get(sw_name)
+net.py(332):   --- modulename: net, funcname: getNodeByName
+net.py(326):  net.py(327):  run_exercise.py(266):         grpc_port = sw_obj.grpc_port
+run_exercise.py(267):         device_id = sw_obj.device_id
+run_exercise.py(268):         runtime_json = sw_dict['runtime_json']
+run_exercise.py(269):         self.logger('Configuring switch %s using P4Runtime with file %s' % (sw_name, runtime_json))
+run_exercise.py(142):         if not self.quiet:
+run_exercise.py(143):             print(' '.join(items))
+run_exercise.py(270):         with open(runtime_json, 'r') as sw_conf_file:
+run_exercise.py(271):             outfile = '%s/%s-p4runtime-requests.txt' %(self.log_dir, sw_name)
+run_exercise.py(272):             p4runtime_lib.simple_controller.program_switch(
+run_exercise.py(273):                 addr='127.0.0.1:%d' % grpc_port,
+run_exercise.py(274):                 device_id=device_id,
+run_exercise.py(275):                 sw_conf_file=sw_conf_file,
+run_exercise.py(276):                 workdir=os.getcwd(),
+run_exercise.py(277):                 proto_dump_fpath=outfile)
+simple_controller.py(92):     sw_conf = json_load_byteified(sw_conf_file)
+simple_controller.py(164):     return _byteify(json.load(file_handle, object_hook=_byteify),
+simple_controller.py(170):     if isinstance(data, unicode):
+simple_controller.py(173):     if isinstance(data, list):
+simple_controller.py(177):     if isinstance(data, dict) and not ignore_dicts:
+simple_controller.py(179):             _byteify(key, ignore_dicts=True): _byteify(value, ignore_dicts=True)
+simple_controller.py(180):             for key, value in data.iteritems()
+simple_controller.py(179):             _byteify(key, ignore_dicts=True): _byteify(value, ignore_dicts=True)
+simple_controller.py(180):             for key, value in data.iteritems()
+simple_controller.py(170):     if isinstance(data, unicode):
+simple_controller.py(173):     if isinstance(data, list):
+simple_controller.py(174):         return [_byteify(item, ignore_dicts=True) for item in data]
+simple_controller.py(170):     if isinstance(data, unicode):
+simple_controller.py(171):         return data.encode('utf-8')
+simple_controller.py(179):             _byteify(key, ignore_dicts=True): _byteify(value, ignore_dicts=True)
+simple_controller.py(180):             for key, value in data.iteritems()
+simple_controller.py(170):     if isinstance(data, unicode):
+simple_controller.py(171):         return data.encode('utf-8')
+simple_controller.py(170):     if isinstance(data, unicode):
+simple_controller.py(171):         return data.encode('utf-8')
+simple_controller.py(179):             _byteify(key, ignore_dicts=True): _byteify(value, ignore_dicts=True)
+simple_controller.py(180):             for key, value in data.iteritems()
+simple_controller.py(170):     if isinstance(data, unicode):
+simple_controller.py(171):         return data.encode('utf-8')
+simple_controller.py(170):     if isinstance(data, unicode):
+simple_controller.py(171):         return data.encode('utf-8')
+simple_controller.py(179):             _byteify(key, ignore_dicts=True): _byteify(value, ignore_dicts=True)
+simple_controller.py(180):             for key, value in data.iteritems()
+simple_controller.py(170):     if isinstance(data, unicode):
+simple_controller.py(171):         return data.encode('utf-8')
+simple_controller.py(170):     if isinstance(data, unicode):
+simple_controller.py(171):         return data.encode('utf-8')
+simple_controller.py(179):             _byteify(key, ignore_dicts=True): _byteify(value, ignore_dicts=True)
+simple_controller.py(165):                     ignore_dicts=True)
+simple_controller.py(170):     if isinstance(data, unicode):
+simple_controller.py(173):     if isinstance(data, list):
+simple_controller.py(177):     if isinstance(data, dict) and not ignore_dicts:
+simple_controller.py(183):     return data
+simple_controller.py(93):     try:
+simple_controller.py(94):         check_switch_conf(sw_conf=sw_conf, workdir=workdir)
+simple_controller.py(67):     required_keys = ["p4info"]
+simple_controller.py(68):     files_to_check = ["p4info"]
+simple_controller.py(69):     target_choices = ["bmv2"]
+simple_controller.py(71):     if "target" not in sw_conf:
+simple_controller.py(73):     target = sw_conf['target']
+simple_controller.py(74):     if target not in target_choices:
+simple_controller.py(77):     if target == 'bmv2':
+simple_controller.py(78):         required_keys.append("bmv2_json")
+simple_controller.py(79):         files_to_check.append("bmv2_json")
+simple_controller.py(81):     for conf_key in required_keys:
+simple_controller.py(82):         if conf_key not in sw_conf or len(sw_conf[conf_key]) == 0:
+simple_controller.py(81):     for conf_key in required_keys:
+simple_controller.py(82):         if conf_key not in sw_conf or len(sw_conf[conf_key]) == 0:
+simple_controller.py(81):     for conf_key in required_keys:
+simple_controller.py(85):     for conf_key in files_to_check:
+simple_controller.py(86):         real_path = os.path.join(workdir, sw_conf[conf_key])
+simple_controller.py(87):         if not os.path.exists(real_path):
+simple_controller.py(85):     for conf_key in files_to_check:
+simple_controller.py(86):         real_path = os.path.join(workdir, sw_conf[conf_key])
+simple_controller.py(87):         if not os.path.exists(real_path):
+simple_controller.py(85):     for conf_key in files_to_check:
+simple_controller.py(99):     info('Using P4Info file %s...' % sw_conf['p4info'])
+simple_controller.py(30):     print >> sys.stdout, ' - ' + msg
+simple_controller.py(100):     p4info_fpath = os.path.join(workdir, sw_conf['p4info'])
+simple_controller.py(101):     p4info_helper = helper.P4InfoHelper(p4info_fpath)
+simple_controller.py(103):     target = sw_conf['target']
+simple_controller.py(105):     info("Connecting to P4Runtime server on %s (%s)..." % (addr, target))
+simple_controller.py(30):     print >> sys.stdout, ' - ' + msg
+simple_controller.py(107):     if target == "bmv2":
+simple_controller.py(108):         sw = bmv2.Bmv2SwitchConnection(address=addr, device_id=device_id,
+simple_controller.py(109):                                        proto_dump_file=proto_dump_fpath)
+switch.py(37):         self.name = name
+switch.py(38):         self.address = address
+switch.py(39):         self.device_id = device_id
+switch.py(40):         self.p4info = None
+switch.py(41):         self.channel = grpc.insecure_channel(self.address)
+switch.py(42):         if proto_dump_file is not None:
+switch.py(43):             interceptor = GrpcRequestLogger(proto_dump_file)
+switch.py(153):         self.log_file = log_file
+switch.py(154):         with open(self.log_file, 'w') as f:
+switch.py(156):             f.write("")
+switch.py(44):             self.channel = grpc.intercept_channel(self.channel, interceptor)
+switch.py(45):         self.client_stub = p4runtime_pb2_grpc.P4RuntimeStub(self.channel)
+p4runtime_pb2_grpc.py(15):     self.Write = channel.unary_unary(
+p4runtime_pb2_grpc.py(16):         '/p4.v1.P4Runtime/Write',
+p4runtime_pb2_grpc.py(17):         request_serializer=p4_dot_v1_dot_p4runtime__pb2.WriteRequest.SerializeToString,
+p4runtime_pb2_grpc.py(18):         response_deserializer=p4_dot_v1_dot_p4runtime__pb2.WriteResponse.FromString,
+p4runtime_pb2_grpc.py(20):     self.Read = channel.unary_stream(
+p4runtime_pb2_grpc.py(21):         '/p4.v1.P4Runtime/Read',
+p4runtime_pb2_grpc.py(22):         request_serializer=p4_dot_v1_dot_p4runtime__pb2.ReadRequest.SerializeToString,
+p4runtime_pb2_grpc.py(23):         response_deserializer=p4_dot_v1_dot_p4runtime__pb2.ReadResponse.FromString,
+p4runtime_pb2_grpc.py(25):     self.SetForwardingPipelineConfig = channel.unary_unary(
+p4runtime_pb2_grpc.py(26):         '/p4.v1.P4Runtime/SetForwardingPipelineConfig',
+p4runtime_pb2_grpc.py(27):         request_serializer=p4_dot_v1_dot_p4runtime__pb2.SetForwardingPipelineConfigRequest.SerializeToString,
+p4runtime_pb2_grpc.py(28):         response_deserializer=p4_dot_v1_dot_p4runtime__pb2.SetForwardingPipelineConfigResponse.FromString,
+p4runtime_pb2_grpc.py(30):     self.GetForwardingPipelineConfig = channel.unary_unary(
+p4runtime_pb2_grpc.py(31):         '/p4.v1.P4Runtime/GetForwardingPipelineConfig',
+p4runtime_pb2_grpc.py(32):         request_serializer=p4_dot_v1_dot_p4runtime__pb2.GetForwardingPipelineConfigRequest.SerializeToString,
+p4runtime_pb2_grpc.py(33):         response_deserializer=p4_dot_v1_dot_p4runtime__pb2.GetForwardingPipelineConfigResponse.FromString,
+p4runtime_pb2_grpc.py(35):     self.StreamChannel = channel.stream_stream(
+p4runtime_pb2_grpc.py(36):         '/p4.v1.P4Runtime/StreamChannel',
+p4runtime_pb2_grpc.py(37):         request_serializer=p4_dot_v1_dot_p4runtime__pb2.StreamMessageRequest.SerializeToString,
+p4runtime_pb2_grpc.py(38):         response_deserializer=p4_dot_v1_dot_p4runtime__pb2.StreamMessageResponse.FromString,
+switch.py(46):         self.requests_stream = IterableQueue()
+switch.py(47):         self.stream_msg_resp = self.client_stub.StreamChannel(iter(self.requests_stream))
+switch.py(181):         return iter(self.get, self._sentinel)
+switch.py(48):         self.proto_dump_file = proto_dump_file
+switch.py(49):         connections.append(self)
+simple_controller.py(113):     try:
+simple_controller.py(114):         sw.MasterArbitrationUpdate()
+switch.py(60):         request = p4runtime_pb2.StreamMessageRequest()
+switch.py(61):         request.arbitration.device_id = self.device_id
+switch.py(62):         request.arbitration.election_id.high = 0
+switch.py(63):         request.arbitration.election_id.low = 1
+switch.py(65):         if dry_run:
+switch.py(68):             self.requests_stream.put(request)
+switch.py(69):             for item in self.stream_msg_resp:
+switch.py(70):                 return item # just one
+simple_controller.py(116):         if target == "bmv2":
+simple_controller.py(117):             info("Setting pipeline config (%s)..." % sw_conf['bmv2_json'])
+simple_controller.py(30):     print >> sys.stdout, ' - ' + msg
+simple_controller.py(118):             bmv2_json_fpath = os.path.join(workdir, sw_conf['bmv2_json'])
+simple_controller.py(119):             sw.SetForwardingPipelineConfig(p4info=p4info_helper.p4info,
+simple_controller.py(120):                                            bmv2_json_file_path=bmv2_json_fpath)
+switch.py(73):         device_config = self.buildDeviceConfig(**kwargs)
+bmv2.py(30):         return buildDeviceConfig(**kwargs)
+bmv2.py(21):     device_config = p4config_pb2.P4DeviceConfig()
+bmv2.py(22):     device_config.reassign = True
+bmv2.py(23):     with open(bmv2_json_file_path) as f:
+bmv2.py(24):         device_config.device_data = f.read()
+bmv2.py(25):     return device_config
+switch.py(74):         request = p4runtime_pb2.SetForwardingPipelineConfigRequest()
+switch.py(75):         request.election_id.low = 1
+switch.py(76):         request.device_id = self.device_id
+switch.py(77):         config = request.config
+switch.py(79):         config.p4info.CopyFrom(p4info)
+switch.py(80):         config.p4_device_config = device_config.SerializeToString()
+switch.py(82):         request.action = p4runtime_pb2.SetForwardingPipelineConfigRequest.VERIFY_AND_COMMIT
+switch.py(83):         if dry_run:
+switch.py(86):             self.client_stub.SetForwardingPipelineConfig(request)
+switch.py(170):         self.log_message(client_call_details.method, request)
+switch.py(159):         with open(self.log_file, 'a') as f:
+switch.py(160):             ts = datetime.utcnow().strftime('%Y-%m-%d %H:%M:%S.%f')[:-3]
+switch.py(161):             msg = str(body)
+switch.py(162):             f.write("\n[%s] %s\n---\n" % (ts, method_name))
+switch.py(163):             if len(msg) < MSG_LOG_MAX_LEN:
+switch.py(166):                 f.write("Message too long (%d bytes)! Skipping log...\n" % len(msg))
+switch.py(167):             f.write('---\n')
+switch.py(171):         return continuation(client_call_details, request)
+simple_controller.py(124):         if 'table_entries' in sw_conf:
+simple_controller.py(125):             table_entries = sw_conf['table_entries']
+simple_controller.py(126):             info("Inserting %d table entries..." % len(table_entries))
+simple_controller.py(30):     print >> sys.stdout, ' - ' + msg
+simple_controller.py(127):             for entry in table_entries:
+simple_controller.py(131):         if 'multicast_group_entries' in sw_conf:
+simple_controller.py(139):         sw.shutdown()
+switch.py(56):         self.requests_stream.close()
+switch.py(184):         self.put(self._sentinel)
+switch.py(57):         self.stream_msg_resp.cancel()
+run_exercise.py(301):         for sw_name, sw_dict in self.switches.iteritems():
+run_exercise.py(203):         sleep(1)
+run_exercise.py(205):         self.do_net_cli()
+run_exercise.py(324):         for s in self.net.switches:
+run_exercise.py(325):             s.describe()
+run_exercise.py(49):                 print "%s -> gRPC port: %d" % (self.name, self.grpc_port)
+run_exercise.py(324):         for s in self.net.switches:
+run_exercise.py(326):         for h in self.net.hosts:
+run_exercise.py(327):             h.describe()
+p4_mininet.py(48):         print "**********"
+p4_mininet.py(49):         print self.name
+p4_mininet.py(50):         print "default interface: %s\t%s\t%s" %(
+p4_mininet.py(51):             self.defaultIntf().name,
+node.py(466):  node.py(467):  node.py(468):  p4_mininet.py(52):             self.defaultIntf().IP(),
+node.py(466):  node.py(467):  node.py(468):   --- modulename: link, funcname: IP
+link.py(128):  p4_mininet.py(53):             self.defaultIntf().MAC()
+node.py(466):  node.py(467):  node.py(468):   --- modulename: link, funcname: MAC
+link.py(132):  default interface: eth0	10.0.1.1	08:00:00:00:01:11
+p4_mininet.py(55):         print "**********"
+run_exercise.py(326):         for h in self.net.hosts:
+run_exercise.py(327):             h.describe()
+p4_mininet.py(48):         print "**********"
+p4_mininet.py(49):         print self.name
+p4_mininet.py(50):         print "default interface: %s\t%s\t%s" %(
+p4_mininet.py(51):             self.defaultIntf().name,
+node.py(466):  node.py(467):  node.py(468):  p4_mininet.py(52):             self.defaultIntf().IP(),
+node.py(466):  node.py(467):  node.py(468):   --- modulename: link, funcname: IP
+link.py(128):  p4_mininet.py(53):             self.defaultIntf().MAC()
+node.py(466):  node.py(467):  node.py(468):   --- modulename: link, funcname: MAC
+link.py(132):  default interface: eth0	10.0.2.2	08:00:00:00:02:22
+p4_mininet.py(55):         print "**********"
+run_exercise.py(326):         for h in self.net.hosts:
+run_exercise.py(328):         self.logger("Starting mininet CLI")
+run_exercise.py(142):         if not self.quiet:
+run_exercise.py(143):             print(' '.join(items))
+run_exercise.py(331):         print('')
+run_exercise.py(332):         print('======================================================================')
+run_exercise.py(333):         print('Welcome to the BMV2 Mininet CLI!')
+run_exercise.py(334):         print('======================================================================')
+run_exercise.py(335):         print('Your P4 program is installed into the BMV2 software switch')
+run_exercise.py(336):         print('and your initial runtime configuration is loaded. You can interact')
+run_exercise.py(337):         print('with the network using the mininet CLI below.')
+run_exercise.py(338):         print('')
+run_exercise.py(339):         if self.switch_json:
+run_exercise.py(340):             print('To inspect or change the switch configuration, connect to')
+run_exercise.py(341):             print('its CLI from your host operating system using this command:')
+run_exercise.py(342):             print('  simple_switch_CLI --thrift-port <switch thrift port>')
+run_exercise.py(343):             print('')
+run_exercise.py(344):         print('To view a switch log, run this command from your host OS:')
+run_exercise.py(345):         print('  tail -f %s/<switchname>.log' %  self.log_dir)
+run_exercise.py(346):         print('')
+run_exercise.py(347):         print('To view the switch output pcap, check the pcap files in %s:' % self.pcap_dir)
+run_exercise.py(348):         print(' for example run:  sudo tcpdump -xxx -r s1-eth1.pcap')
+run_exercise.py(349):         print('')
+run_exercise.py(350):         if 'grpc' in self.bmv2_exe:
+run_exercise.py(351):             print('To view the P4Runtime requests sent to the switch, check the')
+run_exercise.py(352):             print('corresponding txt file in %s:' % self.log_dir)
+run_exercise.py(353):             print(' for example run:  cat %s/s1-p4runtime-requests.txt' % self.log_dir)
+run_exercise.py(354):             print('')
+run_exercise.py(356):         CLI(self.net)
+cli.py(55):  cli.py(57):  cli.py(59):  cli.py(60):  cli.py(61):  cli.py(62):   --- modulename: cmd, funcname: __init__
+cmd.py(90):         import sys
+cmd.py(91):         if stdin is not None:
+cmd.py(92):             self.stdin = stdin
+cmd.py(95):         if stdout is not None:
+cmd.py(98):             self.stdout = sys.stdout
+cmd.py(99):         self.cmdqueue = []
+cmd.py(100):         self.completekey = completekey
+cli.py(63):   --- modulename: log, funcname: newfn
+cli.py(65):  cli.py(69):   --- modulename: cli, funcname: initReadline
+cli.py(78):  cli.py(80):  cli.py(81):  cli.py(82):   --- modulename: six, funcname: find_module
+cli.py(87):   --- modulename: posixpath, funcname: expanduser
+cli.py(88):   --- modulename: genericpath, funcname: isfile
+cli.py(89):  cli.py(90):  cli.py(91):   --- modulename: atexit, funcname: register
+cli.py(70):   --- modulename: cli, funcname: run
+cli.py(95):  cli.py(96):  cli.py(98):   --- modulename: net, funcname: values
+net.py(363):   --- modulename: net, funcname: __iter__
+net.py(345):  net.py(346):   --- modulename: net, funcname: __getitem__
+net.py(337):  net.py(363):   --- modulename: net, funcname: __iter__
+net.py(345):  net.py(346):   --- modulename: net, funcname: __getitem__
+net.py(337):  net.py(363):   --- modulename: net, funcname: __iter__
+net.py(345):  net.py(346):   --- modulename: net, funcname: __getitem__
+net.py(337):  net.py(363):   --- modulename: net, funcname: __iter__
+net.py(345):  cli.py(99):  cli.py(98):  cli.py(99):  cli.py(98):  cli.py(99):  cli.py(98):  cli.py(103):   --- modulename: cli, funcname: isatty
+cli.py(326):  cli.py(104):   --- modulename: util, funcname: quietRun
+util.py(198):   --- modulename: util, funcname: errRun
+util.py(126):  util.py(127):  util.py(128):  util.py(129):  util.py(132):  util.py(133):  util.py(135):  util.py(136):  util.py(137):  util.py(137):  util.py(137):  util.py(137):  util.py(137):  util.py(137):  util.py(140):   --- modulename: log, funcname: newfn
+util.py(141):   --- modulename: subprocess, funcname: __init__
+util.py(144):  util.py(145):  util.py(146):  util.py(147):  util.py(148):   --- modulename: util, funcname: getincrementaldecoder
+util.py(50):  util.py(149):  util.py(150):  util.py(155):  util.py(156):  util.py(157):  util.py(158):  util.py(159):  util.py(160):  util.py(161):   --- modulename: util, funcname: decode
+util.py(28):  util.py(162):  util.py(164):  util.py(165):  util.py(166):  util.py(157):  util.py(155):  util.py(156):  util.py(157):  util.py(158):  util.py(159):  util.py(160):  util.py(161):   --- modulename: util, funcname: decode
+util.py(28):  util.py(162):  util.py(164):  util.py(165):  util.py(166):  util.py(157):  util.py(155):  util.py(156):  util.py(157):  util.py(158):  util.py(159):  util.py(160):  util.py(161):   --- modulename: util, funcname: decode
+util.py(28):  util.py(162):  util.py(164):  util.py(165):  util.py(166):  util.py(157):  util.py(155):  util.py(156):  util.py(157):  util.py(158):  util.py(159):  util.py(160):  util.py(161):   --- modulename: util, funcname: decode
+util.py(28):  util.py(162):  util.py(164):  util.py(165):  util.py(166):  util.py(157):  util.py(155):  util.py(156):  util.py(157):  util.py(158):  util.py(159):  util.py(160):  util.py(173):  util.py(174):  util.py(177):  util.py(157):  util.py(155):  util.py(179):   --- modulename: subprocess, funcname: wait
+util.py(181):  util.py(182):  util.py(184):   --- modulename: log, funcname: newfn
+util.py(185):   --- modulename: subprocess, funcname: __del__
+cli.py(105):   --- modulename: cmd, funcname: cmdloop
+cmd.py(109):         self.preloop()
+cmd.py(167):         pass
+cmd.py(110):         if self.use_rawinput and self.completekey:
+cmd.py(111):             try:
+cmd.py(112):                 import readline
+cmd.py(113):                 self.old_completer = readline.get_completer()
+cmd.py(114):                 readline.set_completer(self.complete)
+cmd.py(115):                 readline.parse_and_bind(self.completekey+": complete")
+cmd.py(118):         try:
+cmd.py(119):             if intro is not None:
+cmd.py(121):             if self.intro:
+cmd.py(123):             stop = None
+cmd.py(124):             while not stop:
+cmd.py(125):                 if self.cmdqueue:
+cmd.py(128):                     if self.use_rawinput:
+cmd.py(129):                         try:
+cmd.py(130):                             line = raw_input(self.prompt)
+mininet> cmd.py(141):                 line = self.precmd(line)
+cli.py(474):  cli.py(476):  cmd.py(142):                 stop = self.onecmd(line)
+cmd.py(206):         cmd, arg, line = self.parseline(line)
+cmd.py(181):         line = line.strip()
+cmd.py(182):         if not line:
+cmd.py(183):             return None, None, line
+cmd.py(207):         if not line:
+cmd.py(208):             return self.emptyline()
+cli.py(118):  cmd.py(143):                 stop = self.postcmd(stop, line)
+cmd.py(163):         return stop
+cmd.py(124):             while not stop:
+cmd.py(125):                 if self.cmdqueue:
+cmd.py(128):                     if self.use_rawinput:
+cmd.py(129):                         try:
+cmd.py(130):                             line = raw_input(self.prompt)
+mininet> cmd.py(141):                 line = self.precmd(line)
+cli.py(474):  cli.py(476):  cmd.py(142):                 stop = self.onecmd(line)
+cmd.py(206):         cmd, arg, line = self.parseline(line)
+cmd.py(181):         line = line.strip()
+cmd.py(182):         if not line:
+cmd.py(184):         elif line[0] == '?':
+cmd.py(186):         elif line[0] == '!':
+cmd.py(191):         i, n = 0, len(line)
+cmd.py(192):         while i < n and line[i] in self.identchars: i = i+1
+cmd.py(192):         while i < n and line[i] in self.identchars: i = i+1
+cmd.py(192):         while i < n and line[i] in self.identchars: i = i+1
+cmd.py(192):         while i < n and line[i] in self.identchars: i = i+1
+cmd.py(192):         while i < n and line[i] in self.identchars: i = i+1
+cmd.py(193):         cmd, arg = line[:i], line[i:].strip()
+cmd.py(194):         return cmd, arg, line
+cmd.py(207):         if not line:
+cmd.py(209):         if cmd is None:
+cmd.py(211):         self.lastcmd = line
+cmd.py(212):         if line == 'EOF' :
+cmd.py(214):         if cmd == '':
+cmd.py(217):             try:
+cmd.py(218):                 func = getattr(self, 'do_' + cmd)
+cmd.py(221):             return func(arg)
+cli.py(312):  cli.py(313):  cmd.py(143):                 stop = self.postcmd(stop, line)
+cmd.py(163):         return stop
+cmd.py(124):             while not stop:
+cmd.py(144):             self.postloop()
+cmd.py(174):         pass
+cmd.py(146):             if self.use_rawinput and self.completekey:
+cmd.py(147):                 try:
+cmd.py(148):                     import readline
+cmd.py(149):                     readline.set_completer(self.old_completer)
+cli.py(106):  run_exercise.py(207):         self.net.stop()
+net.py(564):   --- modulename: log, funcname: newfn
+net.py(565):  net.py(568):   --- modulename: log, funcname: newfn
+net.py(569):  net.py(572):   --- modulename: log, funcname: newfn
+net.py(573):  net.py(574):   --- modulename: log, funcname: newfn
+net.py(575):   --- modulename: link, funcname: stop
+link.py(507):   --- modulename: link, funcname: delete
+link.py(500):   --- modulename: link, funcname: delete
+link.py(203):   --- modulename: link, funcname: cmd
+link.py(65):   --- modulename: node, funcname: cmd
+node.py(372):  node.py(373):  node.py(374):   --- modulename: log, funcname: newfn
+node.py(375):  node.py(376):   --- modulename: node, funcname: sendCmd
+node.py(293):  node.py(294):  node.py(296):  node.py(299):  node.py(300):  node.py(302):  node.py(303):  node.py(303):  node.py(304):   --- modulename: re, funcname: search
+node.py(307):  node.py(309):  node.py(312):  node.py(314):   --- modulename: node, funcname: write
+node.py(264):   --- modulename: util, funcname: encode
+util.py(33):  node.py(315):  node.py(316):  node.py(377):   --- modulename: node, funcname: waitOutput
+node.py(361):  node.py(362):  node.py(363):  node.py(364):   --- modulename: node, funcname: monitor
+node.py(328):   --- modulename: node, funcname: waitReadable
+node.py(285):  node.py(286):  node.py(329):  node.py(331):   --- modulename: node, funcname: read
+node.py(238):  node.py(239):  node.py(240):  node.py(241):   --- modulename: util, funcname: decode
+util.py(28):  node.py(242):  node.py(243):  node.py(244):  node.py(248):  node.py(332):  node.py(334):  node.py(335):  node.py(347):  node.py(348):  node.py(349):  node.py(353):  node.py(365):  node.py(366):   --- modulename: log, funcname: newfn
+node.py(363):  node.py(367):  link.py(208):   --- modulename: node, funcname: delIntf
+node.py(458):  node.py(459):  node.py(460):  node.py(461):  node.py(462):  link.py(209):  link.py(501):  link.py(502):   --- modulename: link, funcname: delete
+link.py(203):   --- modulename: link, funcname: cmd
+link.py(65):   --- modulename: node, funcname: cmd
+node.py(372):  node.py(373):  node.py(374):   --- modulename: log, funcname: newfn
+node.py(375):  node.py(376):   --- modulename: node, funcname: sendCmd
+node.py(927):  node.py(928):  node.py(929):   --- modulename: node, funcname: sendCmd
+node.py(293):  node.py(294):  node.py(296):  node.py(299):  node.py(300):  node.py(302):  node.py(303):  node.py(303):  node.py(304):   --- modulename: re, funcname: search
+node.py(307):  node.py(309):  node.py(312):  node.py(314):   --- modulename: node, funcname: write
+node.py(264):   --- modulename: util, funcname: encode
+util.py(33):  node.py(315):  node.py(316):  node.py(377):   --- modulename: node, funcname: waitOutput
+node.py(361):  node.py(362):  node.py(363):  node.py(364):   --- modulename: node, funcname: monitor
+node.py(328):   --- modulename: node, funcname: waitReadable
+node.py(285):  node.py(286):  node.py(329):  node.py(331):   --- modulename: node, funcname: read
+node.py(238):  node.py(239):  node.py(240):  node.py(241):   --- modulename: util, funcname: decode
+util.py(28):  node.py(242):  node.py(243):  node.py(244):  node.py(248):  node.py(332):  node.py(334):  node.py(335):  node.py(347):  node.py(350):  node.py(353):  node.py(365):  node.py(366):   --- modulename: log, funcname: newfn
+node.py(363):  node.py(364):   --- modulename: node, funcname: monitor
+node.py(328):   --- modulename: node, funcname: waitReadable
+node.py(285):  node.py(286):  node.py(329):  node.py(331):   --- modulename: node, funcname: read
+node.py(238):  node.py(239):  node.py(240):  node.py(241):   --- modulename: util, funcname: decode
+util.py(28):  node.py(242):  node.py(243):  node.py(244):  node.py(248):  node.py(332):  node.py(334):  node.py(335):  node.py(347):  node.py(348):  node.py(349):  node.py(353):  node.py(365):  node.py(366):   --- modulename: log, funcname: newfn
+node.py(363):  node.py(367):  link.py(208):   --- modulename: node, funcname: delIntf
+node.py(458):  node.py(459):  node.py(460):  node.py(461):  node.py(462):  link.py(209):  link.py(503):  net.py(573):  net.py(574):   --- modulename: log, funcname: newfn
+net.py(575):   --- modulename: link, funcname: stop
+link.py(507):   --- modulename: link, funcname: delete
+link.py(500):   --- modulename: link, funcname: delete
+link.py(203):   --- modulename: link, funcname: cmd
+link.py(65):   --- modulename: node, funcname: cmd
+node.py(372):  node.py(373):  node.py(374):   --- modulename: log, funcname: newfn
+node.py(375):  node.py(376):   --- modulename: node, funcname: sendCmd
+node.py(293):  node.py(294):  node.py(296):  node.py(299):  node.py(300):  node.py(302):  node.py(303):  node.py(303):  node.py(304):   --- modulename: re, funcname: search
+node.py(307):  node.py(309):  node.py(312):  node.py(314):   --- modulename: node, funcname: write
+node.py(264):   --- modulename: util, funcname: encode
+util.py(33):  node.py(315):  node.py(316):  node.py(377):   --- modulename: node, funcname: waitOutput
+node.py(361):  node.py(362):  node.py(363):  node.py(364):   --- modulename: node, funcname: monitor
+node.py(328):   --- modulename: node, funcname: waitReadable
+node.py(285):  node.py(286):  node.py(329):  node.py(331):   --- modulename: node, funcname: read
+node.py(238):  node.py(239):  node.py(240):  node.py(241):   --- modulename: util, funcname: decode
+util.py(28):  node.py(242):  node.py(243):  node.py(244):  node.py(248):  node.py(332):  node.py(334):  node.py(335):  node.py(347):  node.py(348):  node.py(349):  node.py(353):  node.py(365):  node.py(366):   --- modulename: log, funcname: newfn
+node.py(363):  node.py(367):  link.py(208):   --- modulename: node, funcname: delIntf
+node.py(458):  node.py(459):  node.py(460):  node.py(461):  node.py(462):  link.py(209):  link.py(501):  link.py(502):   --- modulename: link, funcname: delete
+link.py(203):   --- modulename: link, funcname: cmd
+link.py(65):   --- modulename: node, funcname: cmd
+node.py(372):  node.py(373):  node.py(374):   --- modulename: log, funcname: newfn
+node.py(375):  node.py(376):   --- modulename: node, funcname: sendCmd
+node.py(927):  node.py(928):  node.py(929):   --- modulename: node, funcname: sendCmd
+node.py(293):  node.py(294):  node.py(296):  node.py(299):  node.py(300):  node.py(302):  node.py(303):  node.py(303):  node.py(304):   --- modulename: re, funcname: search
+node.py(307):  node.py(309):  node.py(312):  node.py(314):   --- modulename: node, funcname: write
+node.py(264):   --- modulename: util, funcname: encode
+util.py(33):  node.py(315):  node.py(316):  node.py(377):   --- modulename: node, funcname: waitOutput
+node.py(361):  node.py(362):  node.py(363):  node.py(364):   --- modulename: node, funcname: monitor
+node.py(328):   --- modulename: node, funcname: waitReadable
+node.py(285):  node.py(286):  node.py(329):  node.py(331):   --- modulename: node, funcname: read
+node.py(238):  node.py(239):  node.py(240):  node.py(241):   --- modulename: util, funcname: decode
+util.py(28):  node.py(242):  node.py(243):  node.py(244):  node.py(248):  node.py(332):  node.py(334):  node.py(335):  node.py(347):  node.py(350):  node.py(353):  node.py(365):  node.py(366):   --- modulename: log, funcname: newfn
+node.py(363):  node.py(364):   --- modulename: node, funcname: monitor
+node.py(328):   --- modulename: node, funcname: waitReadable
+node.py(285):  node.py(286):  node.py(329):  node.py(331):   --- modulename: node, funcname: read
+node.py(238):  node.py(239):  node.py(240):  node.py(241):   --- modulename: util, funcname: decode
+util.py(28):  node.py(242):  node.py(243):  node.py(244):  node.py(248):  node.py(332):  node.py(334):  node.py(335):  node.py(347):  node.py(348):  node.py(349):  node.py(353):  node.py(365):  node.py(366):   --- modulename: log, funcname: newfn
+node.py(363):  node.py(367):  link.py(208):   --- modulename: node, funcname: delIntf
+node.py(458):  node.py(459):  node.py(460):  node.py(461):  node.py(462):  link.py(209):  link.py(503):  net.py(573):  net.py(576):   --- modulename: log, funcname: newfn
+net.py(577):   --- modulename: log, funcname: newfn
+net.py(578):  net.py(579):  net.py(580):  net.py(581):   --- modulename: net, funcname: <lambda>
+net.py(581):  net.py(582):  net.py(583):  net.py(581):  net.py(586):  net.py(587):   --- modulename: log, funcname: newfn
+net.py(588):  net.py(589):   --- modulename: p4_mininet, funcname: stop
+p4_mininet.py(154):         self.output.flush()
+p4_mininet.py(155):         self.cmd('kill %' + self.sw_path)
+node.py(372):  node.py(373):  node.py(374):   --- modulename: log, funcname: newfn
+node.py(375):  node.py(376):   --- modulename: node, funcname: sendCmd
+node.py(927):  node.py(928):  node.py(929):   --- modulename: node, funcname: sendCmd
+node.py(293):  node.py(294):  node.py(296):  node.py(299):  node.py(300):  node.py(302):  node.py(303):  node.py(303):  node.py(304):   --- modulename: re, funcname: search
+node.py(307):  node.py(309):  node.py(312):  node.py(314):   --- modulename: node, funcname: write
+node.py(264):   --- modulename: util, funcname: encode
+util.py(33):  node.py(315):  node.py(316):  node.py(377):   --- modulename: node, funcname: waitOutput
+node.py(361):  node.py(362):  node.py(363):  node.py(364):   --- modulename: node, funcname: monitor
+node.py(328):   --- modulename: node, funcname: waitReadable
+node.py(285):  node.py(286):  node.py(329):  node.py(331):   --- modulename: node, funcname: read
+node.py(238):  node.py(239):  node.py(240):  node.py(241):   --- modulename: util, funcname: decode
+util.py(28):  node.py(242):  node.py(243):  node.py(244):  node.py(248):  node.py(332):  node.py(334):  node.py(335):  node.py(347):  node.py(348):  node.py(349):  node.py(353):  node.py(365):  node.py(366):   --- modulename: log, funcname: newfn
+node.py(363):  node.py(367):  p4_mininet.py(156):         self.cmd('wait')
+node.py(372):  node.py(373):  node.py(374):   --- modulename: log, funcname: newfn
+node.py(375):  node.py(376):   --- modulename: node, funcname: sendCmd
+node.py(927):  node.py(928):  node.py(929):   --- modulename: node, funcname: sendCmd
+node.py(293):  node.py(294):  node.py(296):  node.py(299):  node.py(300):  node.py(302):  node.py(303):  node.py(303):  node.py(304):   --- modulename: re, funcname: search
+node.py(307):  node.py(309):  node.py(312):  node.py(314):   --- modulename: node, funcname: write
+node.py(264):   --- modulename: util, funcname: encode
+util.py(33):  node.py(315):  node.py(316):  node.py(377):   --- modulename: node, funcname: waitOutput
+node.py(361):  node.py(362):  node.py(363):  node.py(364):   --- modulename: node, funcname: monitor
+node.py(328):   --- modulename: node, funcname: waitReadable
+node.py(285):  node.py(286):  node.py(329):  node.py(331):   --- modulename: node, funcname: read
+node.py(238):  node.py(239):  node.py(240):  node.py(241):   --- modulename: util, funcname: decode
+util.py(28):  node.py(242):  node.py(243):  node.py(244):  node.py(248):  node.py(332):  node.py(334):  node.py(335):  node.py(347):  node.py(348):  node.py(349):  node.py(353):  node.py(365):  node.py(366):   --- modulename: log, funcname: newfn
+node.py(363):  node.py(367):  p4_mininet.py(157):         self.deleteIntfs()
+node.py(511):  node.py(513):  node.py(511):  net.py(590):   --- modulename: node, funcname: terminate
+node.py(268):   --- modulename: node, funcname: unmountPrivateDirs
+node.py(201):  node.py(269):  node.py(270):   --- modulename: subprocess, funcname: poll
+node.py(271):  node.py(272):   --- modulename: node, funcname: cleanup
+node.py(224):  node.py(226):  node.py(227):  node.py(228):  node.py(231):   --- modulename: subprocess, funcname: __del__
+net.py(586):  net.py(591):   --- modulename: log, funcname: newfn
+net.py(592):   --- modulename: log, funcname: newfn
+net.py(593):  net.py(594):   --- modulename: log, funcname: newfn
+net.py(595):   --- modulename: node, funcname: terminate
+node.py(268):   --- modulename: node, funcname: unmountPrivateDirs
+node.py(201):  node.py(269):  node.py(270):   --- modulename: subprocess, funcname: poll
+node.py(271):  node.py(272):   --- modulename: node, funcname: cleanup
+node.py(224):  node.py(226):  node.py(227):  node.py(228):  node.py(231):   --- modulename: subprocess, funcname: __del__
+net.py(593):  net.py(594):   --- modulename: log, funcname: newfn
+net.py(595):   --- modulename: node, funcname: terminate
+node.py(268):   --- modulename: node, funcname: unmountPrivateDirs
+node.py(201):  node.py(269):  node.py(270):   --- modulename: subprocess, funcname: poll
+node.py(271):  node.py(272):   --- modulename: node, funcname: cleanup
+node.py(224):  node.py(226):  node.py(227):  node.py(228):  node.py(231):   --- modulename: subprocess, funcname: __del__
+net.py(593):  net.py(596):   --- modulename: log, funcname: newfn

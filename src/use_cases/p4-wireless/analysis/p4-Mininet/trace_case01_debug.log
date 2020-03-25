@@ -1,0 +1,238 @@
+n0obie@n0obie-VirtualBox:~/TFG/src/use_cases/p4/case01$ sudo make run
+[sudo] password for n0obie:
+mkdir -p build pcaps logs
+p4c-bm2-ss --p4v 16 --p4runtime-files build/case01.p4.p4info.txt -o build/case01.json case01.p4
+sudo python ../utils/run_exercise.py -t scenario/topology.json -j build/case01.json -b simple_switch_grpc
+Reading topology file.
+Building mininet topology.
+*** errRun: ['grep', '-c', 'processor', '/proc/cpuinfo']
+2
+  0*** Setting resource limits
+*** Creating network
+*** Adding hosts:
+*** errRun: ['which', 'mnexec']
+/usr/bin/mnexec
+  0*** errRun: ['which', 'ifconfig']
+/sbin/ifconfig
+  0_popen ['mnexec', '-cdn', 'env', 'PS1=\x7f', 'bash', '--norc', '--noediting', '-is', u'mininet:h1'] 2455*** h1 : ('unset HISTFILE; stty -echo; set +m',)
+unset HISTFILE; stty -echo; set +m
+h1 _popen ['mnexec', '-cdn', 'env', 'PS1=\x7f', 'bash', '--norc', '--noediting', '-is', u'mininet:h2'] 2460*** h2 : ('unset HISTFILE; stty -echo; set +m',)
+unset HISTFILE; stty -echo; set +m
+h2
+*** Adding switches:
+_popen ['mnexec', '-cd', 'env', 'PS1=\x7f', 'bash', '--norc', '--noediting', '-is', u'mininet:s1'] 2466*** s1 : ('unset HISTFILE; stty -echo; set +m',)
+unset HISTFILE; stty -echo; set +m
+
+added intf lo (0) to node s1
+*** s1 : ('ifconfig', 'lo', 'up')
+*** errRun: ['which', 'simple_switch_grpc']
+/usr/local/bin/simple_switch_grpc
+  0s1
+*** Adding links:
+*** h1 : (u'ip link add name h1-eth0 address 06:f0:ed:d4:82:87 type veth peer name s1-eth1 address 36:49:29:46:fa:4f netns 2466',)
+
+added intf h1-eth0 (0) to node h1
+moving h1-eth0 into namespace for h1
+*** h1 : ('ifconfig', u'h1-eth0', 'up')
+*** h1 : ('ethtool -K', <TCIntf h1-eth0>, 'gro', 'off', 'tx', 'on', 'rx', 'on')
+Cannot get device udp-fragmentation-offload settings: Operation not supported
+Cannot get device udp-fragmentation-offload settings: Operation not supported
+ *** executing command: tc qdisc show dev h1-eth0
+*** h1 : (u'tc qdisc show dev h1-eth0',)
+qdisc noqueue 0: root refcnt 2
+(0ms delay) at map stage w/cmds: ['%s qdisc add dev %s  root  handle 10: netem delay 0ms ']
+ *** executing command: tc qdisc add dev h1-eth0  root  handle 10: netem delay 0ms
+*** h1 : (u'tc qdisc add dev h1-eth0  root  handle 10: netem delay 0ms ',)
+cmds: ['%s qdisc add dev %s  root  handle 10: netem delay 0ms ']
+outputs: ['']
+
+added intf s1-eth1 (1) to node s1
+*** s1 : ('ifconfig', u's1-eth1', 'up')
+*** s1 : ('ethtool -K', <TCIntf s1-eth1>, 'gro', 'off', 'tx', 'on', 'rx', 'on')
+Cannot get device udp-fragmentation-offload settings: Operation not supported
+Cannot get device udp-fragmentation-offload settings: Operation not supported
+ *** executing command: tc qdisc show dev s1-eth1
+*** s1 : (u'tc qdisc show dev s1-eth1',)
+qdisc noqueue 0: root refcnt 2
+(0ms delay) at map stage w/cmds: ['%s qdisc add dev %s  root  handle 10: netem delay 0ms ']
+ *** executing command: tc qdisc add dev s1-eth1  root  handle 10: netem delay 0ms
+*** s1 : (u'tc qdisc add dev s1-eth1  root  handle 10: netem delay 0ms ',)
+cmds: ['%s qdisc add dev %s  root  handle 10: netem delay 0ms ']
+outputs: ['']
+(h1, s1) *** h2 : (u'ip link add name h2-eth0 address ce:36:93:0f:3a:12 type veth peer name s1-eth2 address 86:8d:10:82:85:26 netns 2466',)
+
+added intf h2-eth0 (0) to node h2
+moving h2-eth0 into namespace for h2
+*** h2 : ('ifconfig', u'h2-eth0', 'up')
+*** h2 : ('ethtool -K', <TCIntf h2-eth0>, 'gro', 'off', 'tx', 'on', 'rx', 'on')
+Cannot get device udp-fragmentation-offload settings: Operation not supported
+Cannot get device udp-fragmentation-offload settings: Operation not supported
+ *** executing command: tc qdisc show dev h2-eth0
+*** h2 : (u'tc qdisc show dev h2-eth0',)
+qdisc noqueue 0: root refcnt 2
+(0ms delay) at map stage w/cmds: ['%s qdisc add dev %s  root  handle 10: netem delay 0ms ']
+ *** executing command: tc qdisc add dev h2-eth0  root  handle 10: netem delay 0ms
+*** h2 : (u'tc qdisc add dev h2-eth0  root  handle 10: netem delay 0ms ',)
+cmds: ['%s qdisc add dev %s  root  handle 10: netem delay 0ms ']
+outputs: ['']
+
+added intf s1-eth2 (2) to node s1
+*** s1 : ('ifconfig', u's1-eth2', 'up')
+*** s1 : ('ethtool -K', <TCIntf s1-eth2>, 'gro', 'off', 'tx', 'on', 'rx', 'on')
+Cannot get device udp-fragmentation-offload settings: Operation not supported
+Cannot get device udp-fragmentation-offload settings: Operation not supported
+ *** executing command: tc qdisc show dev s1-eth2
+*** s1 : (u'tc qdisc show dev s1-eth2',)
+qdisc noqueue 0: root refcnt 2
+(0ms delay) at map stage w/cmds: ['%s qdisc add dev %s  root  handle 10: netem delay 0ms ']
+ *** executing command: tc qdisc add dev s1-eth2  root  handle 10: netem delay 0ms
+*** s1 : (u'tc qdisc add dev s1-eth2  root  handle 10: netem delay 0ms ',)
+cmds: ['%s qdisc add dev %s  root  handle 10: netem delay 0ms ']
+outputs: ['']
+(h2, s1)
+*** Configuring hosts
+h1 *** h1 : ('ifconfig', u'h1-eth0', 'down')
+*** h1 : ('ifconfig', u'h1-eth0', 'hw', 'ether', u'08:00:00:00:01:11')
+*** h1 : ('ifconfig', u'h1-eth0', 'up')
+*** h1 : ('ifconfig', u'h1-eth0', u'10.0.1.1/24', 'up')
+*** h1 : ('ifconfig lo up',)
+*** h1 : ('ifconfig', u'h1-eth0', 'down')
+*** h1 : ('ip link set', u'h1-eth0', 'name', 'eth0')
+*** h1 : ('ifconfig', 'eth0', 'up')
+*** h1 : ('/sbin/ethtool --offload eth0 rx off',)
+Cannot get device udp-fragmentation-offload settings: Operation not supported
+Cannot get device udp-fragmentation-offload settings: Operation not supported
+*** h1 : ('/sbin/ethtool --offload eth0 tx off',)
+Cannot get device udp-fragmentation-offload settings: Operation not supported
+Cannot get device udp-fragmentation-offload settings: Operation not supported
+Actual changes:
+tx-checksumming: off
+        tx-checksum-ip-generic: off
+        tx-checksum-sctp: off
+tcp-segmentation-offload: off
+        tx-tcp-segmentation: off [requested on]
+        tx-tcp-ecn-segmentation: off [requested on]
+        tx-tcp-mangleid-segmentation: off [requested on]
+        tx-tcp6-segmentation: off [requested on]
+*** h1 : ('/sbin/ethtool --offload eth0 sg off',)
+Cannot get device udp-fragmentation-offload settings: Operation not supported
+Cannot get device udp-fragmentation-offload settings: Operation not supported
+Actual changes:
+scatter-gather: off
+        tx-scatter-gather: off
+        tx-scatter-gather-fraglist: off
+generic-segmentation-offload: off [requested on]
+*** h1 : ('sysctl -w net.ipv6.conf.all.disable_ipv6=1',)
+net.ipv6.conf.all.disable_ipv6 = 1
+*** h1 : ('sysctl -w net.ipv6.conf.default.disable_ipv6=1',)
+net.ipv6.conf.default.disable_ipv6 = 1
+*** h1 : ('sysctl -w net.ipv6.conf.lo.disable_ipv6=1',)
+net.ipv6.conf.lo.disable_ipv6 = 1
+h2 *** h2 : ('ifconfig', u'h2-eth0', 'down')
+*** h2 : ('ifconfig', u'h2-eth0', 'hw', 'ether', u'08:00:00:00:02:22')
+*** h2 : ('ifconfig', u'h2-eth0', 'up')
+*** h2 : ('ifconfig', u'h2-eth0', u'10.0.2.2/24', 'up')
+*** h2 : ('ifconfig lo up',)
+*** h2 : ('ifconfig', u'h2-eth0', 'down')
+*** h2 : ('ip link set', u'h2-eth0', 'name', 'eth0')
+*** h2 : ('ifconfig', 'eth0', 'up')
+*** h2 : ('/sbin/ethtool --offload eth0 rx off',)
+Cannot get device udp-fragmentation-offload settings: Operation not supported
+Cannot get device udp-fragmentation-offload settings: Operation not supported
+*** h2 : ('/sbin/ethtool --offload eth0 tx off',)
+Cannot get device udp-fragmentation-offload settings: Operation not supported
+Cannot get device udp-fragmentation-offload settings: Operation not supported
+Actual changes:
+tx-checksumming: off
+        tx-checksum-ip-generic: off
+        tx-checksum-sctp: off
+tcp-segmentation-offload: off
+        tx-tcp-segmentation: off [requested on]
+        tx-tcp-ecn-segmentation: off [requested on]
+        tx-tcp-mangleid-segmentation: off [requested on]
+        tx-tcp6-segmentation: off [requested on]
+*** h2 : ('/sbin/ethtool --offload eth0 sg off',)
+Cannot get device udp-fragmentation-offload settings: Operation not supported
+Cannot get device udp-fragmentation-offload settings: Operation not supported
+Actual changes:
+scatter-gather: off
+        tx-scatter-gather: off
+        tx-scatter-gather-fraglist: off
+generic-segmentation-offload: off [requested on]
+*** h2 : ('sysctl -w net.ipv6.conf.all.disable_ipv6=1',)
+net.ipv6.conf.all.disable_ipv6 = 1
+*** h2 : ('sysctl -w net.ipv6.conf.default.disable_ipv6=1',)
+net.ipv6.conf.default.disable_ipv6 = 1
+*** h2 : ('sysctl -w net.ipv6.conf.lo.disable_ipv6=1',)
+net.ipv6.conf.lo.disable_ipv6 = 1
+
+*** Starting controller
+
+*** Starting 1 switches
+s1 Starting P4 switch s1.
+simple_switch_grpc -i 1@s1-eth1 -i 2@s1-eth2 --pcap /home/n0obie/TFG/src/use_cases/p4/case01/pcaps --nanolog ipc:///tmp/bm-0-log.ipc --device-id 0 build/case01.json --log-console --thrift-port 9090 -- --grpc-server-addr 0.0.0.0:50051
+*** s1 : (u'simple_switch_grpc -i 1@s1-eth1 -i 2@s1-eth2 --pcap /home/n0obie/TFG/src/use_cases/p4/case01/pcaps --nanolog ipc:///tmp/bm-0-log.ipc --device-id 0 build/case01.json --log-console --thrift-port 9090 -- --grpc-server-addr 0.0.0.0:50051 >/home/n0obie/TFG/src/use_cases/p4/case01/logs/s1.log 2>&1 & echo $! >> /tmp/tmpDHGsSD',)
+[1] 2570
+P4 switch s1 PID is 2570.
+P4 switch s1 has been started.
+
+*** h2 : (u'ip route add default dev eth0',)
+*** h1 : (u'ip route add default dev eth0',)
+Configuring switch s1 using P4Runtime with file scenario/s1-runtime.json
+ - Using P4Info file build/case01.p4.p4info.txt...
+ - Connecting to P4Runtime server on 127.0.0.1:50051 (bmv2)...
+ - Setting pipeline config (build/case01.json)...
+ - Inserting 0 table entries...
+s1 -> gRPC port: 50051
+**********
+h1
+default interface: eth0 10.0.1.1        08:00:00:00:01:11
+**********
+**********
+h2
+default interface: eth0 10.0.2.2        08:00:00:00:02:22
+**********
+Starting mininet CLI
+
+======================================================================
+Welcome to the BMV2 Mininet CLI!
+======================================================================
+Your P4 program is installed into the BMV2 software switch
+and your initial runtime configuration is loaded. You can interact
+with the network using the mininet CLI below.
+
+To inspect or change the switch configuration, connect to
+its CLI from your host operating system using this command:
+  simple_switch_CLI --thrift-port <switch thrift port>
+
+To view a switch log, run this command from your host OS:
+  tail -f /home/n0obie/TFG/src/use_cases/p4/case01/logs/<switchname>.log
+
+To view the switch output pcap, check the pcap files in /home/n0obie/TFG/src/use_cases/p4/case01/pcaps:
+ for example run:  sudo tcpdump -xxx -r s1-eth1.pcap
+
+To view the P4Runtime requests sent to the switch, check the
+corresponding txt file in /home/n0obie/TFG/src/use_cases/p4/case01/logs:
+ for example run:  cat /home/n0obie/TFG/src/use_cases/p4/case01/logs/s1-p4runtime-requests.txt
+
+*** Starting CLI:
+*** errRun: ['stty', 'echo', 'sane', 'intr', '^C']
+  0mininet> exit
+*** Stopping 0 controllers
+
+*** Stopping 2 links
+.*** h1 : ('ip link del eth0',)
+*** s1 : (u'ip link del s1-eth1',)
+Cannot find device "s1-eth1"
+.*** h2 : ('ip link del eth0',)
+*** s1 : (u'ip link del s1-eth2',)
+Cannot find device "s1-eth2"
+
+*** Stopping 1 switches
+s1 *** s1 : ('kill %simple_switch_grpc',)
+*** s1 : ('wait',)
+
+*** Stopping 2 hosts
+h1 h2
+*** Done
+n0obie@n0obie-VirtualBox:~/TFG/src/use_cases/p4/case01$
