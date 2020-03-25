@@ -13,6 +13,9 @@ Por tanto, se propone el siguiente plan para abordar el desarrollo:
 Si la magnitud de ambas interfaces fuera inaccesible por su gran complejidad, se propone ir directamente al bajo nivel de Mininet-Wifi, hacer uso de ``wmediumd`` y del modulo del kernel ``mac80211_hwsim`` para montar escenarios custom para llevar a cabo nuestros casos de uso.
 
 
+## P4Switch (BMV2) - Mininet Interface
+
+
 
 ## Fuentes 
 
