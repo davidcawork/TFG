@@ -22,8 +22,9 @@
 import os, sys, json, subprocess, re, argparse
 from time import sleep
 
-from p4_mininet import P4Switch, P4Host
+from p4_mininet import P4Switch, P4Host, P4Mininet
 
+from mininet.log import setLogLevel
 from mininet.net import Mininet
 from mininet.topo import Topo
 from mininet.link import TCLink
@@ -251,29 +252,22 @@ class ExerciseRunner:
 
         self.topo = ExerciseTopo(self.hosts, self.switches, self.links, self.log_dir, self.bmv2_exe, self.pcap_dir)
 
-        self.net = Mininet(topo = self.topo,
+        self.net = P4Mininet(topo = self.topo,
                       link = TCLink,
                       host = P4Host,
                       switch = defaultSwitchClass,
-                      controller = None)
+                      controller = None, inNamespace = True)
 
     def program_switch_p4runtime(self, sw_name, sw_dict):
         """ This method will use P4Runtime to program the switch using the
             content of the runtime JSON file as input.
         """
         sw_obj = self.net.get(sw_name)
-        grpc_port = sw_obj.grpc_port
-        device_id = sw_obj.device_id
-        runtime_json = sw_dict['runtime_json']
-        self.logger('Configuring switch %s using P4Runtime with file %s' % (sw_name, runtime_json))
-        with open(runtime_json, 'r') as sw_conf_file:
-            outfile = '%s/%s-p4runtime-requests.txt' %(self.log_dir, sw_name)
-            p4runtime_lib.simple_controller.program_switch(
-                addr='127.0.0.1:%d' % grpc_port,
-                device_id=device_id,
-                sw_conf_file=sw_conf_file,
-                workdir=os.getcwd(),
-                proto_dump_fpath=outfile)
+	sw_obj.cmd('python ../utils/program_p4runtime_switch.py %s %s %s %s %s' % (sw_obj.grpc_port,
+										   sw_obj.device_id,
+										   sw_dict['runtime_json'],
+										   sw_name,
+									           self.log_dir))        
 
     def program_switch_cli(self, sw_name, sw_dict):
         """ This method will start up the CLI and use the contents of the
@@ -374,7 +368,7 @@ def get_args():
 
 if __name__ == '__main__':
     # from mininet.log import setLogLevel
-    # setLogLevel("info")
+    setLogLevel("debug")
 
     args = get_args()
     exercise = ExerciseRunner(args.topo, args.log_dir, args.pcap_dir,

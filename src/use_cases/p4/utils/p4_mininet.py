@@ -27,6 +27,20 @@ from netstat import check_listening_on_port
 
 SWITCH_START_TIMEOUT = 10 # seconds
 
+class P4Mininet(Mininet):
+	def configureControlNetwork(self):
+		
+		info( '*** Configuring the intf control - controller\n' )
+        	for controller in self.controllers:
+            		info( controller.name + ' ')
+            		controller.cmd('ip link set dev lo up')
+        	info( '\n' )
+        
+		info( '*** Configuring the intf control for %s switches\n' % len( self.switches ) )
+        	for switch in self.switches:
+            		info( switch.name + ' ')
+            		switch.cmd( 'ip link set dev lo up' )
+
 class P4Host(Host):
     def config(self, **params):
         r = super(Host, self).config(**params)
