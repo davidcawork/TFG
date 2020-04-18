@@ -1,7 +1,6 @@
 #!/usr/bin/python
 
 import os
-import subprocess
 from ctypes import cdll
 
 # http://man7.org/linux/man-pages/man2/setns.2.html
@@ -50,25 +49,3 @@ class Netns_mgmt(object):
 
         return netns_path
 
-
-
-if __name__ == '__main__':
-
-	if os.getuid() != 0:
-		raise ValueError('Netns_mgmt must run as root.')
-        	
-
-	# --- Unit test --- #
-	try:
-		os.system('ip netns add test')
-		expected_output = subprocess.check_output(['ip', 'netns', 'exec', 'test', 'ip', 'a', 's'])
-	
-		with Netns_mgmt(nsname = 'test'):
-			output = subprocess.check_output(['ip', 'a', 's'])
-
-		if expected_output ==  output:
-			print('[OK] Unit test: Named Network Namespace, mounted in /var/run/netns')
-		else:
-			print('[FAIL] Unit test: Named Network Namespace, mounted in /var/run/netns')
-	finally:
-		os.system('ip netns del test')
