@@ -1,5 +1,4 @@
 from netns_mgmt import Netns_mgmt
-from ctypes import *
 import subprocess, os, unittest, time
 
 
