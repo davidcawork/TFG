@@ -88,6 +88,81 @@ A continuación, se presenta una tabla resumen del workflow ocurrido en el levan
 
 La motivación de crear esta tabla ha sido doble, primero documentar de forma detallada el funcionamiento interno de la interfaz de Mininet con el enviroment P4, para así brindar a otras personas de un entrypoint a la hora de desarrollar con Mininet. El segundo ha sido el de aprender a modo personal el funcionamiento interno, para así, a posteriori poder lograr la integración con Mininet-Wifi :monkey:.
 
+## Mininet-Wifi Internals
+
+Una vez que se revisó el funcionamiento interno de la API de Mininet-P4 env se da paso a analizar Mininet-Wifi. Mininet-Wifi es una herramienta de emulación de redes wireless que ha nacido de Mininet, es decir es un fork de este. Al ser un fork comparte gran parte de la jerarquía de clases así como su capacidad para simular ciertos elementos de la red. Además, con la herramienta de Mininet-Wifi se puede correr una topología de Mininet sin problemas, ya que el el añadido de Wifi es un complemento sobre Mininet!
+
+Con Mininet-Wifi podremos emular estaciones Wifi, puntos de acceso, redes adhoc, mesh y todos los nodos de red disponibles en Mininet. Como ya hemos dicho Mininet-Wifi esta desarrollado a partir de Mininet, pero la capacidad de emulación de interfaces Wireless la toma de subsistema wireless de Linux (Más adelante se entrará en el modulo del Kernel ``mac80211_hwsim ``).
+
+La arquitectura de virtualización empleada en Mininet-Wifi funciona de forma similar a la Mininet, se hace uso de la herramienta [`mnexec`](https://github.com/intrig-unicamp/mininet-wifi/blob/master/mnexec.c) para lanzar distintos procesos de bash en nuevas Network Namespaces, uno por cada nodo independiente de la red. De estos procesos colgarán todos los procesos relativos a los distintos nodos de la red, cuando la emulación haya terminado, se matarán dichos procesos de bash, consiguiendo que no haya ninguna condición de referenciación de las Network Namespaces, y estas sean eliminadas por el Kernel. 
+
+De esta manera, los nodos de la red ya estarían aislados de otros nodos de la red, por lo que lo único que quedaría por virtualizar son las capacidades wireless de los nodos que las requieran. Para ellos se hará uso del subsistema wireless del Kernel de Linux, más concretamente el módulo ``mac80211_hwsim `` el cual creará las interfaces wireless en nuestro equipo. Este módulo se comunicará con framework ``mac80211`` el cual proveerá de las capacidades de gestión de acceso al medio de la interfaz wireless. Además, en el espacio de Kernel aun hay un bloque más llamado `cfg80211` el cual servirá de API para la configuración de las cabeceras 802.11. Esta configuración puede ser realizada por la interfaz netlink de espacio de usuario llamada `nl80211`. 
+
+Para la configuración de los puntos de acceso, se hará uso del programa [``HostApd``](https://github.com/latelee/hostapd) el cual indicándole la configuración del punto de acceso y la interfaz sobre la cual debe correr, emulará el funcionamiento de un punto de acceso estándar. En la siguiente figura se puede ver de manera resumida la arquitectura básica de Mininet-Wifi.
+
+
+> Imagen de la arquitectura de Mininet-Wifi
+
+
+En cuanto a la jerarquía de clases unicamente decir que es bastante similar a la de Mininet. Por destacar dos clases claves en la jerarquía de Mininet-Wifi  serían [`Node_Wifi`](https://github.com/intrig-unicamp/mininet-wifi/blob/master/mn_wifi/node.py#L44), de la cual heredan todos los nodos con capacidades wireless que poseé Mininet-Wifi y por último, la clase [`IntfWireless`](https://github.com/intrig-unicamp/mininet-wifi/blob/master/mn_wifi/link.py#L22), de la cual heredan todos los tipos de enlaces disponibles de Mininet-Wifi (Bajo el estándar 802.11). A continuación se dejan los UML referentes a  dichas clases.
+
+> UML node wifi
+
+Como se puede apreciar en los esquemas UML, se ha conseguido aislar la funcionalidad común en las clases padres con la finalidad de optimizar la cantidad de código de las clases hijas. De esta forma añadir nuevos tipos de enlaces por ejemplo en Mininet-Wifi resulta bastante asequible ya que, tenemos multitud de tipos de enlaces con una estructura muy clara y organizada.
+
+> UML Intf wireless
+
+
+### Linux Wireless Subsystem
+
+El subsistema wireless de Linux consiste en un set de varios módulos que se encuentran en el Kernel de Linux. Estos manejan la configuración del hardware bajo el estándar IEEE 802.11 además de la gestión de la transmisión y la escucha de los paquetes de datos. Yendo de desde abajo hacia arriba del subsistema, el primer módulo que nos encontramos es el módulo ``mac80211_hwsim``. Este módulo como ya comentábamos es el responsable de crear las interfaces wireless virtuales en nuestra máquina. 
+
+> Foto del subsistema wireless 
+
+El objetivo principal de  este módulo ``mac80211_hwsim`` es facilitar a los desarrolladores de drivers de tarjetas wireless la prueba de su código e interacción con el siguiente módulo llamado ``mac80211``. Las interfaces virtualizadas no tienen las limitaciones, es decir, a diferencia del hardware real,  resulta más sencillo la creación de distintas pruebas con distintas configuraciones sin estar cohibidos por falta de recursos materiales. Este módulo generalmente recibe un único parámetro, que es el número de "radios" , interfaces virtuales, a virtualizar. Dado que las posibilidades que ofrece este módulo eran un poco reducidas, muchos wrappers han sido creados para ofrecer más funcionalidad a parte de la dada por el propio módulo. La mayoría de herramientas creadas hacen uso de la librería Netlink para comunicarse directamente con el subsistema en el Kernel y así conseguir configuraciones extra, como pueden ser añadir un RSSI, darle nombre a la interfaz. Un ejemplo de dichas herramientas sería la herramienta [``mac80211_hwsim_mgmt``](https://github.com/patgrosse/mac80211_hwsim_mgmt), la cual es usada por Mininet-Wifi para gestionar la creación de las interfaces wireless en cada nodo que las requiera. 
+
+Es importante mencionar el cambio de paradigma que existe en el subsistema wireless de Linux con el concepto de interfaz. Generalmente estamos acostumbrados a pensar en el concepto de interfaz como un elemento que gestiona el acceso al medio, capa dos, y el propio hardware, capa física, un ejemplo de ello sería una interfaz de Ethernet. Bien, pues en el subsistema wireless se desglosa la interfaz **dos capas**, una de ellas es la capa física (PHY) donde se puede gestionar por ejemplo en que canal está escuchando la tarjeta wireless emulada. La otra capa es el acceso al medio, representado por las interfaces virtuales que "cuelgan" de una tarjeta wireless. 
+
+La idea detrás de esto es que puede tener *N* interfaces virtuales asociadas a la misma tarjeta wifi emulada, lo que me sorprendió es que las interfaces virtuales funcionan principalmente con Ethernet (dejando de lado las que están en modo monitor).
+
+
+
+#### Limitaciones encontradas 
+
+Como ya se ha comentado la mayoría de interfaces virtuales asociadas a una tarjeta wireless emulada son del tipo de Ethernet, por ello todos los paquetes que nos llegan vienen con cabeceras Ethernet. Esto supone una limitación ya que en nuestros casos de uso queríamos gestionar las cabeceras Wifi, pero si todas las interfaces virtuales son generalmente del de tipo Ethernet no sería viable la idea.
+
+Pero, ¿Qué sentido tiene tener convertir las cabeceras Wifi a cabeceras Ethernet? De momento la única razón que he encontrado de esta decisión de diseño, es hacer un diseño más sencillo de todos los drivers que operan bajo el módulo `mac80211`, convierten a Ethernet y se lo entregan al stack de red para que lo gestione como un paquete más de una red cableada. 
+
+> foto rX y TX 
+
+A mi parecer, esto supone un gasto de recursos bastante grande, ya que el paquete es encolado hasta tres veces (driver, ethernet queue, qdisc queue) y se tiene que invertir tiempo y recursos en el proceso de casting de las cabeceras, [aquí](https://elixir.bootlin.com/linux/latest/source/net/mac80211/rx.c#L2376) se puede ver la función en el kernel donde se lleva a cabo ese proceso.  
+
+
+
+Digo generalmente ya que en el único modo que una interfaz puede llegar a escuchar los paquetes wifi es en el modo **monitor**. Pero el modo monitor está pensado unicamente para escuchar paquetes, no para transmitir. Este modo puede ser llevado al limite haciendo una inyección de paquetes (*packet injection*) por la interfaz, esto significa que la construcción de las cabeceras Wifi debe ser hecha por nosotros, abrir un socket raw con dicha interfaz y transmitir el paquete. Se realizó un test generando un ping Wifi, se puede consultar la herramienta [aquí](https://github.com/davidcawork/TFG/blob/master/src/use_cases/p4-wireless/analysis/Mininet-wifi/wtools/wping.py). Para conseguir el ping Wifi se hizo uso de [``Scapy``](https://scapy.readthedocs.io/en/latest/api/scapy.layers.dot11.html) para el conformado de las cabeceras necesarias para transmitir el mensaje, y del módulo socket para generar un socket raw con la interfaz en modo monitor.
+
+ De esta forma conseguiríamos nuestro objetivo de manejar las cabeceras Wifi, pero después de hablarlo con mis tutores del TFG este desarrollo se escapa completamente de las competencias de un TFG ya que ni si quiera Mininet-Wifi contempla el manejo de cabeceras Wifi. Por ello, este objetivo se plantea como un desarrollo a futuro, se mencionará en future work. El desarrollo pues sobre Mininet-Wifi consistirá en la integración del BMV2 en Mininet-Wifi, y probar los casos de uso desarrollados para P4, bajo Mininet-Wifi. Las cabeceras que nos llegaran serán las de Ethernet, pero como ya se ha explicado, es el propio Kernel quien se encarga de hacer un casting de las cabeceras Wifi hacia cabeceras Ethernet, por lo que se escapa de nuestro control.
+
+
+### Ejemplo traza de ejecución Mininet-Wifi
+
+Para entender un poco mejor el funcionamiento de Mininet-Wifi se han propuesto dos scripts donde se emulan la misma topología, pero haciendo uso de enlaces TCLink y de enlaces gestionados por ``wmediumd``. La herramienta ``wmediumd`` es una herramienta que funciona sobre el mismo módulo del Kernel ``mac80211_hwsim``, esta herramienta lleva implementado modelos de perdidas y de retardos de los paquetes por lo que permiten que la emulación de la topología tengo un factor más realista y cercano con la realidad.
+
+Los scripts que estudiaremos son los siguientes, tambien indicamos las trazas obtenidas de la ejecución de cada uno de ellos (Las cuales se analizarán para comprender mejor su funcionamiento interno).
+
+*   [Topología con enlaces TCLink](https://github.com/davidcawork/TFG/blob/master/src/use_cases/p4-wireless/analysis/Mininet-wifi/examples/topo_TC.py)
+
+    * [System trace](https://github.com/davidcawork/TFG/blob/master/src/use_cases/p4-wireless/analysis/Mininet-wifi/traces/strace_topo_TC.log)
+    * [Mininet-Wifi debug trace](https://github.com/davidcawork/TFG/blob/master/src/use_cases/p4-wireless/analysis/Mininet-wifi/traces/trace_topo_TC_debug.log)
+
+*   [Topología con enlaces gestionados por ``wmediumd``](https://github.com/davidcawork/TFG/blob/master/src/use_cases/p4-wireless/analysis/Mininet-wifi/examples/topo_wmediumd.py)
+
+    * [System trace](https://github.com/davidcawork/TFG/blob/master/src/use_cases/p4-wireless/analysis/Mininet-wifi/traces/strace_topo_wmediumd.log)
+    * [Mininet-Wifi debug trace](https://github.com/davidcawork/TFG/blob/master/src/use_cases/p4-wireless/analysis/Mininet-wifi/traces/trace_topo_wmediumd_debug.log)
+
+
+A continuación, se presenta una tabla resumen del workflow ocurrido en el levantamiento de ambas topologías. Se indican cuatro columnas en las cuales se describe la funcionalidad que está siendo ejecutada, el texto de operación arrojado por la traza, que clase está impactada y por último, en que método está ocurriendo dicho paso. Todos los pasos están linkeados al source por si se quisiera consulta personalmente.
+
 ## Fuentes 
 
 *   [Mininet-Wifi](https://github.com/intrig-unicamp/mininet-wifi)
