@@ -1,0 +1,153 @@
+n0obie@n0obie-VirtualBox:~/TFG/src/use_cases/p4-wireless/analysis/Mininet-wifi/examples$ sudo python topo_wmediumd.py
+*** errRun: ['grep', '-c', 'processor', '/proc/cpuinfo']
+1
+  0*** Setting resource limits
+*** Creating nodes
+*** errRun: ['which', 'ovs-vsctl']
+/usr/bin/ovs-vsctl
+  0*** errRun: ['ovs-vsctl', '-t', '1', 'show']
+15d511c0-cdd9-4e79-8bbd-e128a3d6884f
+    ovs_version: "2.5.5"
+  0*** errRun: ['ovs-vsctl', '--version']
+ovs-vsctl (Open vSwitch) 2.5.5
+Compiled Oct  4 2018 15:45:07
+DB Schema 7.12.1
+  0_popen ['mnexec', '-cd', 'env', 'PS1=\x7f', 'bash', '--norc', '--noediting', '-is', 'mininet:ap1'] 594*** ap1 : ('unset HISTFILE; stty -echo; set +m',)
+unset HISTFILE; stty -echo; set +m
+
+added intf lo (0) to node ap1
+*** ap1 : ('ifconfig', 'lo', 'up')
+*** errRun: ['which', 'mnexec']
+/usr/bin/mnexec
+  0*** errRun: ['which', 'ip', 'addr']
+/sbin/ip
+  1_popen ['mnexec', '-cdn', 'env', 'PS1=\x7f', 'bash', '--norc', '--noediting', '-is', 'mininet:sta1'] 599*** sta1 : ('unset HISTFILE; stty -echo; set +m',)
+unset HISTFILE; stty -echo; set +m
+_popen ['mnexec', '-cdn', 'env', 'PS1=\x7f', 'bash', '--norc', '--noediting', '-is', 'mininet:sta2'] 601*** sta2 : ('unset HISTFILE; stty -echo; set +m',)
+unset HISTFILE; stty -echo; set +m
+*** errRun: ['which', 'controller']
+/usr/local/bin/controller
+  0*** errRun: ['which', 'mnexec']
+/usr/bin/mnexec
+  0*** errRun: ['which', 'ifconfig']
+/sbin/ifconfig
+  0_popen ['mnexec', '-cd', 'env', 'PS1=\x7f', 'bash', '--norc', '--noediting', '-is', 'mininet:c1'] 610*** c1 : ('unset HISTFILE; stty -echo; set +m',)
+unset HISTFILE; stty -echo; set +m
+*** errRun: ['which', 'telnet']
+/usr/bin/telnet
+  0*** c1 : ('echo A | telnet -e A 127.0.0.1 6653',)
+Telnet escape character is 'A'.
+Trying 127.0.0.1...
+telnet: Unable to connect to remote host: Connection refused
+*** Configuring wifi nodes
+Loading 3 virtual wifi interfaces
+Created mac80211_hwsim device with ID 0
+Created mac80211_hwsim device with ID 1
+Created mac80211_hwsim device with ID 2
+
+*** Configuring interfaces with appropriated network-namespaces...
+rfkill unblock 109
+*** sta1 : (u'ip link set wlan0 down',)
+*** sta1 : (u'ip link set wlan0 name sta1-wlan0',)
+rfkill unblock 110
+*** sta2 : (u'ip link set wlan1 down',)
+*** sta2 : (u'ip link set wlan1 name sta2-wlan0',)
+*** ap1 : (u'ip link set wlan2 down',)
+*** ap1 : (u'ip link set wlan2 name ap1-wlan1',)
+*** ap1 : ('ip link set ap1-wlan1 up',)
+
+added intf sta1-wlan0 (0) to node sta1
+*** sta1 : ('ip link set', 'sta1-wlan0', 'down')
+*** sta1 : ('ip link set', 'sta1-wlan0', 'address', '00:00:00:00:00:02')
+*** sta1 : ('ip link set', 'sta1-wlan0', 'up')
+
+added intf sta2-wlan0 (0) to node sta2
+*** sta2 : ('ip link set', 'sta2-wlan0', 'down')
+*** sta2 : ('ip link set', 'sta2-wlan0', 'address', '00:00:00:00:00:03')
+*** sta2 : ('ip link set', 'sta2-wlan0', 'up')
+
+added intf ap1-wlan1 (1) to node ap1
+*** ap1 : ('ip link set', 'ap1-wlan1', 'up')
+*** ap1 : ('ethtool -K', <TCWirelessLink ap1-wlan1>, 'gro', 'off')
+Cannot get device udp-fragmentation-offload settings: Operation not supported
+Cannot get device udp-fragmentation-offload settings: Operation not supported
+getting mac address from ap1-wlan1
+_popen ['mnexec', '-da', '594', 'ip', 'addr', 'show', 'ap1-wlan1'] 746
+02:00:00:00:02:00Name of wmediumd config: /tmp/mn_wmd_config_QJ5XSN.cfg
+Name of wmediumd log: /tmp/mn_wmd_log_kYZ6kK.log
+*** Connecting to wmediumd server /var/run/wmediumd.sock
+*** ap1 : ("echo 'interface=ap1-wlan1\ndriver=nl80211\nssid=new-ssid\nwds_sta=1\ncountry_code=US\nhw_mode=a\nchannel=36\nctrl_interface=/var/run/hostapd\nctrl_interface_group=0' > mn579_ap1-wlan1.apconf",)
+> > > > > > > > *** ap1 : ('hostapd -B mn579_ap1-wlan1.apconf ',)
+Configuration file: mn579_ap1-wlan1.apconf
+ap1-wlan1: interface state UNINITIALIZED->COUNTRY_UPDATE
+Using interface ap1-wlan1 with hwaddr 02:00:00:00:02:00 and ssid "new-ssid"
+ap1-wlan1: interface state COUNTRY_UPDATE->ENABLED
+ap1-wlan1: AP-ENABLED
+*** ap1 : ('ip link set', 'ap1-wlan1', 'down')
+*** ap1 : ('ip link set', 'ap1-wlan1', 'address', '02:00:00:00:02:00')
+*** ap1 : ('ip link set', 'ap1-wlan1', 'up')
+_popen ['mnexec', '-da', '599', 'iw', 'dev', 'sta1-wlan0', 'set', 'txpower', 'fixed', '1400'] 772
+_popen ['mnexec', '-da', '601', 'iw', 'dev', 'sta2-wlan0', 'set', 'txpower', 'fixed', '1400'] 773
+_popen ['mnexec', '-da', '594', 'iw', 'dev', 'ap1-wlan1', 'set', 'txpower', 'fixed', '1400'] 774
+*** Starting network
+*** Configuring nodes
+*** sta1 : ('ip addr flush ', 'sta1-wlan0')
+*** sta1 : ('ip addr add 10.0.0.1/8 dev sta1-wlan0 && ip -6 addr add 2001:0:0:0:0:0:0:1/64 dev sta1-wlan0',)
+*** sta1 : ('ip -6 addr flush ', 'sta1-wlan0')
+*** sta1 : ('ip -6 addr add', '2001:0:0:0:0:0:0:1/64', 'dev', 'sta1-wlan0')
+*** sta1 : ('ip link set lo up',)
+*** sta2 : ('ip addr flush ', 'sta2-wlan0')
+*** sta2 : ('ip addr add 10.0.0.2/8 dev sta2-wlan0 && ip -6 addr add 2001:0:0:0:0:0:0:2/64 dev sta2-wlan0',)
+*** sta2 : ('ip -6 addr flush ', 'sta2-wlan0')
+*** sta2 : ('ip -6 addr add', '2001:0:0:0:0:0:0:2/64', 'dev', 'sta2-wlan0')
+*** sta2 : ('ip link set lo up',)
+_popen ['mnexec', '-da', '599', 'iwconfig', 'sta1-wlan0', 'essid', 'new-ssid', 'ap', '02:00:00:00:02:00'] 788
+_popen ['mnexec', '-da', '601', 'iwconfig', 'sta2-wlan0', 'essid', 'new-ssid', 'ap', '02:00:00:00:02:00'] 789
+
+added intf sta1-wlan0 (1) to node sta1
+*** sta1 : ('ip link set', 'sta1-wlan0', 'up')
+*** sta1 : ('ethtool -K', <TCWirelessLink sta1-wlan0>, 'gro', 'off')
+Cannot get device udp-fragmentation-offload settings: Operation not supported
+Cannot get device udp-fragmentation-offload settings: Operation not supported
+
+added intf sta2-wlan0 (1) to node sta2
+*** sta2 : ('ip link set', 'sta2-wlan0', 'up')
+*** sta2 : ('ethtool -K', <TCWirelessLink sta2-wlan0>, 'gro', 'off')
+Cannot get device udp-fragmentation-offload settings: Operation not supported
+Cannot get device udp-fragmentation-offload settings: Operation not supported
+Enabling Graph...
+*** errRun: ['which', 'controller']
+/usr/local/bin/controller
+  0*** c1 : ('controller -v ptcp:6653 1>/tmp/c1.log 2>/tmp/c1.log &',)
+*** ap1 : ('ovs-vsctl', '-- --id=@ap1c1 create Controller target=\\"tcp:127.0.0.1:6653\\" max_backoff=1000 -- --if-exists del-br ap1 -- add-br ap1 -- set bridge ap1 controller=[@ap1c1] other_config:datapath-id=1000000000000001 fail_mode=secure other-config:disable-in-band=true other-config:dp-desc=ap1 -- add-port ap1 ap1-wlan1 -- set Interface ap1-wlan1 ofport_request=1')
+e69e13c2-cbfe-41b4-87f4-03bd1ea91baa
+*** ap1 : ('ip link set', 'ap1-wlan1', 'up')
+*** ap1 : ('ethtool -K', <TCWirelessLink ap1-wlan1>, 'gro', 'off')
+Cannot get device udp-fragmentation-offload settings: Operation not supported
+Cannot get device udp-fragmentation-offload settings: Operation not supported
+*** Running CLI
+*** Starting CLI:
+*** errRun: ['stty', 'echo', 'sane', 'intr', '^C']
+  0mininet-wifi> exit
+*** Stopping network
+*** Stopping 1 access points
+ap1 *** ap1 : ('ovs-vsctl del-br', <OVSAP ap1: lo:127.0.0.1,ap1-wlan1:None pid=594> )
+.
+*** Stopping 2 stations
+sta1 sta2
+*** Stopping 1 controllers
+c1 *** c1 : ('kill %controller',)
+*** c1 : ('wait %controller',)
+
+*** Stopping 2 links
+..
+*** Stopping 0 switches
+
+*** Stopping 0 hosts
+
+*** Done
+
+*** Removing WiFi module and Configurations
+*** Killing mac80211_hwsim
+n0obie@n0obie-VirtualBox:~/TFG/src/use_cases/p4-wireless/analysis/Mininet-wifi/examples$
+
