@@ -278,6 +278,8 @@ Este analisis del flujo de ejecución se ha llevado a cabo en el commit [`d0bce`
 *   [BMV2](https://github.com/p4lang/behavioral-model)
 *   [Medium and mobility behaviour insertion for 802.11 emulated networks -  wmediumd](https://core.ac.uk/download/pdf/41810121.pdf)
 *   [Design and implementation of a wireless network tap device for IEEE 802.11 wireless network emulation](https://ieeexplore.ieee.org/abstract/document/8330098)
-*   [Analysis of Open Source Drivers for IEEE 802.11
-WLANs](http://www.au-kbc.org/comm/Docs/papers/Vipin_Analysis_of_open_source_WLAN_driver_paper.pdf)
+*   [Analysis of Open Source Drivers for IEEE 802.11 WLANs](http://www.au-kbc.org/comm/Docs/papers/Vipin_Analysis_of_open_source_WLAN_driver_paper.pdf)
+*   [Figura componentes Mininet-Wifi](https://github.com/ramonfontes/mn-wifi-book-pt)
+*   [Diapositivas de la universidad de trento sobre el subsistema wireless de Linux](http://disi.unitn.it/locigno/didattica/NC/14-15/Laboratory_1.pdf)
+
  
