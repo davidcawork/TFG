@@ -277,6 +277,21 @@ Ahora que ya tenemos una idea sobre el funcionamiento interno de ambas herramien
 
 A la par que se estaba trabajando en el desarrollo de la integración del BMV2 en Mininet-Wifi [Ramon Fontes](https://github.com/ramonfontes) abrió un [issue](https://github.com/intrig-unicamp/mininet-wifi/issues/295) donde se exponía la intención del creado en dicha integración. En este [issue](https://github.com/intrig-unicamp/mininet-wifi/issues/295) se pudo debatir con [Ramon Fontes](https://github.com/ramonfontes) como debía hacerse dicho desarrollo. 
 
+Se ha decidido hacer un jerarquía de clases generica para el BMv2 para que de estas se puedan crear clases custum con añadidos nuevos, por así decirlo estas clases serán la base para clases que controlen el BMV2 de uan forma más particular. Una clase [`P4AP`](https://github.com/davidcawork/mininet-wifi/blob/p4/mn_wifi/bmv2.py#L447), la cual continee todos los tributos y metodos comunes al BMV2 como son el path de ejecución del BMv2, el json compialdo del programa p4, el thrift-port, configuración de log y identificador básico del BMV2. De esta clase se quiere que herede una clase llamada [`P4RuntimeAP`](https://github.com/davidcawork/mininet-wifi/blob/p4/mn_wifi/bmv2.py#L616), la cual proporcionará todos los elementos necesarios para dar soporte a la configurarción via P4Runtime via gRPC-port del BMV2.
+
+
+
+![UML P4-Mininet-Wifi](../../../img/p4-wireless/p4_Mininet_Wifi_UML.png)
+
+
+Además hablando con [Ramon Fontes](https://github.com/ramonfontes) sobre la implementación de estas clases, me indicó que sería de gran utilidad que dichas clases tengan soporte de ejecución en Network Namespaces, por lo que de forma paralela se tuvo que crear una clase llamada [`Netns_mgmt`](https://github.com/davidcawork/TFG/tree/master/src/netns_mgmt). Esta clase nos ayuda a gestionar la ejecución de código python en runtime de un Network namespace indicada haciendo uso de la llamada `setns` la cual asocia el procesos sobre la cual se realiza esta llamada al sistema a una Namespace indicada.
+
+Con la ayuda de esta clase, [`Netns_mgmt`](https://github.com/davidcawork/TFG/tree/master/src/netns_mgmt), se pudo conseguir configurar cada BMV2 en su propia Network Namespace, por tanto la integración se dio por terminada. Adicionalmente se añadieron dos ejemplos a Mininet-Wifi con la finalidad de ayudar a las personas que vayan hacer uso de clase. Dichos ejemplos pueden ser econtrados [aquí](https://github.com/davidcawork/mininet-wifi/tree/p4/examples/p4).
+
+
+Todo este desarrollo se llevo a cabo en un fork de Mininet-Wifi, y dentro de este en una rama en particular, en la cual se llevan a cabo todos los desarrollos de P4. Una vez finalizada la integración, se ofreció el desarrollo al repositorio oficial de Mininet-Wifi via pull-request. Actualmente se ha dejado a la espera de hacer un upgrade a las dependencias donde fue llevada a cabo la integración, ya que Mininet-Wifi está trabajando con las últimas versiones! Nosotros para el desarrollo de los casos de uso p4-wireless, se hará uso de las versiones estables de las dependencias del entorno P4.
+
+
 
 ## Fuentes 
 
