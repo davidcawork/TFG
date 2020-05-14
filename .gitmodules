@@ -4,3 +4,6 @@
 [submodule "src/xdp-tutorial-solutions"]
 	path = src/xdp-tutorial-solutions
 	url = https://github.com/davidcawork/xdp-tutorial-solutions.git
+[submodule "src/use_cases/p4-wireless/mininet-wifi"]
+	path = src/use_cases/p4-wireless/mininet-wifi
+	url = https://github.com/davidcawork/mininet-wifi.git
