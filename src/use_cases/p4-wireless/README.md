@@ -126,7 +126,6 @@ El subsistema wireless de Linux consiste en un set de varios módulos que se enc
 </p>
 
 
-![Foto del subsistema wireless]() 
 
 El objetivo principal de  este módulo ``mac80211_hwsim`` es facilitar a los desarrolladores de drivers de tarjetas wireless la prueba de su código e interacción con el siguiente módulo llamado ``mac80211``. Las interfaces virtualizadas no tienen las limitaciones, es decir, a diferencia del hardware real,  resulta más sencillo la creación de distintas pruebas con distintas configuraciones sin estar cohibidos por falta de recursos materiales. Este módulo generalmente recibe un único parámetro, que es el número de "radios" , interfaces virtuales, a virtualizar. Dado que las posibilidades que ofrece este módulo eran un poco reducidas, muchos wrappers han sido creados para ofrecer más funcionalidad a parte de la dada por el propio módulo. La mayoría de herramientas creadas hacen uso de la librería Netlink para comunicarse directamente con el subsistema en el Kernel y así conseguir configuraciones extra, como pueden ser añadir un RSSI, darle nombre a la interfaz. Un ejemplo de dichas herramientas sería la herramienta [``mac80211_hwsim_mgmt``](https://github.com/patgrosse/mac80211_hwsim_mgmt), la cual es usada por Mininet-Wifi para gestionar la creación de las interfaces wireless en cada nodo que las requiera. 
 
@@ -268,7 +267,15 @@ Este analisis del flujo de ejecución se ha llevado a cabo en el commit [`d0bce`
 | Puesta en marcha de la CLI de Mininet Wifi. | *** Running CLI *** Starting CLI | - | [`topology`](https://github.com/davidcawork/TFG/blob/master/src/use_cases/p4-wireless/analysis/Mininet-wifi/examples/topo_wmediumd.py#L32) |
 
 
+Hemos llegado a la conclusión de que la gran diferencia entre una topolgía con enlaces `TCLink` y enlaces de tipo `wmediumd`, es que los enlaces contorlados por el `TC` de Linux siempre son enlaces uno a uno, donde se aplican las restricciones en el `TC` a cada extremo del enlace. En cambio, cuando el entorno es gestionado por  `wmediumd` no es necesario indicar los enlaces ya que es la propia herramienta la que gestionará los rangos de cada nodo de la red. 
 
+De forma adicional, mencionar que los dos analisis han sido hechos con dos commits distintos debido a que mientras se estaba analizando se actualizo la clase `module`. Se pensó que sería de utilidad analizar la nueva versión para ver que cambios se habian introduccido, se vió que unicamnete se re-organizo código para habilitar la creación de radios en vuelo cuando los enlaces están gestionados por `wmediumd`, además de cambiar el nombre de la clase `module` por `Mac80211Hwsim` siendo esta última mucho más identificativa, ya que siempre en última instacia es este módulo el que es insertado en el Kernel.
+
+## Integración del BMV2 en Mininet-Wifi
+
+Ahora que ya tenemos una idea sobre el funcionamiento interno de ambas herramientas, vamos a proceder con su integración. Como ya se comentó anteriormente se partirá de la base desarrollada por [Ramon Fontes](https://github.com/ramonfontes), que había hecho un [fork](https://github.com/ramonfontes/tutorials)  de los tutoriales de p4 y los había adaptado a Mininet-Wifi.
+
+A la par que se estaba trabajando en el desarrollo de la integración del BMV2 en Mininet-Wifi [Ramon Fontes](https://github.com/ramonfontes) abrió un [issue](https://github.com/intrig-unicamp/mininet-wifi/issues/295) donde se exponía la intención del creado en dicha integración. En este [issue](https://github.com/intrig-unicamp/mininet-wifi/issues/295) se pudo debatir con [Ramon Fontes](https://github.com/ramonfontes) como debía hacerse dicho desarrollo. 
 
 
 ## Fuentes 
