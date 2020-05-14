@@ -291,7 +291,25 @@ Con la ayuda de esta clase, [`Netns_mgmt`](https://github.com/davidcawork/TFG/tr
 
 Todo este desarrollo se llevo a cabo en un fork de Mininet-Wifi, y dentro de este en una rama en particular, en la cual se llevan a cabo todos los desarrollos de P4. Una vez finalizada la integración, se ofreció el desarrollo al repositorio oficial de Mininet-Wifi vía [`pull-request`](https://github.com/intrig-unicamp/mininet-wifi/pull/302). Actualmente se ha dejado a la espera de hacer un upgrade a las dependencias donde fue llevada a cabo la integración, ya que Mininet-Wifi está trabajando con las últimas versiones! Nosotros para el desarrollo de los casos de uso p4-wireless, se hará uso de las versiones estables de las dependencias del entorno P4.
 
+## Puesta en marcha del Mininet-Wifi modificado
 
+Para poder probar el desarrollo llevado a cabo con Mininet-Wifi deberemos hacer los siguientes pasos previamente. Bajarnos el repositorio de mi fork, no el oficial:
+
+```bash
+    git clone https://github.com/davidcawork/mininet-wifi
+```
+
+Haremos un checkout para cambiarnos desde la rama master del repositorio a la rama de desarrollo de elementos P4. Previamente deberemos bajarnos las referencias desde el remoto.
+
+```bash
+
+cd mininet-wifi && git fetch
+git checkout p4
+
+```
+
+
+Como la rama de desarrollo añade modulos nuevos a Mininet-Wifi se deberá "recompilar" de nuevo haciendo un `make install` desde el directorio `/mininet-wifi`. Para que los modulos añadidos funcionen correctamente se deberán tener las dependencias del entorno p4, en la siguiente tabla se puden comprobar que versiones son requeridas.
 
 ## Fuentes 
 
