@@ -311,6 +311,16 @@ git checkout p4
 
 Como la rama de desarrollo añade modulos nuevos a Mininet-Wifi se deberá "recompilar" de nuevo haciendo un `make install` desde el directorio `/mininet-wifi`. Para que los modulos añadidos funcionen correctamente se deberán tener las dependencias del entorno p4, en la siguiente tabla se puden comprobar que versiones son requeridas.
 
+
+|    Dependencia   | Versión requerida |
+|:---------------:|:-------------------:|
+|  [`BMV2`](https://github.com/p4lang/behavioral-model)  |  `b447ac4c0cfd83e5e72a3cc6120251c1e91128ab` |
+|  [`PI`](https://github.com/p4lang/PI) |     `41358da0ff32c94fa13179b9cee0ab597c9ccbcc`  |
+|  [`P4C`](https://github.com/p4lang/p4c)  |    `69e132d0d663e3408d740aaf8ed534ecefc88810`     |
+|  [`PROTOBUF`](https://github.com/protocolbuffers/protobuf) |   `v3.2.0`  |
+|  [`GRPC`](https://github.com/grpc) |    `v1.3.2` |
+
+
 ## Fuentes 
 
 *   [Mininet-Wifi](https://github.com/intrig-unicamp/mininet-wifi)
