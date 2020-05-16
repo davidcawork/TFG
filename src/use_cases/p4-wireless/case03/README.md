@@ -29,4 +29,4 @@ Una vez comprobado que poseé todas la dependencias, simplemente tendremos que e
 sudo python scenario.py
 ```
 
-Este script como se dijo levantará toda la topología en Mininet-Wifi y acto seguido nos abrirá la CLI de Mininet. Para la comprobación de funcionamiento de este caso de uso siga los pasos indicados en el caso de uso análogo de P4 en un entorno alámbrico
+Este script como se dijo levantará toda la topología en Mininet-Wifi y acto seguido nos abrirá la CLI de Mininet. Para la comprobación de funcionamiento de este caso de uso siga los pasos indicados en el caso de uso análogo de P4 en un entorno alámbrico.
