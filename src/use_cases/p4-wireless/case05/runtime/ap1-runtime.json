@@ -20,7 +20,7 @@
       },
       "action_name": "MyIngress.mac_forward",
       "action_params": {
-        "port": 2
+        "port": 1
       }
     },
     {
@@ -30,7 +30,7 @@
       },
       "action_name": "MyIngress.mac_forward",
       "action_params": {
-        "port": 3
+        "port": 1
       }
     }
   ],
@@ -40,14 +40,6 @@
       "replicas" : [
         {
           "egress_port" : 1,
-          "instance" : 1
-        },
-        {
-          "egress_port" : 2,
-          "instance" : 1
-        },
-        {
-          "egress_port" : 3,
           "instance" : 1
         }
       ]
