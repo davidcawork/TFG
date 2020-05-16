@@ -1,4 +1,4 @@
-# P4 Wireless - Case04: Echo server
+# P4 Wireless - Case04: Layer 3 forwarding
 
 En este caso de uso trataremos de implementar un forwarding a nivel de red, capa 3, por ello nuestro hipotético "switch" será ahora un un router muy básico y con muy pocas funcionalidades :smirk:. Como tal el programa p4 no es suficiente para probar esta funcionalidad ya que requiere de una plataforma que sea capaz de soportar el lenguaje p4. Nosotros haremos uso de software switch llamado [``behavioral-model``](https://github.com/p4lang/behavioral-model), [``BMV2``](https://github.com/p4lang/behavioral-model) en adelante, para testear nuestros programas p4, y de nuestra integración con [``Mininet-wifi``](https://github.com/davidcawork/mininet-wifi/tree/be2b9977f7c7630cc9d4b0d909cf4f8476c353d6) como escenario para recrear nuestras topologías de Red. 
 
