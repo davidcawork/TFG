@@ -13,3 +13,10 @@ En este directorio se encuentran distintos casos de uso, a replicar con cada tec
 | case03 - Echo server        | :white_check_mark:    | :white_check_mark:   |  :white_check_mark:  | :white_check_mark: |
 | case04 - Layer 3 forwarding | :white_check_mark:    | :white_check_mark:   |  :white_check_mark:  | :white_check_mark: |
 | case05 - Broadcast          | :white_check_mark:    | :white_check_mark:   |  :white_check_mark:  | :white_check_mark: |
+
+
+De forma adicional, se quiere explorar la viabilidad de hacer uso del modulo `mac802154_hwsim` para replicar los casos de uso y ver las limitaciones, y puntos fuertes que tendrían P4 y XDP en ese medio inlámbrico de baja capacidad. 
+
+| Escenario         | Viabilidad |
+|---------------|-----|
+| Modulo del kernel `mac802154_hwsim` para replicar un medio inlámbrico de baja capacidad ||
