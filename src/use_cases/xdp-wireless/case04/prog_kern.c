@@ -48,7 +48,7 @@ int xdp_redirect_func(struct xdp_md *ctx)
 	struct ethhdr *eth;
 	int eth_type;
 	int action = XDP_PASS;
-	unsigned char dst[ETH_ALEN + 1] = {0x02,0x02,0x02,0x02,0x02,0x02, '\0'} ;
+	//unsigned char dst[ETH_ALEN + 1] = {0x02,0x02,0x02,0x02,0x02,0x02, '\0'} ;
 	unsigned ifindex = 2; 	
 
 	/* These keep track of the next header type and iterator pointer */
@@ -60,7 +60,7 @@ int xdp_redirect_func(struct xdp_md *ctx)
 		goto out;
 
 
-	memcpy(eth->h_dest,dst,ETH_ALEN);
+	//memcpy(eth->h_dest,dst,ETH_ALEN);
 	action = bpf_redirect(ifindex,0);
 
 out:

@@ -7,8 +7,7 @@
 # 	Date:   21 Feb 2020
 
 XDP_TARGETS  := prog_kern
-USER_TARGETS :=
-EBPF_TC	:= bpf
+USER_TARGETS := trace_read
 
 LIBBPF_DIR = ../libbpf/src/
 COMMON_DIR = ../common
