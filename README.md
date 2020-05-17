@@ -15,7 +15,7 @@
 
 |      **Task**     |     **Status**    | **Priority** |
 |:-------------:|:-------------:|:-------------:|
-| Develop xdp-wireless use cases | ![underway](https://img.shields.io/badge/-underway-brightgreen) | ![medium](https://img.shields.io/badge/-medium-lightgrey) |
+| Write memory in latex | ![underway](https://img.shields.io/badge/-underway-brightgreen) | ![medium](https://img.shields.io/badge/-medium-lightgrey) |
 | Translate the contents of the repository into English | ![queued](https://img.shields.io/badge/-queued-orange) | ![low](https://img.shields.io/badge/-low-blue) |
 
 
