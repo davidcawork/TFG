@@ -8,7 +8,6 @@
 from mininet.log import setLogLevel, info
 from mn_wifi.cli import CLI
 from mn_wifi.net import Mininet_wifi
-#from mn_wifi.link import TCWirelessLink
 
 def topology():
     "Create a network."
@@ -34,9 +33,13 @@ def topology():
     ap1.start([])
 
     info("*** Loading XDP program\n")
-    sta1.cmd("mount -t bpf bpf /sys/fs/bpf/")
-    sta1.cmd("./xdp_loader -S -d sta1-wlan0 -F --progsec xdp_case03")
+    ap1.cmd("mount -t bpf bpf /sys/fs/bpf/")
+    ap1.cmd("./xdp_loader -S -d ap1-wlan1 -F --progsec xdp_case03")
 
+    info("*** No arp resolutions\n")
+    for sta in net.stations:
+        sta.cmd("arp -s 10.0.0.254 09:09:09:09:09:09")
+        sta.cmd("ip route add default via 10.0.0.254")
 
     info("*** Running CLI\n")
     CLI(net)
