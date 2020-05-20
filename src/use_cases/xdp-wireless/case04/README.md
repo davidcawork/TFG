@@ -30,7 +30,7 @@ Si tiene dudas sobre el proceso de compilación del programa XDP le recomendamos
 
 Para testear los programas XDP en un entorno inalámbrico, haremos Mininet-Wifi para emular las topologías de red. Esta herramienta de emulación es un fork de Mininet, la cuales hacen uso de  las Network Namespaces para conseguir aislar los nodos independientes de la red. Pero, ¿Qué es una Network Namespaces? Una network namespace consiste en una replica lógica de stack de red que por defecto tiene el kernel de Linux, rutas, tablas ARP, Iptables e interfaces de red.
 
-Como ya comentábamos, para levantar el escenario solo tendremos que ejecutar el script en Python que hace uso de la API de Mininet-Wifi para generar toda la topología de red. Una vez ejecutado este abrirá la interfaz de linea de comandos de Mininet-Wifi, desde la cual podremos comprobar el funcionamiento de nuestro caso de uso. En este caso de uso en particular, se realiza la carga del programa XDP desde el propio script de python, [aquí](https://github.com/davidcawork/TFG/blob/master/src/use_cases/xdp-wireless/case03/runenv.py#L37) se puede ver, haciendo uso de la herramienta `xdp_loader` desarrollada para ello. Por tanto, como hemos dicho este script está autocontenido, por lo que solo deberemos ejecutarlo :smile::
+Como ya comentábamos, para levantar el escenario solo tendremos que ejecutar el script en Python que hace uso de la API de Mininet-Wifi para generar toda la topología de red. Una vez ejecutado este abrirá la interfaz de linea de comandos de Mininet-Wifi, desde la cual podremos comprobar el funcionamiento de nuestro caso de uso. Por lo que solo deberemos ejecutarlo :smile::
 
 ```bash
 sudo python runenv.py
@@ -115,7 +115,7 @@ mininet-wifi> ap1 ./xdp_stats -d ap1-wlan1
 El escenario levantado es el siguiente, está compuesto de una estación wireless y un host, que corren dentro de su respectivas Network Namespaces, y un punto de acceso corriendo un proceso de `Hostapd` para comunicar las dos estaciones wireless entre sí. De forma adicional, y por consistencia del caso de uso se ha decidido correr dicho switch dentro de su propia Network Namespace para que no haya lugar a dudas de que el forwarding se está realizando correctamente y no está habiendo "bypasses" de ningún tipo. En este caso el forwarding lo haremos desde la interfaz ``ap1-wlan1`` hacia la interfaz ``ap1-eth2`` y viceversa.
 
 
-![scenario](../../../../img/use_cases/xdp-wireless/case04/scenario_B.png)
+![scenario](../../../../img/use_cases/xdp-wireless/case04/scenario_b.png)
 
 ### Carga del programa  XDP
 
@@ -163,4 +163,3 @@ mininet-wifi> ap1 sudo ./xdp_stats -d ap1-eth2
 ## Fuentes
 
 * [Helpers BPF](http://man7.org/linux/man-pages/man7/bpf-helpers.7.html) 
-
