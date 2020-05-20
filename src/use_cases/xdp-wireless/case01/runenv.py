@@ -8,11 +8,10 @@
 from mininet.log import setLogLevel, info
 from mn_wifi.cli import CLI
 from mn_wifi.net import Mininet_wifi
-from mn_wifi.link import TCWirelessLink
 
 def topology():
     "Create a network."
-    net = Mininet_wifi(link=TCWirelessLink)
+    net = Mininet_wifi()
 
     info("*** Creating nodes\n")
     sta1 = net.addStation('sta1', mac='00:00:00:00:00:01', ip='10.0.0.1/8', position='15,35,0',range=20)
