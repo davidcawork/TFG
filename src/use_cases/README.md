@@ -26,4 +26,6 @@ De forma adicional, se quiere explorar la viabilidad de hacer uso del modulo `ma
 
 | Escenario         | Viabilidad |
 |---------------|-----|
-| Modulo del kernel `mac802154_hwsim` para replicar un medio inlámbrico de baja capacidad ||
+| Modulo del kernel `mac802154_hwsim` para replicar un medio inlámbrico de baja capacidad | No es viable ya que este modulo sigue otra arquitectura, además de no ofrecer interfaces de ethernet conectadas a la "tarjeta wireless emulada". |
+
+No obstante se ha probado a añadir un programa XDP a una interfaz generada por el modulo mac802.154_hwsim y tanto la carga como su funcionalidad a nivel de códigos de retorno han sido saticfactora.
