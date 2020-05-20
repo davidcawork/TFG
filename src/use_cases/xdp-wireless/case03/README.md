@@ -1,4 +1,4 @@
-# XDP - Case03: Echo server
+# XDP Wireless - Case03: Echo server
 
 En este test nos adentraremos al parseo de paquetes, su filtrado y manejo. En los anteriores caso de uso exclusivamente definíamos un comportamiento de los paquetes haciendo un uso exclusivo de los códigos de retorno XDP, más concretamente ``XDP_DROP`` para tirar los paquetes y ``XDP_PASS`` para admitir los paquetes. Hay más códigos de retorno XDP pero con ellos no podemos lograr desarrollar todas las lógicas posibles, se pueden consultar en el siguiente archivo de cabecera [``bpf.h``](https://github.com/torvalds/linux/blob/master/include/uapi/linux/bpf.h#L3298). En la siguiente tabla se pueden contemplar todos los códigos de retorno XDP.
 
@@ -101,66 +101,63 @@ Para conseguir esto debemos añaadir la siguiente declaración antes del bucle p
 
 ## Compilación
 
-Para compilar el programa XDP se ha dejado un Makefile preparado en este directorio al igual que en el [``case02``](https://github.com/davidcawork/TFG/tree/master/src/use_cases/xdp/case02), por lo que para compilarlo unicamente hay que hacer un:
+Para compilar el programa XDP se ha dejado un Makefile preparado en este directorio al igual que en el [``case02``](https://github.com/davidcawork/TFG/tree/master/src/use_cases/xdp-wireless/case02), por lo que para compilarlo unicamente hay que hacer un:
 
 ```bash
-make
+sudo make
 ```
 Si tiene dudas sobre el proceso de compilación del programa XDP le recomendamos que vuelva al [``case02``](https://github.com/davidcawork/TFG/tree/master/src/use_cases/xdp/case02) donde se hace referencia al flow dispuesto para la compilación de los programas.
 
 
 ## Puesta en marcha del escenario
 
-Para testear los programas XDP haremos uso de las Network Namespaces. Si usted no sabe lo que son las Network Namespaces, o el concepto de namespace en general, le recomendamos que se lea el [``case01``](https://github.com/davidcawork/TFG/tree/master/src/use_cases/xdp/case01) donde se hace una pequeña introducción a las Network Namespaces, qué son y cómo podemos utilizarlas para emular nuestros escenarios de Red. 
+Para testear los programas XDP en un entorno inalámbrico, haremos Mininet-Wifi para emular las topologías de red. Esta herramienta de emulación es un fork de Mininet, la cuales hacen uso de  las Network Namespaces para conseguir aislar los nodos independientes de la red. Pero, ¿Qué es una Network Namespaces? Una network namespace consiste en una replica lógica de stack de red que por defecto tiene el kernel de Linux, rutas, tablas ARP, Iptables e interfaces de red.
 
-Como ya comentabamos, para que no suponga una barrera de entrada el concepto de las Network Namespaces, se ha dejado escrito un script para levantar el escenario, y para su posterior limpieza. Es importante señalar que el script debe ser lanzado con permisos de root. Para levantar el escenario debemos ejecutar dicho script de la siguiente manera:
-
-```bash
-sudo ./runenv.sh -i
-```
-
-Para limpiar nuestra máquina del escenario recreado anteriormente podemos correr el mismo script indicándole ahora el parámetro -c (Clean). A unas malas, y si se cree que la limpieza no se ha realizado de manera satisfactoria, podemos hacer un reboot de nuestra máquina consiguiendo así que todos los entes no persistentes(veth, netns..) desaparezcan de nuestro equipo.
+Como ya comentábamos, para levantar el escenario solo tendremos que ejecutar el script en Python que hace uso de la API de Mininet-Wifi para generar toda la topología de red. Una vez ejecutado este abrirá la interfaz de linea de comandos de Mininet-Wifi, desde la cual podremos comprobar el funcionamiento de nuestro caso de uso. En este caso de uso en particular, se realiza la carga del programa XDP desde el propio script de python, [aquí](https://github.com/davidcawork/TFG/blob/master/src/use_cases/xdp-wireless/case03/runenv.py#L37) se puede ver, haciendo uso de la herramienta `xdp_loader` desarrollada para ello. Por tanto, como hemos dicho este script está autocontenido, por lo que solo deberemos ejecutarlo :smile::
 
 ```bash
-sudo ./runenv.sh -c
+sudo python runenv.py
 ```
 
-El escenario que vamos a manejar en este caso de uso es el siguiente, compuesto unicamente de una Network namespace y un par de veth's para comunicar la Network namespace creada con la Network namespace por defecto.
+Para limpiar nuestra máquina del escenario recreado anteriormente con Mininet-Wifi podríamos hacer un `sudo mn -c` pero se le recomienda al usuario que haga uso del target del Makefile destinado para ello, ya que adicionalmente limpiará los ficheros intermedios generados en el proceso de compilación de nuestro programa XDP. Ejecutando el siguiente comando limpiaríamos nuestra máquina:
 
-![scenario](../../../../img/use_cases/xdp/case03/scenario.png)
+```bash
+sudo make clean
+```
+
+Por último únicamente indicar que el escenario recreado es el siguiente, compuesto exclusivamente de dos estaciones wireless, aisladas en sus propias network namespaces, y un punto de acceso corriendo el daemon de `Hostapd` para intercomunicar dichas estaciones wifi.
+
+![scenario](../../../../img/use_cases/xdp-wireless/case03/scenario.png)
 
 ## Carga del programa  XDP
 
 Ya tenemos escenario y el programa XDP compilado.. Es hora de cargarlo en el Kernel :smirk:. Si usted no sabe de dónde ha salido el programa [``xdp_loader``](https://github.com/davidcawork/TFG/blob/master/src/use_cases/xdp/util/xdp_loader.c), qué nos aporta la librería [``libbpf``](https://github.com/torvalds/linux/tree/master/tools/lib/bpf), o por que no hacemos uso de la herramienta [``iproute2``](https://wiki.linuxfoundation.org/networking/iproute2) para cargar los programas XDP en el Kernel, por favor vuelva al [``case01``](https://github.com/davidcawork/TFG/tree/master/src/use_cases/xdp/case01) donde se intenta abordar todas estas dudas. Si aun así tiene alguna duda extra o considera que no se encuentra del todo explicado póngase en contacto conmigo o mis tutores.
 
-De forma adicional comentar que se va hacer uso del módulo ``netns`` de la herramienta [``iproute2``](https://wiki.linuxfoundation.org/networking/iproute2), si tiene alguna duda sobre este le recomendamos que consulte sus man-pages o vuelva al [``case02``](https://github.com/davidcawork/TFG/tree/master/src/use_cases/xdp/case02) donde se hace una pequeña introducción sobre éste, y su funcionamiento básico para ejecutar comandos "dentro" de una Network Namespace.
 
+Al loader le estamos indicando ``-d`` (device), ``-S`` para indicar que la carga sobre la interfaz se lleva a cabo en modo genérico,``-F`` (Force) para que haga un override en caso de que ya haya un programa XDP anclado a dicha interfaz y por último, le indicamos el ``--progsec`` (program section) utilizados en XDP para englobar distintas funcionalidades ya que en un mismo bytecode puede haber distintos programas XDP. 
 
 ```bash
-
-# Anclamos el programa XDP (xdp_pass) en la interfaz veth0, perteneciente a la Network Namespace "uno" 
-sudo ip netns exec uno ./xdp_loader -d veth0 -F --progsec xdp_pass
-
-# Anclamos el programa XDP en la interfaz uno, perteneciente a la Network Namespace por defecto.
-sudo ./xdp_loader -d uno -F --progsec xdp_case03
-
+# Linea 38 del script runenv.py
+sudo ./xdp_loader -d ap1-wlan1 -F --progsec xdp_case03 -S
 ```
-
-En este caso de uso aclaremos el programa XDP a validar en la ``veth`` exterior, por lo que las pruebas vendrán induccidas desde "dentro" de la Network Namespace ``uno``. Para anclar el programa hemos hecho uso de nuevo del programa [``xdp_loader``](https://github.com/davidcawork/TFG/blob/master/src/use_cases/xdp/util/xdp_loader.c). Es importante señalar como hemos tenido que anclar un *dummy program* que permite pasar todos los paquetes a la veth destino, esta es una limitación propia por trabajar con ``veth's`` y XDP, de momento se trata de una limitación de implementación, puede que a un corto plazo esta limitación se vea ya superada. Para más inforación sobre esta limitación recomendamos ver la charla de la [Netdev](https://netdevconf.info) llamada **_Veth XDP: XDP for containers_** donde explican con un mayor detalle esta limitación, como abordarla y por que está inducida.  [Enlace a la charla](https://netdevconf.info/0x13/session.html?talk-veth-xdp)
-
 
 ## Comprobación del funcionamiento
 
-La comprobación del funcionamiento del programa XDP anclado a la interfaz ``uno`` se llevará a cabo generando pings desde "dentro" la Network Namespace ``uno`` hacia afuera, para que la interfaz ``uno`` los filtre, analice y nos genere una respuesta. De forma adicional comentar que el programa soporta tanto direccionamiento IPv4 como IPv6, su funcionalidad se vio extendida debido a que la gran parte de la documentación encontrada sobre XDP donde llevan a cabo ejemplos como este hacen uso de direccionamiento IPv6 por lo que, a modo personal, me pareció un buen punto seguir esta corriente ya que el direccionamiento IPv4 se ha agotado este mismo [año](https://www.ripe.net/manage-ips-and-asns/ipv4/ipv4-run-out)  :cold_sweat: ..
+La comprobación del funcionamiento del programa XDP anclado a la interfaz ``ap1-wlan1`` se llevará a cabo generando pings desde las estaciones wireless hacia el punto de acceso, para que la interfaz ``ap1-wlan1`` los filtre, analice y nos genere una respuesta. De forma adicional comentar que el programa soporta tanto direccionamiento IPv4 como IPv6, su funcionalidad se vio extendida debido a que la gran parte de la documentación encontrada sobre XDP donde llevan a cabo ejemplos como este hacen uso de direccionamiento IPv6 por lo que, a modo personal, me pareció un buen punto seguir esta corriente ya que el direccionamiento IPv4 se ha agotado este mismo [año](https://www.ripe.net/manage-ips-and-asns/ipv4/ipv4-run-out)  :cold_sweat: ..
 
 
 ```bash
 
-# Lanzamos un ping desde "dentro" Network Namespace hacia la interfaz externa 
-sudo ip netns exec uno ping 10.0.0.1
+# Lanzamos un ping desde una estación wireless, hacia cualquier máquina, el cual atraviese
+# la interfaz ap1-wlan1. 
+mininet-wifi> sta1 ping sta2
+
+ó 
+
+mininet-wifi> sta1 ping 9.9.9.9
 
 # En una consola aparte lanzamos el programa xdp_stats para ir viendo a tiempo real los códigos de retorno XDP empleados
-sudo ./xdp_stats -d uno
+mininet-wifi> ap1 ./xdp_stats -d ap1-wlan1
 ```
 
 Si todo funciona correctamente deberíamos ver como los códigos de retorno mayormente empleados son los 
