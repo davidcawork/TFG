@@ -45,7 +45,7 @@ Al loader le estamos indicando ``-d`` (device), ``-S`` para indicar que la carga
 
 ```bash
 # Linea 38 del script runenv.py
-sudo ./xdp_loader -d sta1-wlan0 -F --progsec xdp_case01-S
+sudo ./xdp_loader -d sta1-wlan0 -F --progsec xdp_case01 -S
 ```
 
 ## Comprobación del funcionamiento
