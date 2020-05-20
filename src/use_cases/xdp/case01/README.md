@@ -50,7 +50,7 @@ sudo ./xdp_loader -d uno -F --progsec xdp_case01
 
 ## Comprobación del funcionamiento
 
-Una vez que el programa XDP fue anclado a la interfaz debemos asegurarnos de que funciona según lo esperado. Esto lo haremos generando tráfico desde un estremo de una veth para que atraviese por la interfaz que tiene anclado el programa XDP y observaremsos su comportamiento. En este caso el comportamiento esperado es que haga un drop de los paquetes nada más llegar a la interfaz, en este caso la interfaz ``uno``.
+Una vez que el programa XDP fue anclado a la interfaz debemos asegurarnos de que funciona según lo esperado. Esto lo haremos generando tráfico desde un extremo de una veth para que atraviese por la interfaz que tiene anclado el programa XDP y observaremsos su comportamiento. En este caso el comportamiento esperado es que haga un drop de los paquetes nada más llegar a la interfaz, en este caso la interfaz ``uno``.
 
 
 ```bash
