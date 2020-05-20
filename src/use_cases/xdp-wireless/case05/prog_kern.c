@@ -67,7 +67,7 @@ int xdp_pass_func(struct xdp_md *ctx)
         struct ethhdr *eth;
         int action = XDP_PASS;
 	int eth_type;
-        unsigned ifindex = 143; /*  Wireless interface */
+        unsigned ifindex = 217; /*  Wireless interface */
 
         /* These keep track of the next header type and iterator pointer */
         nh.pos = data;
