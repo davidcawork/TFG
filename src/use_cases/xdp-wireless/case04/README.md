@@ -115,7 +115,7 @@ mininet-wifi> ap1 ./xdp_stats -d ap1-wlan1
 El escenario levantado es el siguiente, está compuesto de una estación wireless y un host, que corren dentro de su respectivas Network Namespaces, y un punto de acceso corriendo un proceso de `Hostapd` para comunicar las dos estaciones wireless entre sí. De forma adicional, y por consistencia del caso de uso se ha decidido correr dicho switch dentro de su propia Network Namespace para que no haya lugar a dudas de que el forwarding se está realizando correctamente y no está habiendo "bypasses" de ningún tipo. En este caso el forwarding lo haremos desde la interfaz ``ap1-wlan1`` hacia la interfaz ``ap1-eth2`` y viceversa.
 
 
-![scenario](../../../../img/use_cases/xdp-wireless/case04/scenario_B.png)
+![scenario](../../../../img/use_cases/xdp-wireless/case04/scenario_b.png)
 
 ### Carga del programa  XDP
 
