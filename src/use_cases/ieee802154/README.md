@@ -1,9 +1,9 @@
-# Future work: Análisis  de casos de uso sobre el estándar ieee802154
+# Future work: Análisis  de casos de uso sobre el estándar `ieee802154`
 
 A continuación, se quiere hacer un breve análisis sobre la viabilidad de exportar los casos de uso realizados anteriormente en medios cableados e inalámbrico bajo el estándar wireless de baja capacidad. De esta forma se quiere ver las fortalezas y debilidades, de tanto XDP como el lenguaje P4 para programar el datapath de dispositivos de baja capacidad, en un escenario orientado a un entorno IoT (Internet of Things), con sensores los cuales están bastante limitados en batería, alcance, memoria y procesamiento.
 
 
-## Herramientas entorno `ieee802154`
+## Herramientas 
 
 ¿Por dónde empezamos?¿Qué herramientas de espacio de usuario tenemos para trabajar con el subsistema `ieee802154`? Es una buena pregunta, yo llegue a esta respuesta después de ver que dependencias instala Mininet-Wifi para interactuar con su módulo de Iot. Todas las herramientas que han sido útiles en este análisis se muestran en la siguiente tabla resumen: 
 
