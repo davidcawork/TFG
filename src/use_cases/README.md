@@ -28,3 +28,5 @@ De forma adicional, se quiere explorar la viabilidad de hacer uso del modulo `ma
 |---------------|-----|
 | Modulo del kernel `mac802154_hwsim` para replicar un medio inalámbrico de baja capacidad. | No es viable ya que este modulo sigue otra arquitectura, además de no ofrecer interfaces de Ethernet conectadas a la "tarjeta 802.15.4 emulada", por lo que habría que rehacer las distintas etapas de parsing en cada caso de uso. |
 
+*   Para más información sobre el análisis del módulo `mac802154_hwsim` consulte este [readme](./ieee802154/README.md).
+
