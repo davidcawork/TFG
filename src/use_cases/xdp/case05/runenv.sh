@@ -8,7 +8,7 @@ error(){
 }
 
 ok(){
-	echo -e "\e[92m$1"
+	echo -e "\e[92m$1\e[0m"
 }
 
 function check_prereq()
