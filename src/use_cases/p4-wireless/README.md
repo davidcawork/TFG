@@ -27,11 +27,11 @@ De esta forma también se consigue abstraer el la definición de la topología d
 El script [``run_exercise.py``](https://github.com/davidcawork/TFG/blob/master/src/use_cases/p4/utils/run_exercise.py) inicializa un objeto de la clase ``ExerciseRunner`` el cual parseará el fichero ``*.json``, procesará la topología con la ayuda de la clase ``ExerciseTopo`` y levantará la topologia haciendo uso de la API de Python de Mininet. A continuación, se puede apreciar un diagrama UML donde se indica la relación de clases desde nuestro _entrypoint_ en el levantamiento de los distintos casos de uso.
 
 
-![UML_no_extendido](../../../img/p4-wireless/run_exercise_pertenencia.png)
+![UML_no_extendido](../../../img/analysis_p4-wireless/run_exercise_pertenencia.png)
 
 Como ya se comentaba anteriormente, para logar la integración del [``BMV2``](https://github.com/p4lang/behavioral-model) en Mininet se tuvo que crear la clase [``P4Switch``](https://github.com/p4lang/tutorials/blob/master/utils/p4_mininet.py#L57). Esta nueva clase, heredaría de la clase ``Switch`` de Mininet. A su vez, se crearían nuevas clases hijas de la clase [``P4Switch``](https://github.com/p4lang/tutorials/blob/master/utils/p4_mininet.py#L57), la más importante [``P4RuntimeSwitch``](https://github.com/p4lang/tutorials/blob/master/utils/p4runtime_switch.py#L27) la cual se utilizaría para configurar dicho "switch" via [``P4Runtime``](https://github.com/p4lang/PI) :smile: . Si se desea ver una vista más amplia de este mismo UML, mostrando métodos y atributos, ir [aquí](../../../img/p4-wireless/run_exercise.png).
 
-![UML_no_extendido](../../../img/p4-wireless/run_exercise_class_names_only.png)
+![UML_no_extendido](../../../img/analysis_p4-wireless/run_exercise_class_names_only.png)
 
 <br/>
 
@@ -102,19 +102,19 @@ De esta manera, los nodos de la red ya estarían aislados de otros nodos de la r
 Para la configuración de los puntos de acceso, se hará uso del programa [``HostApd``](https://github.com/latelee/hostapd) el cual indicándole la configuración del punto de acceso y la interfaz sobre la cual debe correr, emulará el funcionamiento de un punto de acceso estándar. En la siguiente figura se puede ver de manera resumida la arquitectura básica de Mininet-Wifi.
 
 
-![Imagen de la arquitectura de Mininet-Wifi](../../../img/p4-wireless/mininet_wifi_components.png)
+![Imagen de la arquitectura de Mininet-Wifi](../../../img/analysis_p4-wireless/mininet_wifi_components.png)
 
 
 En cuanto a la jerarquía de clases unicamente decir que es bastante similar a la de Mininet. Por destacar dos clases claves en la jerarquía de Mininet-Wifi  serían [`Node_Wifi`](https://github.com/intrig-unicamp/mininet-wifi/blob/master/mn_wifi/node.py#L44), de la cual heredan todos los nodos con capacidades wireless que poseé Mininet-Wifi y por último, la clase [`IntfWireless`](https://github.com/intrig-unicamp/mininet-wifi/blob/master/mn_wifi/link.py#L22), de la cual heredan todos los tipos de enlaces disponibles de Mininet-Wifi (Bajo el estándar 802.11). A continuación se dejan los UML referentes a  dichas clases.
 
 
 <p align="center">
- <img src="../../../img/p4-wireless/uml_node.png"/>
+ <img src="../../../img/analysis_p4-wireless/uml_node.png"/>
 </p>
 
 Como se puede apreciar en los esquemas UML, se ha conseguido aislar la funcionalidad común en las clases padres con la finalidad de optimizar la cantidad de código de las clases hijas. De esta forma añadir nuevos tipos de enlaces por ejemplo en Mininet-Wifi resulta bastante asequible ya que, tenemos multitud de tipos de enlaces con una estructura muy clara y organizada.
 
-![UML Intf wireless](../../../img/p4-wireless/uml_link.png)
+![UML Intf wireless](../../../img/analysis_p4-wireless/uml_link.png)
 
 
 ### Linux Wireless Subsystem
@@ -122,7 +122,7 @@ Como se puede apreciar en los esquemas UML, se ha conseguido aislar la funcional
 El subsistema wireless de Linux consiste en un set de varios módulos que se encuentran en el Kernel de Linux. Estos manejan la configuración del hardware bajo el estándar IEEE 802.11 además de la gestión de la transmisión y la escucha de los paquetes de datos. Yendo de desde abajo hacia arriba del subsistema, el primer módulo que nos encontramos es el módulo ``mac80211_hwsim``. Este módulo como ya comentábamos es el responsable de crear las interfaces wireless virtuales en nuestra máquina. 
 
 <p align="center">
- <img src="../../../img/p4-wireless/linux_wireless_subsystem.JPG"/>
+ <img src="../../../img/analysis_p4-wireless/linux_wireless_subsystem.JPG"/>
 </p>
 
 
@@ -140,14 +140,14 @@ La idea detrás de esto es que puede tener *N* interfaces virtuales asociadas a 
 Como ya se ha comentado la mayoría de interfaces virtuales asociadas a una tarjeta wireless emulada son del tipo de Ethernet, por ello todos los paquetes que nos llegan vienen con cabeceras Ethernet. Esto supone una limitación ya que en nuestros casos de uso queríamos gestionar las cabeceras Wifi, pero si todas las interfaces virtuales son generalmente del de tipo Ethernet no sería viable la idea.
 
 <p align="center">
- <img src="../../../img/p4-wireless/linux_wireless_subsystem_tx.png" width="40%" />
+ <img src="../../../img/analysis_p4-wireless/linux_wireless_subsystem_tx.png" width="40%" />
 </p>
 
 
 Pero, ¿Qué sentido tiene tener convertir las cabeceras Wifi a cabeceras Ethernet? De momento la única razón que he encontrado de esta decisión de diseño, es hacer un diseño más sencillo de todos los drivers que operan bajo el módulo `mac80211`, convierten a Ethernet y se lo entregan al stack de red para que lo gestione como un paquete más de una red cableada. 
 
 <p align="center">
- <img src="../../../img/p4-wireless/linux_wireless_subsystem_rx.png" width="50%" />
+ <img src="../../../img/analysis_p4-wireless/linux_wireless_subsystem_rx.png" width="50%" />
 </p>
 
 
@@ -281,7 +281,7 @@ Se ha decidido hacer un jerarquía de clases generica para el BMv2 para que de e
 
 
 
-![UML P4-Mininet-Wifi](../../../img/p4-wireless/p4_Mininet_Wifi_UML.png)
+![UML P4-Mininet-Wifi](../../../img/analysis_p4-wireless/p4_Mininet_Wifi_UML.png)
 
 
 Además hablando con [Ramon Fontes](https://github.com/ramonfontes) sobre la implementación de estas clases, me indicó que sería de gran utilidad que dichas clases tengan soporte de ejecución en Network Namespaces, por lo que de forma paralela se tuvo que crear una clase llamada [`Netns_mgmt`](https://github.com/davidcawork/TFG/tree/master/src/netns_mgmt). Esta clase nos ayuda a gestionar la ejecución de código python en runtime de un Network namespace indicada haciendo uso de la llamada `setns` la cual asocia el procesos sobre la cual se realiza esta llamada al sistema a una Namespace indicada.
