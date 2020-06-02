@@ -186,8 +186,8 @@ Para comprobar el funcionamiento del sistema de Broadcast se realizará la sigui
 arping 10.0.0.2/3
 
 # Escuchamos en las Network Namespace destino a la espera de ver ARP-REQUEST.
-sudo ip netns exec uno tcpduml -l
-sudo ip netns exec dos tcpduml -l
+sudo ip netns exec uno tcpdump -l
+sudo ip netns exec dos tcpdump -l
 ```
 
 ## Fuentes
