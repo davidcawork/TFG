@@ -60,7 +60,7 @@ Una vez que el programa XDP fue anclado a la interfaz debemos asegurarnos de que
 sudo ip netns exec uno ping 10.0.0.1
 
 # Cargamos el programa XDP para que haga un drop de los paquetes que lleguen a la interfaz 
-sudo ip netns exec uno ./xdp_loader -d veth0 -F --progsec xdp_case01
+sudo ./xdp_loader -d veth0 -F --progsec xdp_case01
 
 # Si volvemos hacer el ping deberiamos ver como no tenemos conectividad
 sudo ip netns exec uno ping 10.0.0.1
