@@ -1,0 +1,75 @@
+\subsection{Case03 - Echo server}
+\label{p4_wifi_case03}
+
+ En este caso de uso desarrollaremos un servidor de echo que responda todos los pings que le lleguen al \gls{bmv2}. Como tal el programa P4 no es suficiente para probar esta funcionalidad ya que requiere de una plataforma que sea capaz de soportar el lenguaje P4. Se hará uso de software switch \gls{bmv2}, para testear los programas P4, y de la integración desarrollada anteriormente con Mininet-WiFi como escenario para recrear las topologías de Red. Como el \gls{bmv2} será configurado vía P4Runtime se hará uso de la clase de \texttt{P4RuntimeAP}.\\
+\par
+
+Dado que este caso de uso ya se ha explicado anteriormente en el case03 de P4 cableado (Ver subsección \ref{P4_ether_case03}), y no hay ninguna diferencia inducida en el cambio de entorno según se explico en las sección anterior,  únicamente se harán indicaciones sobre como poder compilarlo y ejecutarlo. Importante, si usted está replicando este caso de uso, sin antes haber adecuado las dependencias necesarias de Mininet-WiFi con soporte del \gls{bmv2}, vuelva a este punto \ref{mn_wifi_own_deps} y siga los pasos indicados.\\
+\par
+
+% figura escenario
+\begin{figure}[ht]
+    \centering
+    \includegraphics[width=16cm]{archivos/img/dev/p4-wifi/case03/scenario.png}
+    \caption{Escenario del Case03 - P4 Wireless}
+    \label{fig:case03_p4_wifi_scenario}
+\end{figure}
+
+\vspace{0.2cm}
+\textbf{Compilación}\\
+\par
+
+Para la compilación de este caso de uso, al igual que en los casos de uso anteriores se ha dejado preparado un Makefile, por tanto no es necesario que el usuario haga un uso directo del compilador p4c. Si se quiere saber más sobre como funciona el proceso de compilación, qué etapas hay, como se le ``inyecta" el \texttt{json} generado al \gls{bmv2}, o qué distintos \textit{targets} hay en función de la arquitectura, le recomendamos que vuelva al case01 (\ref{p4_ether_case01}). Para llevar a cabo la compilación solo se tendrá que seguir los pasos indicados en el bloque \ref{code:case03_p4_wifi_load}.
+
+\newpage
+
+\begin{lstlisting}[language= bash, style=Consola, caption={Compilación programa P4  - Case03},label=code:case03_p4_wifi_load]
+    # Entramos al directorio 
+    cd TFG/src/use_cases/p4-wireless/case03
+
+    # Hacemos uso del Makefile
+    sudo make
+\end{lstlisting}
+\vspace{0.3cm}
+
+
+Una vez ejecutado el make, se habrá generado una estructura de directorios que se utilizarán en el lanzamiento del caso de uso. Bajo el directorio \texttt{build} se podrá encontrar el \texttt{json} generado por el compilador, será este \texttt{json} quien tenga toda la información requerida para conformar el \gls{bmv2}. Los directorios \texttt{log} y \texttt{pcap}, se utilizarán respectivamente para almacenar los logs del \gls{bmv2} y para guardar las capturas de paquetes de las interfaces asociadas a la instancia \gls{bmv2}.\\
+\par
+
+
+
+\vspace{0.2cm}
+\textbf{Puesta en marcha del escenario}\\
+\par
+
+Al igual que en la compilación, se ha dejado preparado un script en Python para automatizar la puesta en marcha del escenario. Este script describe la topología que se utilizará en este caso de uso. Recordar que es necesario volver hacer un \texttt{make install} para instalar los módulos adicionales generados para la integración del \gls{bmv2} y Mininet-WiFi, además de tener instaladas las versiones indicadas en el análisis de la integración. Estas dependencias se pueden encontrar en el apartado \ref{mn_wifi_own_deps}. Una vez comprobado que posee todas la dependencias, simplemente se tendrá que ejecutar el script con el interprete de Python. Este script levantará la topología descrita en la figura \ref{fig:case03_p4_wifi_scenario}, compuesto por dos estaciones WiFi y por una instancia del nodo \texttt{P4RuntimeAP}. El nodo \texttt{ap1}, del tipo \texttt{P4RuntimeAP}, tendrá dos interfaces, una wireless y un par de \gls{veth}.
+
+
+\begin{lstlisting}[language= bash, style=Consola, caption={Puesta en marcha del escenario  - Case03},label=code:case03_p4_wifi_run]
+    sudo python scenario.py
+\end{lstlisting}
+
+\vspace{0.4cm}
+\textbf{Comprobación del funcionamiento}\\
+
+
+Tras las ejecución del script \texttt{scenario.py}, se tendría el escenario \ref{fig:case03_p4_wifi_scenario} levantado, y la CLI de Mininet-WiFi abierta. Para la comprobación de funcionamiento de este caso de uso, se van a seguir los mismos pasos que en el case03 (\ref{P4_ether_case03}) - P4 en un entorno alámbrico, adaptados en Mininet-WiFi. Por tanto solo se indicarán los pasos seguidos para llevar a cabo la comprobación de funcionamiento y los resultados de dichas pruebas. 
+
+% figura escenario
+\begin{figure}[ht]
+    \centering
+    \includegraphics[width=14cm]{archivos/img/dev/p4-wifi/case03/demo_case03_edited.png}
+    \caption{Comprobación de funcionamiento del Case03 - P4 Wireless}
+    \label{fig:case03_p4_wifi_func1}
+\end{figure}
+
+\begin{lstlisting}[language= bash, style=Consola, caption={Pasos a seguir para comprobar el funcionamiento - Case03},label=code:case03_p4_wifi_func1]
+    mininet-wifi>  xterm sta1
+    
+    # Se hará ping desde la estación Wifi al Host.
+    [sta1] wireshark &
+    [sta1] ping 10.0.2.2
+\end{lstlisting}
+\vspace{0.5cm}
+
+Como se puede ver en la figura \ref{fig:case03_p4_wifi_func1}, todo funciona correctamente ya que se están recibiendo respuesta a los pings \fcolorbox{black}{orange}{\rule{0pt}{2.5pt}\rule{2.5pt}{0pt}}\hspace{1mm}. De forma adicional, se puede comprobar con Wireshark como el \textit{checksum} de la cabecera ICMP viene correctamente calculado.

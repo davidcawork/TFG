@@ -1,0 +1,15 @@
+\begin{table}[h!]
+\centering
+\resizebox{\textwidth}{!}{%
+\begin{tabular}{|l|l|}
+\hline
+\rowcolor[HTML]{EFEFEF} 
+\multicolumn{1}{|c|}{\cellcolor[HTML]{EFEFEF}{\color[HTML]{24292E} \textbf{Modo de Operación}}} & \multicolumn{1}{c|}{\cellcolor[HTML]{EFEFEF}{\color[HTML]{24292E} \textbf{Descripción}}}                                                                                                                                                                                                                                                                           \\ \hline
+\texttt{OFFLOADED XDP}                                                                                   & \begin{tabular}[c]{@{}l@{}}En este modo de operación, el programa XDP se carga directamente en la propia NIC \\  en lugar de ser ejecutado en la CPU del host. Al sacar la ejecución fuera del sistema y\\  delegarla a la propia NIC, este modo tiene las mejores ganancias de rendimiento.\end{tabular}                                                          \\ \hline
+\texttt{NATIVE XDP}                                                                                      & \begin{tabular}[c]{@{}l@{}}En este modo de operación los programas XDP se ejecutan lo antes posible una vez\\ recibidos por el driver de la NIC. Este modo no está disponible en todos los drivers\\ ( Todos aquellos que permiten este modo gestionan la macro XDP\_SETUP\_PROG ).\end{tabular}                                                                   \\ \hline
+\texttt{GENERIC XDP}                                                                                     & \begin{tabular}[c]{@{}l@{}}Este modo de operación se proporciona como un modo de prueba para desarrollar \\ programas XDP. Está soportado desde la versión 4.12 del Kernel y se puede utilizar\\ este modo por ejemplo en pares de Veths.\\  \\ Nótese que no se obtendrá el mismo rendimiento que con los dos modos anteriores\\ de funcionamiento.\end{tabular} \\ \hline
+\end{tabular}
+}
+\caption{Resumen modos de operación en XDP}
+\label{tab:xdpOPmodes}
+\end{table}

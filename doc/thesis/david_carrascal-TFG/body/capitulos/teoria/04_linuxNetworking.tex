@@ -1,0 +1,189 @@
+\section{Linux Networking}
+\label{linuxNetworking}
+
+En esta sección se van a recoger todos los conceptos y herramientas que se engloben en la parte de \textit{Networking} de Linux y se crean fundamentales en el desarrollo de este proyecto.  
+
+
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+\subsection{Estructura \texttt{sk\_buff}}
+\label{linuxNetworking_skbuff}
+
+Se puede afirmar que  esta estructura es una de las más importantes de todo el Kernel de Linux en cuanto a la parte de \textit{Networking} se refiere. Esta estructura representa las cabeceras o información de control para los datos que se van a enviar o para aquellos que se acaban de recibir. Dicha estructura se encuentra definida en el siguiente archivo de cabecera \texttt{<include/linux/skbuff.h>}, y contiene campos de todo tipo, para así tratar de ser una estructura ``todo terreno" que tenga una gran versatilidad. Por ello, se puede llegar a entender que \gls{xdp} no haga uso de esta estructura, ya que habría que hacer una reserva de memoria por cada paquete recibido y esto consumiría bastante tiempo viéndolo a gran escala, dadas las dimensiones de la estructura.\\
+\par
+
+Esta estructura es usada por bastantes capas de la pila de protocolos del Kernel, y muchas veces la misma estructura es reutilizada de una capa hacia otra. Por ejemplo, cuando se genera una paquete TCP se añaden las cabeceras de la capa de transporte al payload,  acto seguido se le pasa a la capa de red, IPv4 - IPv6. En esta capa se deben añadir de igual manera sus cabeceras, por ello la estructura sk\_buff que gobierna dicho paquete tendrá que iniciar un proceso de adicción de cabeceras. Este proceso se lleva a cabo haciendo reservas de memoria en el \textit{buffer} gestionado por la estructura, llamando a la función \texttt{skb\_reserve}. Una vez que se tiene reservada memoria para las nuevas cabeceras éstas se copian, se actualizan los punteros de la estructura a las nuevas posiciones de inicio de paquete, y se delega la estructura \textit{stack} de red abajo.\\
+\par
+
+ Podría surgir la siguiente pregunta, ¿Cuando llega un paquete qué ocurre? En primera instancia se creía que las cabeceras iban siendo eliminadas del paquete como si de una pila se tratase, cada capa que a travesaba del \textit{stack} de red iba haciendo un \textit{pop-out} de una cabecera. El funcionamiento sin embargo, se lleva a cabo con esta estructura, y no se opera como una pila haciendo \textit{relloc} eliminado capas, sino que en realidad se va moviendo un puntero que apunta al \textit{payload} y  a la información de control según en la capa del \textit{stack} de red en el que se encuentre.\\
+\par
+
+Por ejemplo, si el paquete se encuentra en  la capa dos, el puntero de datos apuntaría a las cabeceras de capa dos. Una vez que estas se han parseado, y se pasa el paquete a la capa tres, el puntero se desplazaría a las cabeceras de capa tres. De esta manera el procesamiento de los paquetes supone menos ciclos de CPU, y se consigue un mejor rendimiento ya que no es necesario hacer un \texttt{realloc} con la nueva información ``útil" del paquete.\\
+\par
+
+
+Como ya se ha explicado, esta estructura juega un papel fundamental en el control de cabeceras, pero es igual de importante en el control de colas. Generalmente las colas se organizan en una lista doblemente enlazada, como toda lista doblemente enlazada elemento de la lista tiene un puntero que apunta al siguiente elemento y otro puntero que apunta al elemento anterior de la lista. Pero, una característica especial de esta estructura, es que cada estructura \texttt{sk\_buff} debe ser capaz de encontrar la cabeza de toda la lista rápidamente, de esta forma hace la lista mucho más accesible. Por ello, cada elemento de lista tiene un puntero a una estructura del tipo \texttt{sk\_buff\_head}, la cual estará siempre al principio de la lista. La definición de esta estructura \texttt{sk\_buff\_head} es la siguiente.
+
+% code 
+\begin{lstlisting}[language=C, style=C-color, caption={Estructura sk\_buff\_head},label=code:linuxNet_skbuffhead]
+    struct sk_buff_head {
+    	/* These two members must be first. */
+    	struct sk_buff	*next;
+    	struct sk_buff	*prev;
+    
+    	__u32		qlen;
+    	spinlock_t	lock;
+    };
+\end{lstlisting}
+\vspace{0.5cm}
+
+El elemento \texttt{lock} se utiliza como cerrojo para prevenir accesos simultáneos a la cola, será un atributo crucial para lograr la atomicidad en la operaciones relativas a la cola. En cuanto al elemento \texttt{next} y \texttt{prev} sirven como elementos para recorrer la cola apuntando estos al primer buffer y al ultimo de ellos. Al contener estos elementos, \texttt{next} y \texttt{prev}, la estructura \texttt{sk\_buff\_head} es completamente compatible en la lista doblemente enlazada, ya que se puede recorrer la cola desde el primer \textit{item} sin problemas. Por último, el elemento \texttt{qlen} es para llevar el número de elementos que hay en la cola en un momento dado.\\
+\par
+
+%foto
+\begin{figure}[ht]
+    \centering
+    \includegraphics[width=16cm]{archivos/img/teoria/sk_buff_queue.png}
+    \caption{Sistema de colas doblemente enlazada}
+    \label{fig:linuxNet_skbuff1}
+\end{figure}
+
+Por claridad en la figura \ref{fig:linuxNet_skbuff1} no se ha dibujado el enlace de cada elemento de la lista hacia la cabeza de la misma. Pero recordemos que no es una simple lista enlazada, cada elemento de lista tiene un puntero que apunta al primer elemento de la lista, con su parámetro \texttt{list}.\\
+\par
+Muchos campos de la estructura resultan muy familiares, ya que con \gls{xdp} se tiene que replicar su funcionalidad al no poder disponer de ellos. Pero hay campos en las dos estructuras que son constantes; estos son los punteros que apuntan a posicionas clave del paquete en  memoria.\\
+\par
+
+%foto
+\begin{figure}[ht]
+    \centering
+    \includegraphics[width=16cm]{archivos/img/teoria/sk_buff.png}
+    \caption{Punteros de la estructura sk\_buff}
+    \label{fig:linuxNet_skbuff2}
+\end{figure}
+
+Estos cuatro punteros a memoria son de utilidad cuando se tiene que llevar a cabo una reserva de memoria para añadir una nueva cabecera. El puntero \texttt{head} siempre apuntará al principio de la posición de memoria reservada en primera instancia, el puntero data siempre apuntará al principio del paquete, por lo que si queremos superponer una cabecera sobre otra simplemente tendremos que reservar la memoria suficiente entre ambos punteros. En cuanto a los punteros, \texttt{tail} y \texttt{end} son útiles para añadir información de control al final del paquete, como por ejemplo el CRC de Ethernet.\\
+\par
+
+Esta estructura tiene muchísimas aplicaciones y usos en el Kernel de Linux. En nuestro caso, está estructura está relacionada con el proyecto, por el hecho de que numerosos \textit{helpers} \gls{bpf} hacen uso de ella, pero con \gls{xdp} no podremos al disponer de ella. Por ello, se tendrán que plantear soluciones a la ausencia de funcionalidades por los \textit{helpers} \gls{bpf}, como por ejemplo clonar paquetes, muy útil para difundir paquetes por toda la red o \textit{broadcast}.
+
+
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+\subsection{Herramienta \texttt{TC}}
+
+
+\gls{tc}, es un programa de espacio de usuario el cual es la pieza fundamental de la \gls{qos} en el Kernel de Linux. Muchas de sus funcionalidades se pueden resumir en cuatro puntos:
+
+\begin{itemize}
+    \item \textsc{SHAPING}
+    \item \textsc{SCHEDULING}
+    \item \textsc{POLICING}
+    \item \textsc{DROPPING}
+\end{itemize}
+
+ Según su \textit{man-page}\footnote{\url{https://man7.org/linux/man-pages/man8/tc.8.html}}, el procesamiento del trafico para conseguir dichas funcionalidades, se lleva a cabo con tres tipos de objetos: \textbf{qdiscs}, \textbf{classes} y \textbf{filters}.
+
+\subsubsection{Qdiscs}
+
+El objeto \gls{qdics}, disciplina de cola, es un concepto básico en el Networking de Linux que indica el orden en que los miembros de la cola, en este caso paquetes, se seleccionan para el servicio. Por ejemplo, en un momento dado puede que una herramienta de espacio de usuario requiera de transmitir un paquete, dicho paquete será entregado al \textit{stack} de red, llegando en última instancia a la interfaz de red por la cual va a ser transmitido. En ese momento el paquete se encontrará encolado en una cola de a la espera de ser trasnmitido, estas colas estarán regidas por un \gls{qdics}. El \gls{qdics} por defecto es un pfifo, es un puro \textit{first-in}, \textit{first-out} con limitación en el tamaño de cola en número de paquetes.
+
+
+\subsubsection{Classes}
+
+La clases se podrían ver como una sub-\gls{qdics} de una \gls{qdics}. Una clase puede contener a su vez otra clase, o más clases, pudiendo conformar sistemas de \gls{qos} en detalle, véase la figura \ref{fig:linuxNet_tc}. Cuando los paquetes son recibidos en una cola administrada por un \gls{qdics}, estos pueden ser encolados en base a las características del paquete en otras colas,  gestionadas por otras clases. Esto permite por ejemplo, priorizar el envío de datos de una aplicación sobre otra. Para ello, los paquetes de ambas aplicaciones se clasificarán en distintas clases, dándole más prioridad a una clase sobre la otra, asignándole más recursos de transmisión y recepción.
+
+%foto
+\begin{figure}[ht]
+    \centering
+    \includegraphics[width=8cm]{archivos/img/teoria/tc_qdisc_example_implementation.png}
+    \caption{Sistema de QoS implementado con distintas clases \cite{qdiscs}}
+    \label{fig:linuxNet_tc}
+\end{figure}
+
+\subsubsection{Filters}
+
+Un filtro es usado para determinar con qué clase debe ser encolado el paquete. Para ello, el paquete siempre debe ser clasificado con una clase determinada. Varios tipos de filtros se pueden utilizar para clasificar los paquetes, pero en este caso será de interés el tipo de filtro \gls{bpf}\footnote{\url{https://man7.org/linux/man-pages/man8/tc-bpf.8.html}}, los cuales permiten anclar un \textit{bytecode} \gls{bpf}. Estos filtros se utilizarán para cargar programas \gls{bpf} que trabajarán en conjunto con \gls{xdp} con la finalidad de lograr el Broadcast. Esto es así, ya que en el \gls{tc} ya se hace uso de la estructura \texttt{sk\_buff} (Ir a \ref{linuxNetworking_skbuff}), por lo que ciertos \textit{helpers} \gls{bpf} para clonar paquetes podrán ser utilizados por \textit{bytecode} anclado en el filtro.
+
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+\subsection{Namespaces}
+\label{namespaces}
+Una \textit{Namespace} se utiliza para aislar un recurso del sistema en una abstracción que hace  creer a los procesos dentro de dicha \textit{Namespace} que tienen su propia instancia del recurso en cuestión aislada del sistema real.  Los cambios realizados sobre recursos aislados del sistema, son solo visibles para procesos que son pertenecientes a la \textit{Namespace}, pero son invisibles para otros procesos pertenecientes al sistema o a otra \textit{Namespace}.\\
+\par
+Hay muchos tipos de \textit{Namespaces}, en la tabla \ref{tab:linux_ns} se pueden apreciar todos los tipos que existen a día de hoy. El uso de todos estos tipos de \textit{Namespaces} puede ser muy variado, pero el más importante de todos ellos son los contenedores. Los contenedores son elementos para correr aplicaciones, o herraminetas en un entorno aislado del sistema. A día de hoy, los contenedores más utilizados son los de Docker\footnote{\url{https://www.docker.com/}}, pero, ¿Realmente que hace Docker, qué es Docker?\\
+\par
+
+Docker se vale de las bondades del Kernel de Linux para aislar recursos y con esto conformar contenedores. Éste hará uso de las APIs suministradas por el Kernel para crear y destruir a conveniencia las distintas \textit{Namespaces}. Por lo que, Docker en verdad simplemente es un envoltorio de las llamadas al sistema para gestionar \textit{Namespaces}. Docker además, provee de distintos aspectos al usuario como \textit{copy-on-write}, o una configuración en modo \textit{bridge} hacia el exterior, pero en el fondo es 
+un mero \textit{wrapper} para la gestión de las \textit{Namespaces} con la finalidad de implementar contenedores. 
+
+\input{archivos/diagramas/tabla_ns}
+
+\subsubsection{Persistencia de las Namespaces}
+
+Atendiendo a la \textit{man-page} \cite{ns} sobre \textit{Namespaces}, es importante señalar que las \textit{Namespaces} tienen una vida finita. La vida finita de la \textit{Namespace} dependerá de si la \textit{Namespace} en cuestión está referenciada, por lo que éstas vivirán siempre y cuando estén referenciadas, cuando dejen de estarlo serán destruidas.\\
+\par
+Este concepto de vida finita, será útil entenderlo para tener una mejor comprensión sobre el funcionamiento interno de Mininet ó Mininet-WiFI, los cuales se valen de estos conceptos para ahorrarse operaciones y ganar en rendimiento.  Una Namespace a día de hoy puede ser referenciada de tres maneras distintas:\\
+
+\begin{itemize}
+    \item Siempre y cuando haya un proceso corriendo dentro de esta \textit{Namespace}.
+    \item Siempre que haya abierto un descriptor de archivo al fichero identificativo de la \textit{Namespace} (\texttt{/proc/{pid}/ns/{tipo\_namespace}}).
+    \item Siempre que exista un \textit{bind-mount} del fichero (\texttt{/proc/{pid}/ns/{tipo\_namespace}}) de la \textit{Namespace} en cuestión.
+\end{itemize}
+
+Si ninguna de estas condiciones se cumple, la \textit{Namespace} en cuestión es eliminada automáticamente por el Kernel. Si se tratase de una \textit{Network Namespace}, aquellas interfaces que se encuentren en la \textit{Namespace} en desaparición volverán a la \textit{Network Namespace} por defecto \cite{ns}.
+
+\subsubsection{Concepto de las Network Namespaces}
+
+Una vez entendido el concepto de \textit{Namespace} en Linux, se introducen las \textit{Network Namespace}, las cuales serán fundamentales para las plataformas donde se probarán los distintos test. Éstas consisten en una replica lógica de \textit{stack} de red que por defecto tiene Linux, replicando rutas, tablas ARP, Iptables e interfaces de red \cite{netns}. \\
+\par
+ Linux se inicia con un \textit{Network Namespace} por defecto, el espacio \textit{root}, con su tabla de rutas, su tabla ARP,  Iptables e interfaces de red. Pero también es posible crear más \textit{Network Namespace} no predeterminadas,  crear nuevos dispositivos en esos espacios de nombres, o mover un dispositivo existente de un espacio de nombres a otro. \\
+ \par
+ Para llevar todas estas tareas a cabo, la herramienta más sencilla será \texttt{iproute2} (Ir a Anexo \ref{iproute2}). Esta herramienta, haciendo uso del módulo \texttt{netns}, se podrá gestionar todo en lo relativo a las \textit{Network Namespace} con nombre. Esta coletilla, ``con nombre", atiende a que todas las \textit{Network Namespace} que se gestionen desde \texttt{iproute2} serán persistentes debido a que se realizará un \textit{bind-mount} con el nombre de la \textit{Namespace}, del fichero identificativo de la \textit{Namespace} en cuestión, bajo el directorio \texttt{/var/run/netns} . A continuación, se listan los comandos más frecuentes a la hora de gestionar \textit{Network Namespaces}, se entiende que se ejecutan con permisos de súper usuario.
+ 
+ \begin{lstlisting}[language= bash, style=Consola, caption={Comandos útiles con iproute2 - Netns},label=code:iproute2_ns_use]
+    # Para crear una Network Namespace
+    ip netns add {nombre netns}
+    
+    # Para listar las Network Namespaces "con nombre"
+    ip netns list
+    
+    # Para añadir una interfaz a una Network Namespace
+     ip netns set {nombre netns} Veth
+    
+    # Para ejecutar un comando dentro de una Network Namespace
+    ip netns exec {nombre netns} {cmd}
+    
+    # Para eliminar una Network Namespace
+    ip netns del {nombre netns}
+    
+\end{lstlisting}
+ 
+\subsubsection{Métodos de comunicación inter-Namespaces: \glsentryshort{veth}}
+\label{linuxVeths}
+Las \gls{veth}, son interfaces de Ethernet virtuales creadas como un par de interfaces interconectadas entre si. El modelo funcional es sencillo, los paquetes enviados desde una son recibidos por la otra interfaz de forma directa, bastante parecido al funcionamiento de las \textit{pipes}. Una condición interesante de estas interfaces es que su gestión está asociada, es decir, si se levanta una extremo de la \gls{veth}, la otra también lo hará, si por el contrario se deshabilita o se destruye algún extremo de un par de \gls{veth} el otro extremo también se verá afectado \cite{veth}.\\
+\par
+Es muy común hacer uso de las \gls{veth} para interconectar \textit{Network Namespaces}, ya que, sabiendo que estas van a estar conectadas de forma directa, se puede utilizar este enlace como pasarela entre dos \textit{Network Namespaces}. De esta forma, se estaría interconectando dos \textit{stacks} independientes de red. La creación y destrucción de este tipo de interfaces se puede apreciar en el bloque \ref{code:iproute2_veth_use}, se recuerda que es necesario permisos de súper usuario.\\
+
+ \begin{lstlisting}[language= bash, style=Consola, caption={Manejo de Veths},label=code:iproute2_veth_use]
+    # Crear un par veth
+    ip link add {nombre_veth1} type veth peer name {nombre_veth2}
+    
+    # Si se elimina un extremo, el otro también lo hará
+    ip link delete {nombre_veth}
+    
+\end{lstlisting}
+\vspace{0.5cm}
+
+Por lo tanto, se puede llegar al siguiente diagrama básico del funcionamiento de un par de \gls{veth}, las cuales estarán asignadas a una \textit{Network Namespace} distinta.  Como se puede apreciar en la figura \ref{fig:linuxNet_veth}, ambas interfaces están conectadas entre si directamente de forma interna en el propio Kernel. En el caso de que se generen paquetes desde una \textit{Network Namespace} hacia la otra, estos paquetes llegarán desde un extremo de la \gls{veth} directamente al otro extremo de la \gls{veth} a través del Kernel, y en este caso, la \textit{Network Namespace} por defecto no percibirá dicho trafico.\\
+\par
+Esta condición será de gran utilidad para recrear enlaces entre nodos independientes de red, los nodos se replicarán con \textit{Network Namespaces} y los enlaces con \gls{veth}s. Estos mecanismos serán utilizados por herramientas de emulación de redes como Mininet o Mininet-WiFI, más adelante se destallará. 
+
+\begin{figure}[ht]
+    \centering
+    \includegraphics[width=15.5cm]{archivos/img/teoria/user_kernel.png}
+    \caption{Enlace entre interfaces Veth separadas en dos Network Namespaces}
+    \label{fig:linuxNet_veth}
+\end{figure}

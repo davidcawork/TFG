@@ -1,0 +1,129 @@
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+% Plantilla TFG/TFM
+% Escuela Politécnica Superior de la Universidad de Alicante
+% Realizado por: Jose Manuel Requena Plens
+% Contacto: info@jmrplens.com / Telegram:@jmrplens
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+%%%%%%%%%%%% Dedicatoria %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+\cleardoublepage %salta a nueva página impar
+% Aquí va la dedicatoria si la hubiese. Si no, comentar la(s) linea(s) siguientes
+\chapter*{}
+\setlength{\leftmargin}{0.5\textwidth}
+\setlength{\parsep}{0cm}
+\addtolength{\topsep}{0.5cm}
+\begin{flushright}
+\small\em{
+A mi pareja, Yuliia, a mi familia y a mis amigos,\\
+quienes día a día han inculcado en mi \\
+el ejemplo del esfuerzo, trabajo y superación.
+}
+\end{flushright}
+
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+%%%%%%%%%%%% Agradecimientos %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+\chapter*{Agradecimientos}
+
+\thispagestyle{empty}
+\vspace{1cm}
+
+Este trabajo no habría sido posible sin el apoyo y el estímulo de mis tutores, Elisa y Joaquín, que compartieron su destreza y conocimiento desde el primer día que les conocí. Quienes, bajo su supervisión, me han enseñado lo entretenido y bonito que es el mundo de las Redes. \newline
+
+También me gustaría agradecer a mi profesor de Sistemas Operativos, Juan Ignacio García Tejedor, cuya maestría y pasión por lo que hace, y a lo que se dedica, me hicieron aprender y disfrutar cada día que iba sus clases. Es más, aún habiendo terminado la asignatura me ayudó en uno de los momentos más difíciles de este trabajo, arrojando luz y aplanando el duro camino al Kernel de Linux. No me podía olvidar de mis amigos, Rubén y Laura, con los que he compartido momentos de estrés y tardes de risas, y de Pablo, a quien lo he conocido casi al final de la carrera, pero con el que comparto un montón de ratos y pasiones. \newline
+
+No puedo terminar sin agradecer a mis compañeros del Laboratorio LE34, quienes me han enseñado a ver los problemas con perspectiva, en ocasiones, a priorizar según el caso. Me han alegrado cada semana de estos dos últimos años con su apoyo y compañía, y  me han alentado a mejorar cada día, marcándome el camino en un futuro incierto.
+
+\vspace{0.5cm}
+
+Sinceramente, mil gracias a todos.
+
+
+
+
+\cleardoublepage %salta a nueva página impar
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+
+%%%%%%%%%%%%  Resumen corto  %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\chapter{Resumen}
+\thispagestyle{empty}
+% Resumen de 100 palabras: Hay 110 actualmente
+Este \gls{tfg} se enfoca en el estudio de las distintas tecnologías disponibles para la definición del denominado \textit{datapath}, con el objetivo de conseguir una integración de dispositivos \gls{iot} en entornos de \gls{sdn}. \newline
+
+Las dos principales tecnologías que se han analizado para la definición de datapaths son \gls{xdp} y el lenguaje P4. A su vez, se han planteado casos de uso donde se quiere demostrar qué ciertas funcionalidades, que debe tener un nodo \gls{iot}, pueden ser implementadas. Cuando los casos de uso se realicen, se justificará qué tecnología es más viable en la definición de los datapaths para alcanzar la integración de nodos \gls{iot} en entornos \gls{sdn}.
+
+\vspace{1cm}
+
+	\textbf{Palabras clave}: \href{https://scholar.google.es/scholar?q=Internet+of+Things}{IoT}; \href{https://www.opennetworking.org/sdn-definition}{SDN}; 
+	\href{https://p4.org/}{Lenguaje P4}; \href{https://scholar.google.es/scholar?q=XDP+linux}{XDP};
+	\href{https://scholar.google.es/scholar?q=Datapaths}{Plano de datos}
+
+
+\cleardoublepage %salta a nueva página impar
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+
+%%%%%%%%%%%%  Resumen corto - Inglés %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\chapter{Abstract}
+\thispagestyle{empty}
+
+This Bachelor's Degree Final Project is focused on the study of the different technologies available for the definition of the so-called datapaths, with the aim of achieving an integration of Internet of Things (\gls{iot}) devices in Software-Defined Networking (\gls{sdn}) environments. \newline
+
+The two main technologies that have been analyzed for the definition of datapaths are 
+eXpress Data Path (\gls{xdp}) and the P4 language. At the same time, a set of use cases has been presented to demonstrate that certain functionalities that an \gls{iot} node must have can be implemented. When the use cases are carried out, it will be justified which technology is more viable in the definition of the datapaths to achieve the integration of \gls{iot} nodes in \gls{sdn} environments.
+
+\vspace{1cm}
+
+	\textbf{Keywords}: \href{https://scholar.google.es/scholar?q=Internet+of+Things}{IoT}; \href{https://www.opennetworking.org/sdn-definition}{SDN}; 
+	\href{https://p4.org/}{P4 Language}; \href{https://scholar.google.es/scholar?q=XDP+linux}{XDP};
+	\href{https://scholar.google.es/scholar?q=Datapaths}{Datapaths}
+
+
+
+\cleardoublepage %salta a nueva página impar
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+
+%%%%%%%%%%%%  Resumen extendido     %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+% \chapter{Resumen extendido}
+% \thispagestyle{empty}
+% \todo{Escribir el Resumen extendido al final cuando tengamos una visión amplia sobre todo lo escrito}
+
+% Lorem ipsum dolor sit amet, consectetur adipiscing elit. Etiam vel velit ut metus mattis convallis nec non turpis. Donec pulvinar felis in gravida viverra. Morbi feugiat purus at tincidunt venenatis. Etiam vitae congue libero, in lobortis quam. Quisque volutpat mollis vestibulum. Donec ut porta enim, id pharetra elit. In nisl mi, ultrices eget eros sed, porta venenatis augue. Aenean ac semper est. Pellentesque quis libero et ex rhoncus tempus at non tortor. Phasellus hendrerit nisi eu ex laoreet, at tristique risus scelerisque. Maecenas gravida dolor in nulla porta, non egestas lorem condimentum. Vestibulum ante ipsum primis in faucibus orci luctus et ultrices posuere cubilia curae; Sed id dolor justo.
+% \vspace{1cm}
+% Vestibulum auctor, urna eu cursus commodo, sem lorem malesuada tortor, eu imperdiet libero metus id mauris. Nullam risus eros, aliquet et massa vehicula, semper porta nibh. Mauris sit amet turpis nibh. Aenean sit amet suscipit lacus, et porttitor metus. Nunc maximus in lorem ac ultrices. Nam vehicula, quam in pharetra sagittis, risus odio aliquam tortor, in feugiat nibh odio et elit. Proin vehicula vitae metus ut tempus. Nunc scelerisque blandit purus, ut facilisis est hendrerit molestie. Ut scelerisque neque a velit malesuada sollicitudin. Pellentesque interdum elit nulla, sit amet facilisis nisl efficitur quis. Fusce ante risus, bibendum non vestibulum ut, accumsan eget purus. Nullam eget tortor dignissim orci dapibus iaculis. Aenean quis varius justo. Suspendisse erat lacus, vestibulum vel dui ornare, ultricies laoreet arcu. Sed sit amet elit ac ante consectetur ullamcorper vitae sed erat. Suspendisse aliquam erat eu magna ullamcorper vulputate.
+% \vspace{1cm}
+% Aenean varius rutrum enim non accumsan. Morbi fringilla enim sapien, ac mollis magna hendrerit nec. Nam scelerisque, felis rhoncus dictum congue, nisi libero tempor nulla, ac commodo magna dui et urna. Vivamus egestas orci vel ipsum condimentum tempus. Ut nec nulla vitae odio scelerisque ullamcorper. Vivamus semper aliquam leo, nec dignissim lacus. Fusce dapibus ipsum gravida sem lobortis, sit amet lacinia mauris mollis. Duis tempus efficitur mattis. Nunc convallis urna vitae tincidunt eleifend. Sed cursus, elit quis porttitor mattis, magna quam tempor tortor, ultrices aliquam risus lacus eget est. Interdum et malesuada fames ac ante ipsum primis in faucibus. Cras vel risus vehicula odio dignissim fermentum sed tincidunt justo. Nullam venenatis id mauris in tincidunt.
+% \vspace{1cm}
+% Sed volutpat purus ac odio rhoncus, vitae dictum felis tempor. Vivamus sit amet lacinia sapien. Etiam metus erat, auctor id pellentesque vitae, ullamcorper vel quam. Pellentesque eu pretium est. Vestibulum tincidunt nisl a diam gravida sagittis. Vestibulum id diam ac turpis commodo cursus venenatis posuere neque. Nulla placerat gravida nulla ut pharetra. Nullam a felis felis. Cras consequat tortor eget dui porta, et bibendum dui dictum.
+% \vspace{1cm}
+% Praesent sollicitudin gravida nibh ac hendrerit. Vivamus est turpis, interdum nec imperdiet sed, porta facilisis dolor. Sed sed lobortis mi. Nulla facilisi. Suspendisse potenti. Nullam quis luctus ligula, id viverra neque. Fusce non molestie dolor. Nulla iaculis arcu at est porta commodo.
+
+% \cleardoublepage %salta a nueva página impar
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%  Cita   %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+% Aquí va la cita célebre si la hubiese. Si no, comentar la(s) linea(s) siguientes
+\chapter*{}
+\setlength{\leftmargin}{0.5\textwidth}
+\setlength{\parsep}{0cm}
+\addtolength{\topsep}{0.5cm}
+\begin{flushright}
+\small\em{
+Solo cabe progresar cuando se piensa en grande,\\
+solo es posible avanzar cuando se mira lejos
+}
+\end{flushright}
+\begin{flushright}
+\small{
+Ortega y Gasset.
+}
+\end{flushright}
+\cleardoublepage %salta a nueva página impar
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%

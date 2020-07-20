@@ -1,0 +1,112 @@
+\chapter{Anexo II - Presupuesto}
+
+En este anexo se expondrá de una forma detallada el presupuesto del proyecto. Para que este presupuesto sea lo más próximo a la realidad, se hará un breve análisis sobre la duración del proyecto. De esta forma, se podrán calcular la mano de obra con mayor exactitud. 
+
+\section{Duración del proyecto}
+
+Con el propósito de obtener el número de horas de trabajo por semana del proyecto en \textbf{promedio}, se va a realizar un diagrama de Gantt. De este modo se podrá apreciar la distribución de tareas a lo largo del \gls{tfg} y así ser capaces de obtener un número de horas de trabajo aproximado por semana.
+
+\begin{figure}[htb]
+\begin{center}
+\begin{tikzpicture}
+\begin{ganttchart}[
+	hgrid,
+	vgrid,
+	y unit chart=.73cm,
+	bar/.append style={fill=cyan!50},
+	expand chart=\textwidth
+	]{1}{15}
+\gantttitle{Semanas}{15} \\
+\gantttitlelist{1,...,15}{1} \\
+\ganttbar{Documentación y estudio}{1}{3} \\
+\ganttbar{Planificación}{1}{3} \ganttnewline
+\ganttbar{Diseño de los escenarios}{2}{3} \ganttnewline
+\ganttbar{Instalación del entornos de desarrollo}{4}{4} \ganttnewline
+\ganttbar{Aprendizaje de las herramientas}{4}{5} \ganttnewline
+\ganttbar{Desarrollo de los casos de uso}{5}{10} \ganttnewline
+\ganttbar{Valoración del desarrollo}{9}{12} \ganttnewline
+\ganttbar{Conclusiones y búsqueda de trabajo futuro}{12}{13} \\
+\ganttbar{Informe final}{13}{15}
+\end{ganttchart}
+\end{tikzpicture}
+\end{center}
+%\caption{Diagrama de Gantt del proyecto}
+\label{gantt}
+\end{figure}
+
+\begin{table}[ht]
+\centering
+\begin{tabular}{|c|c|c|}
+\hline
+\rowcolor[HTML]{EFEFEF} 
+\textbf{Número de horas totales} & \textbf{Horas por semana} & \textbf{Horas diarias} \\ \hline
+425h                             & $\approx$ 28h                   & $\approx$ 4.2h              \\ \hline
+\end{tabular}
+\caption{Promedio de horas de trabajo }
+\label{dig:horasTrabajadas}
+\end{table}
+
+\section{Costes del proyecto}
+
+El cálculo de los costes del proyecto se va a realizar diferenciando previamente por \textit{Hardware}, \textit{Software} y mano de obra. De esta manera, se pretende que los costes se desglosen aportando claridad sobre la cuantía total. 
+
+\vspace{0.5cm}
+
+\begin{table}[ht]
+\centering
+\begin{tabular}{|c|r|}
+\hline
+\rowcolor[HTML]{EFEFEF} 
+\textbf{Producto (IVA incluido)}              & \multicolumn{1}{c|}{\cellcolor[HTML]{EFEFEF}\textbf{Valor (€)}} \\ \hline
+Ordenador portátil Lenovo Legion              & 1349,00                                                         \\ \hline
+Ordenador de sobremesa                        & 1450,00                                                         \\ \hline
+Pantalla Lenovo L27i                          & 129,99                                                          \\ \hline
+Pantalla Benq 21"                             & 79,89                                                           \\ \hline
+Periféricos                                   & 150,00                                                          \\ \hline
+Infraestructura de Red (PLCs y Router Livebox) & 70,00                                                           \\ \hline
+\end{tabular}
+\caption{Presupuesto desglosado del Hardware}
+\label{tab:costesHardware}
+\end{table}
+
+\vspace{0.5cm}
+
+Las licencias de software generalmente se venden por años, o por meses. Por ello, se ha calculado el precio equivalente asociado a la duración del \gls{tfg}.
+
+\vspace{0.5cm}
+
+\begin{table}[ht]
+\centering
+\begin{tabular}{|c|r|}
+\hline
+\rowcolor[HTML]{EFEFEF} 
+\textbf{Producto (IVA incluido)}     & \multicolumn{1}{c|}{\cellcolor[HTML]{EFEFEF}\textbf{Valor (€)}} \\ \hline
+Microsoft Office                     & 300,00                                                          \\ \hline
+Adobe Photoshop y Adobe Premiere Pro & 241,96‬                                                         \\ \hline
+\end{tabular}
+\caption{Presupuesto desglosado del Software}
+\label{tab:costesSoftware}
+\end{table}
+
+\vspace{0.5cm}
+
+Se han tomado de referencia los honorarios de un ingeniero junior, los cuales corresponden a 20€ la hora. Los costes del \textit{hardware} y \textit{software} se han agregado como un único elemento, añadiéndolo al presupuesto con el valor total del desglose de los productos indicados.
+
+\vspace{0.5cm}
+
+\begin{table}[ht]
+\centering
+\begin{tabular}{|c|r|r|r|}
+\hline
+\rowcolor[HTML]{EFEFEF} 
+\textbf{Descripción (IVA incluido)} & \multicolumn{1}{c|}{\cellcolor[HTML]{EFEFEF}\textbf{Unidades}} & \multicolumn{1}{c|}{\cellcolor[HTML]{EFEFEF}\textbf{Coste unitario (€)}} & \multicolumn{1}{c|}{\cellcolor[HTML]{EFEFEF}\textbf{Coste total (€)}} \\ \hline
+Material Hardware                   & 1                                                              & 3228,89                                                                  & 3228,89                                                               \\ \hline
+Material Software                   & 1                                                              & 541,96                                                                   & 541,96                                                                \\ \hline
+Mano de obra                        & 425                                                            & 20,00                                                                    & 8500,00                                                              \\ \hline
+Costes fijos (Luz, Internet)                       & 4                                                              & 76,00                                                                    & 304,00                                                                \\ \hline
+\rowcolor[HTML]{FFFFC7} 
+\textbf{TOTAL}          & \multicolumn{3}{r|}{\cellcolor[HTML]{FFFFC7}\textbf{12.574,85‬‬5 €‬}}                                                                                                                                               \\ \hline
+\end{tabular}
+\caption{Presupuesto total con IVA}
+\label{tab:budget}
+\end{table}

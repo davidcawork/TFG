@@ -1,0 +1,10 @@
+\subsection{Case02 - Pass}
+\label{P4_ether_case02}
+
+Como se puede apreciar en esta sección, no se ha desarrollado ningún programa P4. Esto se debe a que no hay equivalente en P4 del código de retorno \texttt{XDP\_PASS}, por ello, no se puede hacer nada en este caso de uso. A continuación, se indica el porqué no se encuentra un equivalente entre ambas tecnologías. El código de de retorno en \gls{xdp} es una forma para llevar a cabo una acción con el paquete que llega a la interfaz, en la cual hay anclado un programa \gls{xdp}. Para más información sobre los códigos de retorno consultar la sección \ref{TecnologiaXDP} donde se indica en detalle cuantos hay, para qué sirven y qué limitaciones tienen.\\
+\par
+
+En este caso, el código de retorno \texttt{XDP\_PASS} implica que el paquete se pasa al siguiente punto del procesamiento del \textit{stack} de red en el Kernel de Linux. Es decir, si el programa está anclado a la \gls{nic}, se dejará pasar el paquete al \gls{tc}, de ahí al propio \textit{stack} de red para parsear sus cabeceras, y más adelante, pasárselo a la interfaz de sockets. En P4, el entorno donde se llevarán a cabo los casos de uso será Mininet con ``switches" (\gls{bmv2}) y host. Los ``switches" (\gls{bmv2}) es un soft-switch que permite inyectarle código P4, con el cual se puede definir el \textit{datapath} del mismo.\\
+\par
+
+Ahora bien, aquí viene la gran diferencia entre ambas tecnologías, con \gls{xdp} siempre se puede pasar el paquete al Kernel para que se encargue el del procesamiento, pero en P4, se debe definir de forma exclusiva todo el \textit{datapath}, por lo que no hay a quién delegar el paquete, dado que se tiene que encargar el propio programa P4. Entonces, como tal, no habría equivalente del \texttt{XDP\_PASS} en P4.

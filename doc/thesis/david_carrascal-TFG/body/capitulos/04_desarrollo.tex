@@ -1,0 +1,211 @@
+\chapter{Desarrollo y evaluación de casos de uso}
+\label{desarrollo}
+
+En este capítulo, se describirá el desarrollo realizado tanto para los medios cableados como para los entornos inalámbricos, con la finalidad de cumplir el objetivo del presente \gls{tfg}. Las secciones que se pueden encontrar en este capítulo son las siguientes: \gls{xdp} en entornos cableados; P4 en entornos cableados; P4 en entornos inalámbricos; y por último, \gls{xdp} en entornos inalámbricos. Según se puede apreciar el orden elegido para las secciones no es simétrico, esto se debe a que a la hora del desarrollo en medios inalámbricos hubo que analizar en profundidad el subsistema wireless de Linux con la finalidad de adaptar el \gls{bmv2} a Mininet-WiFi. Como resultado de dicho análisis se obtuvieron valiosas conclusiones que nos ayudarían a implementar los casos de uso de la tecnología XDP en entornos inalámbricos. Por ello, se cree que el orden elegido ayudará al lector a tener una mejor compresión de las implementaciones.  Cada sección estará compuesta de cinco subsecciones, donde cada subsección representará un caso de uso descrito en el capítulo de Análisis (Cap. \ref{analisisPreimplementacion}).\\
+\par
+
+Se indicarán las partes más importantes de cada caso de uso, añadiendo explicaciones teóricas cuando proceda, y ofreciendo al final de cada caso una evaluación de su funcionamiento, proveyendo indicaciones para que se pueda replicar la funcionalidad esperada. En todos los casos de uso se han suministrado scripts para el despliegue de los desarrollos en entornos de red mínimos, intentando representar siempre una mota \gls{iot}.
+
+
+\section{Casos de uso \glsentryshort{xdp} en medios cableados}
+
+En esta sección se introducirán todos los casos de uso realizados con la tecnología \gls{xdp} en entornos cableados. Todos los casos de uso se han nombrado siguiendo la misma sintaxis que en el repositorio del \gls{tfg}, alojado en GitHub. Para \textbf{la instalación de las dependencias} de la tecnología \gls{xdp}, se ha generado el Anexo \ref{deps} donde se detallan todos los pasos a seguir.\\
+\par
+
+Los casos de uso se han dividido en cinco partes, con la finalidad de que la lectura de estos sea más clara y ordenada.
+
+\begin{itemize}
+    \item \textbf{Introducción}: En esta parte se abordarán las explicaciones teóricas complementarias en caso de que sean necesarias, explicaciones propias sobre el caso de uso y comentarios sobre el código desarrollado.
+    
+    \item \textbf{Compilación}: En esta parte se explicará al lector cómo proceder para compilar el programa \gls{xdp}.
+    
+    \item \textbf{Puesta en marcha del escenario}: En esta parte se explicará al lector cómo levantar el escenario y cómo poder limpiarlo tras finalizar la comprobación de funcionamiento, y por último se comentará el escenario recreado. 
+    \item \textbf{Carga de los programas \gls{xdp}}: En esta parte se indicará sobre qué interfaz se producirá la carga de los programas \gls{xdp}, y cómo realizar dicha carga.
+    
+    \item \textbf{Evaluación del funcionamiento}: Por último se hará una evaluación sobre el funcionamiento del caso de uso.
+\end{itemize}
+
+Para que el lector pueda seguir el desarrollo con los casos de uso, a continuación se indica la tabla \ref{tab:XDP_ether_usecases}, la cual expone en qué ruta del repositorio del \gls{tfg} se puede encontrar dicho caso de uso, y un vídeo demostración donde el autor va comentando paso a paso el caso de uso y su evaluación. 
+
+\begin{table}[ht]
+\centering
+\resizebox{\textwidth}{!}{%
+\begin{tabular}{|l|c|c|}
+\hline
+\rowcolor[HTML]{EFEFEF} 
+\multicolumn{1}{|c|}{\cellcolor[HTML]{EFEFEF}\textbf{Caso de uso}} & \textbf{Enlace al repositorio} & \textbf{Enlace al vídeo demostración  } \\ \hline
+case01 - Drop                                                      & \href{https://github.com/davidcawork/TFG/tree/master/src/use_cases/xdp/case01}{\texttt{Enlace al código}}                         & \href{https://www.youtube.com/watch?v=1Ii5J9dqmVA}{Enlace al vídeo}                                \\ \hline
+case02 - Pass                                                      & \href{https://github.com/davidcawork/TFG/tree/master/src/use_cases/xdp/case02}{\texttt{Enlace al código}}                         & \href{https://youtu.be/Aar6Q_iM3AQ}{Enlace al vídeo}                                \\ \hline
+case03 - Echo server                                               & \href{https://github.com/davidcawork/TFG/tree/master/src/use_cases/xdp/case03}{\texttt{Enlace al código}}                          & \href{https://youtu.be/8eCGmO4t8d4}{Enlace al vídeo}                                \\ \hline
+case04 - Layer 3 forwarding                                        & \href{https://github.com/davidcawork/TFG/tree/master/src/use_cases/xdp/case04}{\texttt{Enlace al código}}                           & \href{https://youtu.be/oD1k7wWykBQ}{Enlace al vídeo}                                \\ \hline
+case05 - Broadcast                                                 & \href{https://github.com/davidcawork/TFG/tree/master/src/use_cases/xdp/case05}{\texttt{Enlace al código}}                          & \href{https://youtu.be/-2SJEyW2rIE}{Enlace al vídeo}                                \\ \hline
+\end{tabular}
+}
+\caption{Resumen de la documentación sobre los casos de uso XDP en entornos cableados}
+\label{tab:XDP_ether_usecases}
+\end{table}
+
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%   Casos de uso XDP medio Cableados 
+
+\input{body/capitulos/usecases/xdp_ether_case01}
+\input{body/capitulos/usecases/xdp_ether_case02}
+\input{body/capitulos/usecases/xdp_ether_case03}
+\input{body/capitulos/usecases/xdp_ether_case04}
+\input{body/capitulos/usecases/xdp_ether_case05}
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+\section{Casos de uso P4 en medios cableados}
+
+En esta sección se introducirán todos los casos de uso realizados con la tecnología P4 en entornos cableados. Todos los casos de uso se han nombrado siguiendo la misma sintaxis que en el repositorio del \gls{tfg}, alojado en GitHub. Para \textbf{la instalación de las dependencias} de la tecnología P4, se ha generado el Anexo \ref{deps} donde se detallan todos los pasos a seguir. Se advierte al lector que quiera replicar los casos de uso, que  debe ser extremadamente cuidadoso con las dependencias del entorno P4 que instala, ya que, de querer hacer un \textit{upgrade} alguna de ellas puede generar numerosas incompatibilidades. \\
+\par
+
+Los casos de uso P4, al igual que con los casos de uso \gls{xdp}, se han dividido en partes diferenciadas con la finalidad de que la lectura de estos sea más clara y ordenada.
+
+\begin{itemize}
+    \item \textbf{Introducción}: En esta parte se abordarán las explicaciones teóricas complementarias, explicaciones propias sobre el caso de uso y comentarios sobre el código P4 desarrollado.
+    
+    \item \textbf{Compilación y puesta en marcha del escenario}: En esta parte se explicará al lector cómo proceder para compilar el programa P4 y cómo levantar el escenario. En este caso ambos procesos están integrados en un mismo Makefile, por lo que, la replicación los casos de uso será más amena.
+    
+    \item \textbf{Evaluación del funcionamiento}: Por último, se hará una evaluación sobre el funcionamiento del caso de uso empleando la CLI de Mininet.
+\end{itemize}
+
+Para que el lector pueda seguir el desarrollo de los casos de uso P4, a continuación se indica la tabla \ref{tab:P4_ether_usecases}, la cual expone en qué ruta del repositorio del \gls{tfg} se puede encontrar dicho caso de uso, y un vídeo demostración donde el autor va comentando paso a paso el caso de uso y su evaluación. \\
+\par
+\vspace{0.2cm}
+\begin{table}[ht]
+\centering
+\resizebox{\textwidth}{!}{%
+\begin{tabular}{|l|c|c|}
+\hline
+\rowcolor[HTML]{EFEFEF} 
+\multicolumn{1}{|c|}{\cellcolor[HTML]{EFEFEF}\textbf{Caso de uso}} & \textbf{Enlace al repositorio} & \textbf{Enlace al vídeo demostración  } \\ \hline
+case01 - Drop                                                      & \href{https://github.com/davidcawork/TFG/tree/master/src/use_cases/p4/case01}{\texttt{Enlace al código}}                         & \href{https://youtu.be/RKdi6SC5jYQ}{Enlace al vídeo}                                \\ \hline
+case02 - Pass                                                      & \href{https://github.com/davidcawork/TFG/tree/master/src/use_cases/p4/case02}{\texttt{Enlace al código}}                         & \href{https://youtu.be/5X78simgC60}{Enlace al vídeo}                                \\ \hline
+case03 - Echo server                                               & \href{https://github.com/davidcawork/TFG/tree/master/src/use_cases/p4/case03}{\texttt{Enlace al código}}                          & \href{https://youtu.be/H8R6T_W34gM}{Enlace al vídeo}                                \\ \hline
+case04 - Layer 3 forwarding                                        & \href{https://github.com/davidcawork/TFG/tree/master/src/use_cases/p4/case04}{\texttt{Enlace al código}}                           & \href{https://youtu.be/La-_JCXut1Y}{Enlace al vídeo}                                \\ \hline
+case05 - Broadcast                                                 & \href{https://github.com/davidcawork/TFG/tree/master/src/use_cases/p4/case05}{\texttt{Enlace al código}}                          & \href{https://youtu.be/jExo0mj8t6k}{Enlace al vídeo}                                \\ \hline
+\end{tabular}
+}
+\caption{Resumen de la documentación sobre los casos de uso P4 en entornos cableados}
+\label{tab:P4_ether_usecases}
+\end{table}
+\vspace{0.5cm}
+En esta ocasión, como ya se comentaba en el capitulo de Análisis y Diseño (\ref{analisisPreimplementacion}), la plataforma que se utilizará para evaluar el funcionamiento de los programas P4 en entornos cableados será Mininet. Por lo que si usted no está familiarizado con la herramienta Mininet, se le recomienda que acuda a la sección \ref{mininet} donde se hace una introducción a esta herramienta.
+
+\newpage
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%   Casos de uso P4 medio Cableados
+\input{body/capitulos/usecases/p4_ether_case01}
+\input{body/capitulos/usecases/p4_ether_case02}
+\input{body/capitulos/usecases/p4_ether_case03}
+\input{body/capitulos/usecases/p4_ether_case04}
+\input{body/capitulos/usecases/p4_ether_case05}
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+\section{Casos de uso P4 en medios inalámbricos}
+
+En esta sección se introducirán todos los casos de uso realizados con la tecnología P4 en entornos inalámbricos. Todos ellos se han nombrado siguiendo la misma sintaxis que en el repositorio del \gls{tfg}, alojado en GitHub. Para \textbf{la instalación de las dependencias} de la tecnología P4, se ha dejado escrito el anexo \ref{deps} donde se detallan todos los pasos a seguir. De forma adicional, será necesario la instalación de Mininet-WiFi.\footnote{Más adelante se indicará que versión se debe instalar.} \\
+\par
+
+Estos casos de uso, al igual que los anteriores, se han dividido en partes diferenciadas con la finalidad de que la lectura de estos sea más clara y ordenada. Puesto que muchos conceptos/desarrollos serán iguales que en los casos de uso P4 en entornos cableados, se referenciará directamente al lector a las secciones correspondientes.
+
+\begin{itemize}
+    \item \textbf{Introducción}: En esta parte se abordará las explicaciones teóricas complementarias, explicaciones propias sobre el caso de uso y comentarios sobre el código P4 desarrollado.
+    
+    \item \textbf{Compilación}: En esta parte se explicará al lector cómo proceder para compilar el programa P4. 
+    
+    \item \textbf{Puesta en marcha del escenario}: En esta parte se explicará cómo levantar el escenario. 
+    
+    \item \textbf{Evaluación del funcionamiento}: Por último se hará una evaluación sobre el funcionamiento del caso de uso haciendo uso de la CLI de Mininet-WiFi.
+\end{itemize}
+
+Para que el lector pueda seguir el desarrollo de los casos de uso P4, a continuación se indica la tabla \ref{tab:P4_wifi_usecases}, la cual expone en qué ruta del repositorio del \gls{tfg} se puede encontrar dicho caso de uso, y un vídeo demostración donde el autor va comentando paso a paso el caso de uso y su evaluación. \\
+\par
+
+\begin{table}[ht]
+\centering
+\resizebox{\textwidth}{!}{%
+\begin{tabular}{|l|c|c|}
+\hline
+\rowcolor[HTML]{EFEFEF} 
+\multicolumn{1}{|c|}{\cellcolor[HTML]{EFEFEF}\textbf{Caso de uso}} & \textbf{Enlace al repositorio} & \textbf{Enlace al vídeo demostración  } \\ \hline
+case01 - Drop                                                      & \href{https://github.com/davidcawork/TFG/tree/master/src/use_cases/p4-wireless/case01}{\texttt{Enlace al código}}                         & \href{https://youtu.be/7e3NQc4qQEo}{Enlace al vídeo}                                \\ \hline
+case02 - Pass                                                      & \href{https://github.com/davidcawork/TFG/tree/master/src/use_cases/p4-wireless/case02}{\texttt{Enlace al código}}                         & \href{https://youtu.be/ZP1oaX3qiD4}{Enlace al vídeo}                                \\ \hline
+case03 - Echo server                                               & \href{https://github.com/davidcawork/TFG/tree/master/src/use_cases/p4-wireless/case03}{\texttt{Enlace al código}}                          & \href{https://youtu.be/4C4yPG6MVkI}{Enlace al vídeo}                                \\ \hline
+case04 - Layer 3 forwarding                                        & \href{https://github.com/davidcawork/TFG/tree/master/src/use_cases/p4-wireless/case04}{\texttt{Enlace al código}}                           & \href{https://youtu.be/w1mzL-I9Naw}{Enlace al vídeo}                                \\ \hline
+case05 - Broadcast                                                 & \href{https://github.com/davidcawork/TFG/tree/master/src/use_cases/p4-wireless/case05}{\texttt{Enlace al código}}                          & \href{https://youtu.be/XU2djyzIyvU}{Enlace al vídeo}                                \\ \hline
+\end{tabular}
+}
+\caption{Resumen de la documentación sobre los casos de uso P4 en entornos inalámbricos}
+\label{tab:P4_wifi_usecases}
+\end{table}
+En esta ocasión, como ya se comentaba en el capitulo de Análisis y Diseño (\ref{analisisPreimplementacion}), la plataforma que se utilizará para evaluar el funcionamiento de los programas P4 en entornos cableados será Mininet-WiFi. Pero como se indicó, la plataforma no contempla ningún tipo de nodo que de soporte al \gls{bmv2}, por lo que será necesario desarrollar previamente una integración del \gls{bmv2} en Mininet-WiFi.
+
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%   Integración y Casos de uso P4 medio inalámbricos
+\input{body/capitulos/04_mn-wifi_bmv2}
+\input{body/capitulos/usecases/p4_wifi_case01}
+\input{body/capitulos/usecases/p4_wifi_case02}
+\input{body/capitulos/usecases/p4_wifi_case03}
+\input{body/capitulos/usecases/p4_wifi_case04}
+\input{body/capitulos/usecases/p4_wifi_case05}
+
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\section{Casos de uso \glsentryshort{xdp} en medios inalámbricos}
+
+En esta sección se introducirán todos los casos de uso realizados con la tecnología \gls{xdp} en entornos inalámbricos. Todos los casos de uso se han nombrado siguiendo la misma sintaxis que en el repositorio del \gls{tfg}, alojado en GitHub. Para \textbf{la instalación de las dependencias} de la tecnología \gls{xdp} se ha dejado escrito el Anexo \ref{deps}, donde se detallan todos los pasos a seguir. De forma adicional, y como se comentó en el capítulo \ref{analisisPreimplementacion}, se hará uso de Mininet-WiFi como plataforma para probar los casos de uso desarrollados en un entorno inalámbrico.\\
+\par
+
+Los casos de uso se han dividido en cinco partes, con la finalidad de que la lectura de estos sea más clara y ordenada.
+
+\begin{itemize}
+    \item \textbf{Introducción}: En esta parte se abordará las explicaciones teóricas complementarias en caso de que sean necesario, muchas de ellas se habrán dado ya en los casos de uso \gls{xdp} en entornos cableados, por lo que se referenciará a dichas explicaciones.
+    
+    \item \textbf{Compilación}: En esta parte se explicará al lector cómo proceder para compilar el programa \gls{xdp}.
+    
+    \item \textbf{Puesta en marcha del escenario}: En esta parte se explicará al lector cómo levantar el escenario y cómo poder limpiarlo tras finalizar la comprobación de funcionamiento.
+    \item \textbf{Carga de los programas \gls{xdp}}, en esta parte se indicará sobre qué interfaz se producirá la carga de los programas \gls{xdp}, y se ha realizado dicha carga, ya que se hará de forma automática en el script que levanta el escenario.
+    
+    \item \textbf{Evaluación del funcionamiento}: Por último se hará una evaluación sobre el funcionamiento del caso de uso.
+\end{itemize}
+
+\vspace{1cm}
+
+Para que el lector pueda seguir el desarrollo con los casos de uso, a continuación se indica la tabla \ref{tab:XDP_wifi_usecases}, la cual expone en qué ruta del repositorio del \gls{tfg} se puede encontrar dicho caso de uso, y un vídeo demostración donde el autor va comentando paso a paso el caso de uso y su evaluación. 
+
+\begin{table}[ht]
+\centering
+\resizebox{\textwidth}{!}{%
+\begin{tabular}{|l|c|c|}
+\hline
+\rowcolor[HTML]{EFEFEF} 
+\multicolumn{1}{|c|}{\cellcolor[HTML]{EFEFEF}\textbf{Caso de uso}} & \textbf{Enlace al repositorio} & \textbf{Enlace al vídeo demostración  } \\ \hline
+case01 - Drop                                                      & \href{https://github.com/davidcawork/TFG/tree/master/src/use_cases/xdp-wireless/case01}{\texttt{Enlace al código}}                         & \href{https://youtu.be/7v-Fsw43Zew}{Enlace al vídeo}                                \\ \hline
+case02 - Pass                                                      & \href{https://github.com/davidcawork/TFG/tree/master/src/use_cases/xdp-wireless/case02}{\texttt{Enlace al código}}                         & \href{https://youtu.be/8ua-d7t0d_M}{Enlace al vídeo}                                \\ \hline
+case03 - Echo server                                               & \href{https://github.com/davidcawork/TFG/tree/master/src/use_cases/xdp-wireless/case03}{\texttt{Enlace al código}}                          & \href{https://youtu.be/02zlWZM_mEk}{Enlace al vídeo}                                \\ \hline
+case04 - Layer 3 forwarding                                        & \href{https://github.com/davidcawork/TFG/tree/master/src/use_cases/xdp-wireless/case04}{\texttt{Enlace al código}}                           & \href{https://youtu.be/QL9lTdYmQ8s}{Enlace al vídeo}                                \\ \hline
+case05 - Broadcast                                                 & \href{https://github.com/davidcawork/TFG/tree/master/src/use_cases/xdp-wireless/case05}{\texttt{Enlace al código}}                          & \href{https://youtu.be/hNnrkMMN3W8}{Enlace al vídeo}                                \\ \hline
+\end{tabular}
+}
+\caption{Resumen de la documentación sobre los casos de uso XDP en entornos inalámbricos}
+\label{tab:XDP_wifi_usecases}
+\end{table}
+
+\newpage
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%   Casos de uso XDP medio Cableados 
+\input{body/capitulos/usecases/xdp_wifi_case01}
+\input{body/capitulos/usecases/xdp_wifi_case02}
+\input{body/capitulos/usecases/xdp_wifi_case03}
+\input{body/capitulos/usecases/xdp_wifi_case04}
+\input{body/capitulos/usecases/xdp_wifi_case05}
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
