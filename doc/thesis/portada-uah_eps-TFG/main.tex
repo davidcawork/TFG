@@ -1,0 +1,42 @@
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%
+%   Este proyecto de Latex se ha creado a partir de la plantilla
+%   de Javier Macías Guarasa para la realización de TFG/TFM/Tesis.
+%   En el siguiente enlace se puede encontrar dicha plantilla:
+%       
+%       [+] www.depeca.uah.es/images/plantillas/book-latex.zip
+%
+%   Se ha limpiado la plantilla en la medida de lo posible con la
+%   motivación de hacer uso exclusivo de portada, hoja calificadora
+%   del tribunal, y contraportada en otros proyectos de Latex.
+%
+%  	  - Autor:   David Carrascal <davidcawork@gmail.com>
+%	  - Fecha:   02 Febrero 2020
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+
+% Compilar con pdflatex (En local compilar dos veces para que cargue las refs)
+\documentclass[spanish,openright]{book}
+
+% No tocar, de verdad.. :) Han sido horas acotando este proyecto de latex
+\input{config/preamble.tex}        
+
+% Modificar las variables para cambiar titulo, autor, tutor, año..
+\input{config/myconfig.tex}    
+
+\graphicspath{{./logos/}}                             
+
+%%%%%%%%% MAIN %%%%%%%%%
+\begin{document}
+
+% Portada %
+\input{cover/portada-tfg-uah.tex}
+
+% Hoja del tribunal %
+\input{cover/cover-pfc-tfg-tfm-uah.tex}       
+
+% Contraportada %
+\input{cover/backpage-tfg-uah.tex}                 
+
+\end{document}
+

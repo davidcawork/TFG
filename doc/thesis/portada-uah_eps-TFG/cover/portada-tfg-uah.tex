@@ -1,0 +1,60 @@
+% No tocar nada aquí
+\thispagestyle{empty}
+
+% To add background watermark
+\BgThispage
+
+
+\begin{tikzpicture}[remember picture,overlay]
+    \node[yshift=-5cm] at (current page.north west)
+      {
+        \begin{tikzpicture}[remember picture, overlay]
+          \draw[fill=headingPortadaTFG,headingPortadaTFG] (0,0) rectangle (\paperwidth,5cm);
+          \node [yshift=3cm, xshift=0.5\paperwidth, font=\Huge, text centered, midway] {\color{textoHeadingPortadaTFM}\textbf{\mybookuniversity}};
+          \node [yshift=2cm, xshift=0.5\paperwidth, font=\Huge, text centered, midway] {\color{textoHeadingPortadaTFM}\textbf{\mybookschool}};
+
+        \end{tikzpicture}
+      };
+   \end{tikzpicture}
+
+
+\large
+\vspace{5cm}
+
+\begin{center}
+
+  % titulación a la que se opta
+  \LARGE\textbf{\mydegreefull}
+
+  \vspace{25mm}
+
+  \LARGE\textbf{\mybookworktypefull}
+  
+  \vspace{0.5cm}
+  
+  \Huge{\mybooktitle}
+  \Large
+\vspace{5cm}
+
+  \textbf{Autor:}  \mybookauthor 
+
+\vspace{0.7cm}
+
+  \textbf{\expandafter\makefirstuc\expandafter{\mybookTutorOrTutores}:}  \mybookadvisors
+
+\vspace{0.2cm}
+
+  \textbf{Cotutor:}  \mybookNameCoAdvisor
+
+\end{center}
+
+\begin{bottomparagraph}
+  \begin{center}
+    \huge{\mybookyear}
+  \end{center}
+\end{bottomparagraph}
+
+%\newpage
+%\clearemptydoublepage
+
+
