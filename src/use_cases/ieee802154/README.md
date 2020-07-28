@@ -3,7 +3,7 @@
 Next, we want to make a brief analysis on the viability of exporting the use cases previously made in wired and wireless media under the low-capacity wireless standard. In this way we want to see the strengths and weaknesses of both XDP and P4 language to program the datapath of low capacity devices, in a scenario oriented to an IoT (Internet of Things) environment, with sensors which are quite limited in battery, range, memory and processing.
 
 
-## Herramientas 
+## Tools 
 
 Where do we start? What userspace tools do we have to work with the `ieee802154` subsystem? It's a good question, I came up with this answer after seeing what dependencies Mininet-Wifi installs to interact with its IoT module. All the tools that have been useful in this analysis are shown in the following summary table: 
 
@@ -16,7 +16,7 @@ Where do we start? What userspace tools do we have to work with the `ieee802154`
 
 
 
-## Arquitectura
+## Architecture
 
 Here is a diagram of the architecture of the `ieee802154` stack, obtained from the official development repository of the tools and modules associated with the `ieee802154` standard of the linux kernel. This scheme has been very useful to compare its different blocks with the module `mac80211_hwsim` which we use to emulate wireless networks under the `ieee802.11` standard.
 
