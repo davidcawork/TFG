@@ -1,5 +1,214 @@
 # XDP - Case05: Broadcast
 
+Finally, in this use case we will explore the forwarding capability of XDP ( :joy: ). For this reason we have tried to replicate a basic broadcast scenario with Network Namespaces. We have proposed to use the tool [**arping**](http://man7.org/linux/man-pages/man8/arping.8.html) to emulate an ARP resolution, generating ARP Request, these take their destination MAC all to FF:FF:FF:FF:FF and their broadcast domain would include all those network nodes that operate up to layer 2 (such as a hub, or a switch).
+
+![scenario](../../../../img/use_cases/xdp/case05/scenario_01.png)
+
+The proposed scenario to emulate that scenario was as follows. This would be composed of three Network Namespaces, each one replicating an independent node of the network, then, to intercommunicate each "node" of the network, we have made use of ``veth's``. The supposed switch will be the Network Namespace called ``switch`` which will require an XDP program to be able to actualise as such, since otherwise its interfaces will have the whole Linux network stack above them, that is, the node will implement all the layers of the TCP/IP (DoD) or OSI model in its default, replicating in this way the functionality of a hypothetical host.
+
+![scenario1](../../../../img/use_cases/xdp/case05/scenario_02.png)
+
+To carry out the broadcast we investigated the _BPF_ helpers in search of some function that would help us in our need, and we found one that at first sight we thought could be useful.
+
+```C
+int bpf_clone_redirect(struct sk_buff *skb, u32 ifindex, u64 flags);
+```
+
+But there was one small detail that we overlooked and that is that it requires the package to already be in a ``sk_buff`` structure :joy:, but what does it mean that the function requires a ``sk_buff`` data structure? Before we answer this question let's look at what a ``sk_buff`` structure is, what it's used for and what it provides.
+
+### What is a `sk_buff` ?
+
+According to everything read about this structure, it is probably the most important structure in the whole Linux Kernel as far as the Networking part is concerned. This structure represents the headers or control information for the data to be sent or for those just received. This structure is defined in the following header file [`<include/linux/skbuff.h>`](https://github.com/torvalds/linux/blob/master/include/linux/skbuff.h#L687). This mega-structure contains fields of all types, in order to try to be an "all-terrain" structure that has a great versatility of uses. 
+
+Therefore, it is understood that XDP does not make use of this structure as a memory reserve would have to be made for each packet received and this would be quite time consuming when viewed on a large scale.
+
+The fields in this structure can be classified into the following fields according to their motivation:
+
+* Queues control
+* Headers control
+* Features
+* General
+
+This structure is used by many layers of the protocol stack, and many times the same structure is reused from one layer to another. For example, when a TCP packet is generated, the headers of the transport layer are added and then passed to the network layer, IPv4 - IPv6, to do the same, adding their headers. This process of adding headers is carried out by making memory reserves in the buffer, calling the `skb_reserve` function. Once this function is called, the buffer layers are passed through the protocol stack.
+
+And we might think, what happens when a package arrives? At first I thought that the headers were being removed as if they were a stack, each layer through the network stack was popping out of a header... To my surprise, the way this structure works was not that, but that it actually moves a pointer with the payload and the control information according to the layer of the network stack in which it is located.
+
+For example, if I am in L2, my data pointer would point to the L2 headers. Once these have been parsed and the packet is passed to L3, the pointer would move to the L3 headers. This way the processing of the packets means less CPU cycles and a better *performance* is achieved since it is not necessary to do a realloc with the new "useful" information of the packet.
+
+
+#### Queue control 
+
+All these structures belong to a double-linked list. But the organization of these is a little more complex than usual.
+
+As we said before, this is a double-linked list as every double-linked list the structure has a pointer pointing to the next element in the list and another pointer pointing to the previous element in the list. But, one feature of this structure is that each `sk_buff` structure must be able to find the head of the whole list quickly. To implement this requirement, an extra `sk_buff_head` structure is inserted at the beginning of the list. The definition of this `sk_buff_head` structure is as follows:
+
+```C
+struct sk_buff_head {
+	/* These two members must be first. */
+	struct sk_buff	*next;
+	struct sk_buff	*prev;
+
+	__u32		qlen;
+	spinlock_t	lock;
+};
+```
+The `lock` element is used as a lock to prevent simultaneous access to the list, it will be a crucial attribute to achieve atomicity in list related operations. As for the `next` and `prev` elements, they serve as elements to go through the list pointing to the first buffer and the last one. As it contains these elements, next and prev, the `sk_buff_head` structure is fully compatible in the double-linked list.  Finally, the `qlen` element is to carry the number of elements in the list at any given time.
+
+![](https://i.imgur.com/uvOG20m.png)
+
+For clarity of the drawing, the link of each element in the list has not been drawn to the head of the list. But let's remember, it's not a simple linked list, each list element has a pointer pointing to the first element in the list, with its `list` parameter. Other useful fields in the `sk_buff` structure are as follows:
+
+
+| Field              | Explanation    |
+| ------------------ | -------------- |
+| `struct sock *sk`    | It's a pointer to the data structure of the hypothetical socket, which owns the buffer   |
+| `unsigned int len` | It tells us the size of the data block that contains our data structure, both payload utilities and protocol headers |
+| `unsigned int mac_len` | It tells us the size of the MAC |
+| `atomic_t users` | It is useful when several entities are making use of this particular structure, in this way we ensure that access to it is for exclusive use |
+| `unsigned int truesize` | This field indicates the size of the data plus the control information that the structure itself carries |
+
+The following fields are very familiar to us since with XDP we have to replicate their functionality when they are not available. 
+
+
+![](https://i.imgur.com/vdR1nYx.png)
+
+
+These four memory pointers are useful when a memory backup has to be carried out to add a new header. The `head' pointer will always point to the beginning of the reserved memory location in the first instance, the `data' pointer will always point to the beginning of the packet, so if we want to superimpose one header over another we will simply have to reserve enough memory between the two pointers.
+
+As for pointers, `tail` and `end` are useful for adding control information at the end of the packet, such as the Ethernet CRC.
+
+
+This structure has a great deal of diversity, so for further documentation of it read the following [document](https://people.cs.clemson.edu/~westall/853/notes/skbuff.pdf) where each attribute of the data structure, its purpose and the functions associated with it are documented.
+
+
+
+## XDP Broadcast Restrictions
+
+
+
+Now that we know the ``sk_buff`` structure a little better, we can understand a little better the restrictions involved in having the _helper BPF_ use this structure. When we work with XDP we work with a much simpler and less cumbersome structure than the ``sk_buff``, called ``xdp_buff``. 
+
+Therefore, we cannot make use of the _helper BPF_ and if we want to make use of it we should make a reservation for this structure and do a casting by hand from ``xdp_buff`` to ``sk_buff``. By doing this we would be operating intrusively with the logic of the Linux Kernel network stack, and we would also be losing the performance that comes from not working with these structures.
+
+So investigating a little more about BPF to be able to evaluate the possible options before giving up, it was seen that the next point following the linux datapath where hooks are produced (process of anchoring a bytecode in the Linux Kernel) is in the [``TC``](http://man7.org/linux/man-pages/man8/tc.8.html). 
+
+### What is `TC` in Linux?
+
+[``TC``](http://man7.org/linux/man-pages/man8/tc.8.html), ("Traffic Controller"), is a userspace program which is used for the creation and association of queues with network interfaces. Its functionality can be summarized in four points:
+
+*    SHAPING 
+*    SCHEDULING
+*    POLICING
+*    DROPPING
+
+Traffic processing to achieve these features is done with three types of objects, qdiscs, classes and filters.
+
+#### Qdiscs
+
+It is the acronym of "queueing discipline", it is a basic concept in Linux Networking. Any time the Kernel needs to send a packet over a network interface, it is queued, and these queues are managed with a ``qdisc``, scheduler. The default qdisc is a `pfifo`, it is a pure first-in, first-out. 
+
+#### Classes
+
+Classes only exist within a ``qdisc`` (e.g. HTB and CBQ). Classes are immensely flexible and can always contain either multiple child classes or a single child qdisc. There is no prohibition against a class containing a classified qdisc itself, which facilitates tremendously complex traffic control scenarios.
+
+Any class can also have an arbitrary number of filters attached, allowing the selection of a child class or the use of a filter to reclassify or reduce traffic entering a particular class.
+
+#### Filters
+
+A filter is used to determine which class the package should be glued with. For this purpose the package must always be classified with a certain class. Several methods can be used to classify the packages, but generally filters are used.
+
+The type of filter that we are interested in here is the
+
+`bpf`    Filter packets using (e)BPF, see [tc-bpf(8)](https://man7.org/linux/man-pages/man8/tc-bpf.8.html) for details.
+
+---
+
+Knowing more or less how the [``TC`` operates (http://man7.org/linux/man-pages/man8/tc.8.html), the following solution is proposed to carry out the forwarding:
+
+
+![scenario3](../../../../img/use_cases/xdp/case05/scenario_04.png)
+
+In this way the TC would already have the handling of the ``sk_buff`` structure and therefore, we could already make use of the _helper BPF_ to clone the package and make a redirect to each of the interfaces we want to complete the Broadcast.
+
+
+## Compilation
+
+To compile the XDP program a Makefile has been left prepared in this directory as well as in the [``case04``](https://github.com/davidcawork/TFG/tree/master/src/use_cases/xdp/case04), so to compile it you only need to make a
+
+
+```bash
+make
+```
+
+If you are in doubt about the process of compiling the XDP program, we recommend that you return to [``case02``](https://github.com/davidcawork/TFG/tree/master/src/use_cases/xdp/case02)] where the flow arranged for compiling the programs is referred to.
+
+
+## Setting up the scenario
+
+To test the XDP programs we will use the Network Namespaces. If you don't know what the Network Namespaces are, or the concept of namespace in general, we recommend that you read the [``case01``](https://github.com/davidcawork/TFG/tree/master/src/use_cases/xdp/case01) where a short introduction to the Network Namespaces is given, what they are and how we can use them to emulate our Network scenarios. 
+
+As we mentioned before, so that the concept of the Network Namespaces does not pose a barrier to entry, a script has been written to raise the stage, and for its subsequent cleaning. It is important to point out that the script must be launched with root permissions. To raise the scenario we must execute the script in the following way:
+
+```bash
+sudo ./runenv.sh -i
+```
+
+To clean our machine from the previously recreated scenario we can run the same script indicating now the -c (Clean) parameter. To some bad, and if it is believed that the cleaning has not been done in a satisfactory way, we can make a reboot of our machine obtaining this way that all the not persistent entities(veth, netns..) disappear of our computer.
+
+
+```bash
+sudo ./runenv.sh -c
+```
+
+Once the stage is raised, we would have the next stage set up with Network Namespaces. 
+
+![scenario2](../../../../img/use_cases/xdp/case05/scenario_03.png)
+
+## Loading the XDP program 
+
+Once we have compiled both our XDP program and our BPF programs that will go to [``TC``](http://man7.org/linux/man-pages/man8/tc.8.html), it's time to load them, so to do this and for greater convenience we will open a bash process in the Network Namespace ``switch``, load the XDP program and then load the BPF programs by adding a new qdisc with a BPF filter that will result in an action, another BPF program with the function to clone the packets and send them to other interfaces.
+
+```bash
+
+# We opened a bash on the Network Namespace "switch"
+sudo ip netns exec switch bash
+
+# We load the program XDP_PASS
+sudo ./xdp_loader -d switch xdp_pass
+
+# We created the new qdisc
+sudo tc qdisc add dev switch ingress handle ffff:
+
+# We apply to the created qdisc a BPF filter that in case of matchear will apply an action (Another BPF program that will make our Broadcast)
+sudo tc filter add dev switch parent ffff: bpf obj bpf.o sec classifier flowid ffff:1 action bpf obj bpf.o sec action 
+
+```
+
+## Testing
+
+To check the functioning of the Broadcast system the following test will be performed, where from our default Network Namespace we will generate ARP-Request to the IP of one of the veths of the destination Network Namespace. If our Broadcast system works, listening in the destination Network namespace ``uno`` and ``dos`` we should see how the ARP-Request packets arrive without problems, only the ``host`` to which the ARP-Request were directed, but these will not arrive back because the Broadcast system has only been mounted on one interface, the ``swicth`` interface.
+
+```bash
+
+# Let's generate the ARP-REQUEST
+arping 10.0.0.2/3
+
+# We listen in the Network Namespace destination waiting to see ARP-REQUEST.
+sudo ip netns exec uno tcpdump -l
+sudo ip netns exec dos tcpdump -l
+```
+
+## References
+
+* [Sk_buff](https://people.cs.clemson.edu/~westall/853/notes/skbuff.pdf)
+* [TC](http://man7.org/linux/man-pages/man8/tc.8.html)
+* [tc-bpf](https://man7.org/linux/man-pages/man8/tc-bpf.8.html)
+
+---
+
+
+# XDP - Case05: Broadcast
+
 Por último, en este caso de uso exploraremos la capacidad de forwarding de XDP ( :joy: ). Por ello se ha intentado replicar un escenario básico de broadcast con Network Namespaces. Se ha planteado hacer uso de la herramienta [**arping**](http://man7.org/linux/man-pages/man8/arping.8.html) para emular una resolución ARP, generando ARP Request, estos llevan su MAC destino todo a FF:FF:FF:FF:FF:FF y su dominio de difusión englobaría todos aquellos nodos de la red que operen hasta capa 2 ( como por ejemplo un hub, o un switch).
 
 ![scenario](../../../../img/use_cases/xdp/case05/scenario_01.png)
@@ -195,3 +404,4 @@ sudo ip netns exec dos tcpdump -l
 * [Sk_buff](https://people.cs.clemson.edu/~westall/853/notes/skbuff.pdf)
 * [TC](http://man7.org/linux/man-pages/man8/tc.8.html)
 * [tc-bpf](https://man7.org/linux/man-pages/man8/tc-bpf.8.html)
+
