@@ -123,7 +123,7 @@ The type of filter that we are interested in here is the
 
 ---
 
-Knowing more or less how the [``TC`` operates (http://man7.org/linux/man-pages/man8/tc.8.html), the following solution is proposed to carry out the forwarding:
+Knowing more or less how the [``TC``](http://man7.org/linux/man-pages/man8/tc.8.html) operates, the following solution is proposed to carry out the forwarding:
 
 
 ![scenario3](../../../../img/use_cases/xdp/case05/scenario_04.png)
