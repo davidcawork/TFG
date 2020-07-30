@@ -1,5 +1,82 @@
 # XDP Wireless - Case03: Echo server
 
+In this test we will go into the package parsing, filtering and handling. In the previous cases of use exclusively we defined a behavior of the packets making an exclusive use of the XDP return codes, more specifically ``XDP_DROP`` to throw the packets and ``XDP_PASS`` to admit the packets. There are more XDP return codes, but we cannot develop all the possible logics with them, they can be consulted in the following header file [``bpf.h``](https://github.com/torvalds/linux/blob/master/include/uapi/linux/bpf.h#L3298). In the following table you can see all the XDP return codes.
+
+
+## Compilation
+
+To compile the XDP program a Makefile has been left prepared in this directory as well as in the [``case02``](https://github.com/davidcawork/TFG/tree/master/src/use_cases/xdp-wireless/case02), so to compile it you only have to make a
+
+```bash
+sudo make
+```
+If you are in doubt about the process of compiling the XDP program, we recommend that you return to [``case02``](https://github.com/davidcawork/TFG/tree/master/src/use_cases/xdp/case02) where you will find a reference to the flow arranged for compiling the programs.
+
+
+## Setting up the scenario
+
+To test the XDP programs in a wireless environment, we will do Mininet-Wifi to emulate the network topologies. This emulation tool is a Mininet fork, which makes use of the Network Namespaces to isolate the independent nodes of the network. But what is a Network Namespaces? A network namespace consists of a logical network stack replica that by default has the Linux kernel, routes, ARP tables, Iptables and network interfaces.
+
+As we already mentioned, to raise the scenario we will only have to execute the script in Python that makes use of the Mininet-Wifi API to generate all the network topology. Once executed, it will open the Mininet-Wifi command line interface, from which we can check the operation of our use case. In this particular use case, the XDP program is loaded from the python script itself, [here](https://github.com/davidcawork/TFG/blob/master/src/use_cases/xdp-wireless/case03/runenv.py#L37) you can see it, using the `xdp_loader` tool developed for it. So, as we said this script is self-contained, so we just need to run it :smile::
+
+```bash
+sudo python runenv.py
+```
+
+To clean our machine from the scenario previously recreated with Mininet-Wifi we could do a `sudo mn -c` but it is recommended that the user makes use of the Makefile target intended for this purpose, since it will additionally clean the intermediate files generated in the process of compiling our XDP program. Executing the following command would clean up our machine:
+
+
+```bash
+sudo make clean
+```
+
+Finally just indicate that the recreated scenario is the following, composed exclusively of two wireless stations, isolated in their own network namespaces, and an access point running the `Hostapd` daemon to intercommunicate these wifi stations.
+
+
+![scenario](../../../../img/use_cases/xdp-wireless/case03/scenario.png)
+
+## Loading the XDP program
+
+We already have a stage and the compiled XDP program.. It's time to load it into the Kernel :smirk:. If you don't know where the program [``xdp_loader``](https://github.com/davidcawork/TFG/blob/master/src/use_cases/xdp/util/xdp_loader.c) came from, what the library [``libbpf``](https://github.com/torvalds/linux/tree/master/tools/lib/bpf) gives us, or why we don't use the tool [``iproute2``](https://wiki.linuxfoundation.org/networking/iproute2) to load the XDP programs into the Kernel, please go back to [``case01``](https://github.com/davidcawork/TFG/tree/master/src/use_cases/xdp/case01) where we try to address all these questions. If you still have additional questions or feel that they are not fully explained, please contact me or my tutors.
+
+
+We are indicating ``-d`` (device) to the loader, ``S`` to indicate that the loading on the interface is carried out in generic mode, ``-F`` (Force) to make an override in case there is already an XDP program attached to that interface and finally, we indicate the ``--progsec`` (program section) used in XDP to include different functionalities since in the same bytecode there can be different XDP programs. 
+
+```bash
+# Line 38 of the script runenv.py
+sudo ./xdp_loader -d ap1-wlan1 -F --progsec xdp_case03 -S
+```
+
+## Testing
+
+The verification of the operation of the XDP program anchored to the ``ap1-wlan1`` interface will be carried out by generating pings from the wireless stations towards the access point, so that the ``ap1-wlan1`` interface filters them, analyses them and generates a response. I would also like to mention that the program supports both IPv4 and IPv6 addressing, and its functionality was extended due to the fact that most of the documentation found on XDP, where examples such as this one are carried out, makes use of IPv6 addressing.
+
+```bash
+mininet-wifi> sta1 ping 9.9.9.9
+
+# In a separate console we launched the program xdp_stats to see in real time the XDP return codes used
+mininet-wifi> ap1 ./xdp_stats -d ap1-wlan1
+```
+
+If everything works correctly we should see how the return codes mostly used are the 
+from ``XDP_TX`` as long as we haven't stopped pinging from inside the Network
+Namespace. The operation of this program is very simple, since from the program anchored in the Kernel
+we generate a map where the statistics on the XDP return codes are going to be stored, and then the ``xdp_stats`` program, user space program, knowing the name of the BPF map where the statistics are stored will look for them and print them on screen periodically.
+
+## References 
+
+* [Conferencia Veths y XDP](https://netdevconf.info/0x13/session.html?talk-veth-xdp)
+* [Mapas eBPF](https://prototype-kernel.readthedocs.io/en/latest/bpf/ebpf_maps.html)
+
+
+
+
+---
+
+
+
+# XDP Wireless - Case03: Echo server
+
 En este test nos adentraremos al parseo de paquetes, su filtrado y manejo. En los anteriores caso de uso exclusivamente definíamos un comportamiento de los paquetes haciendo un uso exclusivo de los códigos de retorno XDP, más concretamente ``XDP_DROP`` para tirar los paquetes y ``XDP_PASS`` para admitir los paquetes. Hay más códigos de retorno XDP pero con ellos no podemos lograr desarrollar todas las lógicas posibles, se pueden consultar en el siguiente archivo de cabecera [``bpf.h``](https://github.com/torvalds/linux/blob/master/include/uapi/linux/bpf.h#L3298). En la siguiente tabla se pueden contemplar todos los códigos de retorno XDP.
 
 <div align="center">
@@ -169,3 +246,4 @@ generamos un mapa donde se van a almacenar las estadísticas sobre los códigos 
 
 * [Conferencia Veths y XDP](https://netdevconf.info/0x13/session.html?talk-veth-xdp)
 * [Mapas eBPF](https://prototype-kernel.readthedocs.io/en/latest/bpf/ebpf_maps.html)
+
