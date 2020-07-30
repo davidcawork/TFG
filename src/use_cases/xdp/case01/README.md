@@ -1,5 +1,85 @@
 # XDP - Case01: Drop
 
+In this test we will prove that it is possible to discard all received packets by using XDP technology. To perform the test, we must first compile our XDP program, build the scenario where the test will be performed, anchor the binary to an interface of the scenario and observe the results when we generate traffic that goes through that interface.
+
+## Compilation
+
+To compile the XDP program a Makefile has been left prepared in this directory, so it is not necessary to understand the whole compilation process. We will detail this process later, but for now and since it is the first case of use, and maybe the first contact with this technology, we do not want to saturate the reader. So we exclusively make a:
+
+
+```bash
+make
+```
+
+We would have already compiled the XDP program, you will notice that in its directory several files have been generated with extensions ``*.ll``, ``*.o``, several executables that we will use later to anchor xdp programs in interfaces (``xdp_loader``), and to check the return codes of our xdp programs once already anchored (``xdp_stats``).
+
+
+## Setting up the scenario 
+
+To test the XDP programs we will use the Network Namespaces. But what is a Network Namespaces? A network namespace consists of a logical network stack replica that by default has the Linux kernel, routes, ARP tables, Iptables and network interfaces.
+
+Linux starts with a default Network namespace, with its routing table, with its ARP table, with its Iptables and network interfaces. But it is also possible to create more non-default network namespaces, create new devices in those namespaces, or move an existing device from one namespace to another. In this way, each element of the "network" has its own network namespace, that is, each element has its own network stack and interfaces. So at the networking level, as you might say, they can be seen as independent elements.
+
+
+Because the concept of the Network namespaces could be an entry barrier for those who have never worked with them and wanted to replicate the tests, it was decided to write a script to raise the stage, and for its later cleaning. In this way we make sure that even if a somewhat "abstract" concept of the Linux Kernel is used, this is not an impediment to corroborate the operation of the use cases. To set up the scenario we have to run the shellscript with the ``-i`` parameter (*Install*):
+
+```bash
+sudo ./runenv.sh -i
+```
+
+
+To clean our machine of the previously recreated scenario we can run the same script by indicating now the ``-c`` parameter (*Clean*). A few bad ones, and if it is believed that the cleaning has not been carried out in a satisfactory way, we can make a reboot of our machine obtaining this way that all the not persistent entities(veth, netns..) disappear of our team. 
+
+```bash
+sudo ./runenv.sh -c
+```
+
+Finally just indicate that the recreated scenario is the following, composed exclusively of a Network namespace and a couple of veth's to communicate the Network Namespace created with the default Network namespace.
+
+![scenario](../../../../img/use_cases/xdp/case01/scenario.png)
+
+## Loading the XDP program
+
+Time to load our XDP program into the Kernel! How do we do it? There would be two ways to load our bytecode into the Kernel, the first would be to use the tool [``iproute2``](https://wiki.linuxfoundation.org/networking/iproute2) from version ``v4.12``. The second, and the most used due to the limitations of [``iproute2``](https://wiki.linuxfoundation.org/networking/iproute2) to work with BPF maps, is to use the library [``libbpf``](https://github.com/torvalds/linux/tree/master/tools/lib/bpf). In our case we will make use of a program made in C using that library to load our XDP programs into the kernel, BPF maps and so on.
+
+The code for this program can be found [here](https://github.com/davidcawork/TFG/blob/master/src/use_cases/xdp/util/xdp_loader.c), this loader was developed following the Linux kernel developers tutorial called [xdp-tutorial](https://github.com/xdp-project/xdp-tutorial).
+
+We are indicating ``-d`` (device), ``-F`` (Force) to the loader to make an override in case there is already an XDP program attached to that interface and finally, we indicate the ``--progsec`` (program section) used in XDP to include different functionalities since in the same bytecode there can be different XDP programs. 
+
+```bash
+sudo ./xdp_loader -d uno -F --progsec xdp_case01
+```
+
+## Testing 
+
+
+Once the XDP program is anchored to the interface we must make sure that it works as expected. We will do this by generating traffic from one end of a veth so that it passes through the interface that the XDP program is anchored to and we will observe its behavior. In this case the expected behaviour is that it drops the packets as soon as they reach the interface, in this case the ``uno`` interface.
+
+
+```bash
+
+# We enter the Network namespace and ping the interface with the hooked XDP program. 
+# If all goes well, we should have connectivity between the veth pair :)
+sudo ip netns exec uno ping 10.0.0.1
+
+# We load the XDP program to drop the packets arriving at the interface 
+sudo ./xdp_loader -d uno -F --progsec xdp_case01
+
+# If we ping again we should see how we don't have connectivity
+sudo ip netns exec uno ping 10.0.0.1
+```
+
+## References
+
+* [Namespaces](http://man7.org/linux/man-pages/man7/namespaces.7.html)
+* [Network Namespaces](http://man7.org/linux/man-pages/man7/network_namespaces.7.html)
+
+
+
+---
+
+# XDP - Case01: Drop
+
 En este test probaremos que es posible descartar todos los paquetes recibidos haciendo uso de la tecnología XDP. Para la realizar la prueba, primero deberemos compilar nuestro programa XDP, levantar el escenario donde se va a realizar la prueba, anclar el binario a un interfaz del escenario y observar los resultados cuando generamos tráfico que atraviesa dicha interfaz.
 
 ## Compilación
