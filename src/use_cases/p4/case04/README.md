@@ -1,6 +1,115 @@
 # P4 - Case04: Layer 3 Forwarding
 
 
+In this case of use we will try to implement a network level forwarding, layer 3, so our hypothetical "switch" will now be a very basic router with very few functionalities :smirk:. For this reason it is convenient to remember the notes we made about the [``BMV2``](https://github.com/p4lang/behavioral-model) and why we should not define it only as a soft-switch, since it depends on the p4 program it carries to define its datapath and its interface with the control plane. 
+
+The motivation for this use case is to see the relationship that the XDP return code called ``XDP_REDIRECT`` has with p4, and thus see its equivalent. In the previous [use case](https://github.com/davidcawork/TFG/blob/master/src/use_cases/p4/case03/) we already used the metadata information to choose the outgoing port of the packet. This is the direct equivalent of forwarding on XDP, but here on p4 it is easier, since we only specify the port number, while on XDP we have to obtain the ``ifindex`` of the interface to which we are forwarding. We leave the sentence here: 
+
+```C
+
+
+standard_metadata.egress_spec = port
+
+```
+
+But to all this, **Port numbers? When did we establish these numbers?** :joy: 
+
+Good question. These port numbers are set when the [``BMV2`` instance is lifted](https://github.com/p4lang/behavioral-model). A real interface is associated with an identifying number, these identifying numbers will be the port numbers of each "switch". In this way, the switch has all its possible ports within reach. The collection of the instances of [``BMV2``](https://github.com/p4lang/behavioral-model) is carried out by loading the script [``run_exercise.py``](https://github.com/davidcawork/TFG/blob/master/src/use_cases/p4/utils/run_exercise.py). The script uses the [``P4RuntimeSwitch``](https://github.com/davidcawork/TFG/blob/master/src/use_cases/p4/utils/p4runtime_switch.py#L100) class to raise the switch with the appropriate parameters. We can pick up an instance of [``BMV2``](https://github.com/p4lang/behavioral-model) ourselves by making a:
+
+```bash
+
+sudo simple_switch_grpc --log-console --dump-packet-data 64 \
+                        –i 0@veth0 -i 1@veth2 … [--pcap] --no-p4 \
+                        --grpc-server-addr 0.0.0.0:50051 --cpu-port 255 \
+                        test.json
+
+```
+
+Once we understand where the port numbers come from we can ask ourselves the following question, **How is a p4 program able to know the possible ports it may have available to forward a packet? 
+
+It can't, and it's not logical that a p4 program where you define the datapath already has the possible port numbers to handle. If that were so, we would have to have different p4 programs for each entity with a different number of ports (only to implement a single datapath). This is not feasible. Therefore, all the information related to the ports (associated to the forwarding) usually comes from the control plane who has a record of the ports of that "switch". 
+
+For example, if I want to forward a packet to a specific port given its IP, we will need the control plane to tell us the criteria to follow, which IPs are associated with which ports. This interface between the data plane and the control plane is defined by **tables**.
+
+From the program p4 we have to define the skeleton of the table, indicating that _actions_ are available, which parameters receive those _actions_, which criteria of _match_ the table will have, on _keys_ the _lookup_ will be done and which is the maximum number of entries in that table. Next, a [figure](https://github.com/p4lang/tutorials/blob/master/P4_tutorial.pdf) that summarizes quite well the functionality of the tables: 
+
+![table](../../../../img/use_cases/p4/case04/table.png)
+
+And from the control plane, via P4Runtime or via json with the ``sX-runtime.json`` files (which will be loaded through the CLI-BMV2), the entries of that table and the parameters of the actions to be carried out when there is a hit with that entry will be popular. In our case, IPs will be associated to a forwarding action where we will pass through which port the packet must leave and which destination MAC must carry.
+
+Once we understand the port numbers, and the concept of the tables, we must approach how to do a forwarding action to resend our packets. This forwarding action should be able to update the outbound port, update the destination MAC and decrease the ``ttl`` field in the IP header by one. The following is the proposed action to perform this task:
+
+```C
+
+/*
+ * We wanted to use the '-=' operator but the syntax of P4 does not allow it :(
+ */
+
+action ipv4_forward(macAddr_t dstAddr, egressSpec_t port) {
+        standard_metadata.egress_spec = port;
+        hdr.ethernet.srcAddr = hdr.ethernet.dstAddr;
+        hdr.ethernet.dstAddr = dstAddr;
+        hdr.ipv4.ttl = hdr.ipv4.ttl - 1;
+}
+
+```
+
+Having the action already available, we would only have to apply the table in our p4 program pipeline and we would already be doing a forwarding in layer 3 :smile:.
+
+## Compilation and setting up the scenario 
+
+For the compilation of our p4 program we will use the compiler [``p4c``](https://github.com/p4lang/p4c). If you are not familiar with this compiler or do not know how to compile a p4 program, we recommend that you return to [case01](https://github.com/davidcawork/TFG/tree/master/src/use_cases/p4/case01) where it is explained how the compilation is done and which steps it takes. 
+
+Since people who want to replicate the use cases may not be very familiar with this whole compilation and upload process in the [``BMV2``](https://github.com/p4lang/behavioral-model) process, a Makefile has been provided to automate the compilation and upload tasks, and the cleanup tasks of the use case. Then for the implementation of the use case we must make a:
+
+```bash
+sudo make run
+```
+
+Once we have finished checking the correct functioning of the use case, we must use another Makefile target to clean the directory. In this case we must use :
+
+```bash
+sudo make clean
+```
+
+It is important to note that this target will clean up both the auxiliary files for loading the p4 program into the [``BMV2``](https://github.com/p4lang/behavioral-model), and the directories of ``pcaps``, ``log``, and ``build`` generated at the start of the scenario. So if you want to keep the captures of the different interfaces of the different [BMV2](https://github.com/p4lang/behavioral-model), copy them or clean the scenario by hand as follows:
+
+```bash
+
+# Clean Mininet
+sudo mn -c
+
+# We clean dynamically generated directories on the stage load
+sudo rm -rf build logs
+
+```
+
+## Testing 
+
+Once the ``make run`` is done in this directory, we will have the topology described for this use case, which can be seen in the following figure. As our datapath does not contemplate the handling of ARP, the ARP entry has been added from the file [``topology.json``](scenario/topology.json) so that the ARP resolution is not generated in the ICMP Request submission. This is a bit of a "botched" arrangement as we are telling you a hypothetical gateway that does not exist, and we are adding an ARP entry with the MAC of that gateway, this way all the packets will go out with the destination MAC indicated in the entry and the ARP resolution will not be produced. When the packet arrives at the "switch" it will be modified to its destination MAC, so the "botch" will not go any further! :joy: 
+
+![scenario](../../../../img/use_cases/p4/case04/scenario.png)
+
+
+Going back to the use case check, we'll have the CLI of [``Mininet``](https://github.com/mininet/mininet) open, so we'll just test the connectivity between all the hosts. This can be done as follows:
+
+```bash
+
+mininet> pingall
+```
+
+Additionally, a sniffer could be used to check that the packets arrive with the ``ttl`` field modified, depending on the jumps the packet has made. :smile:
+
+## References  
+
+*   [P4 tutorial](https://github.com/p4lang/tutorials)
+
+
+---
+
+# P4 - Case04: Layer 3 Forwarding
+
+
 En este caso de uso trataremos de implementar un forwarding a nivel de red, capa 3, por ello nuestro hipotético "switch" será ahora un un router muy básico y con muy pocas funcionalidades :smirk:. Por ello conviene recordar las anotaciones que hicimos sobre el [``BMV2``](https://github.com/p4lang/behavioral-model) y por que no debemos definirlo únicamente como un soft-switch, ya que depende del programa p4 que porte para definir su datapath y su interfaz con el plano de control. 
 
 La motivación de este caso de uso es ver la relación que tiene el código de retorno XDP llamado ``XDP_REDIRECT`` con p4, y así ver su equivalente. En el anterior [caso de uso](https://github.com/davidcawork/TFG/blob/master/src/use_cases/p4/case03/) ya hacíamos uso de la información de metadatos para eligir el puerto de salida del paquete. Por lo que podríamos afirmar que este es el equivalente directo al  forwarding en XDP, solo que aquí en p4 nos resulta más sencillo ya que únicamente indicamos por número de puerto mientras que XDP debíamos obtener el ``ifindex`` de la interfaz a la cual íbamos hacer el reenvío. Dejamos aquí la sentencia: 
@@ -103,5 +212,7 @@ De forma adicional, se podría hacer uso de un sniffer para comprobar que los pa
 ## Fuentes 
 
 *   [P4 tutorial](https://github.com/p4lang/tutorials)
+
+
 
 
