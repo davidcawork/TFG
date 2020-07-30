@@ -73,7 +73,7 @@ The following fields are very familiar to us since with XDP we have to replicate
 ![](https://i.imgur.com/vdR1nYx.png)
 
 
-These four memory pointers are useful when a memory backup has to be carried out to add a new header. The `head' pointer will always point to the beginning of the reserved memory location in the first instance, the `data' pointer will always point to the beginning of the packet, so if we want to superimpose one header over another we will simply have to reserve enough memory between the two pointers.
+These four memory pointers are useful when a memory backup has to be carried out to add a new header. The `head` pointer will always point to the beginning of the reserved memory location in the first instance, the `data` pointer will always point to the beginning of the packet, so if we want to superimpose one header over another we will simply have to reserve enough memory between the two pointers.
 
 As for pointers, `tail` and `end` are useful for adding control information at the end of the packet, such as the Ethernet CRC.
 
