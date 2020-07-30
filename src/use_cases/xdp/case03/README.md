@@ -116,7 +116,7 @@ If you are in doubt about the process of compiling the XDP program, we recommend
 
 ## Setting up the scenario
 
-To test the XDP programs we will use the Network Namespaces. If you don't know what the Network Namespaces are, or the concept of namespace in general, we recommend that you read the [``case01``] (https://github.com/davidcawork/TFG/tree/master/src/use_cases/xdp/case01) where a short introduction to the Network Namespaces is given, what they are and how we can use them to emulate our Network scenarios. 
+To test the XDP programs we will use the Network Namespaces. If you don't know what the Network Namespaces are, or the concept of namespace in general, we recommend that you read the [``case01``](https://github.com/davidcawork/TFG/tree/master/src/use_cases/xdp/case01) where a short introduction to the Network Namespaces is given, what they are and how we can use them to emulate our Network scenarios. 
 
 As we mentioned before, in order to avoid the concept of the Network Namespaces being a barrier to entry, a script has been written to raise the scenario, and to clean it up afterwards. It is important to note that the script must be launched with root permissions. To raise the scenario we must execute the script in the following way:
 
