@@ -1,6 +1,198 @@
 # P4 - Case03: Echo server
 
 
+In this case of use we will develop an echo server that will answer all pings coming to it. As such the p4 program is not sufficient to test this functionality as it requires a platform that is capable of supporting the p4 language. We will use switch software called [``behavioral-model``](https://github.com/p4lang/behavioral-model), [``BMV2``](https://github.com/p4lang/behavioral-model) onwards, to test our p4 programs, and [``Mininet``](https://github.com/mininet/mininet) as a scenario to recreate our network topologies. 
+
+Our p4 program should be able to analyze incoming packets, parse and filter them. And only those that we filter will have to be answered. How will we filter them? By adding new states in our parser that check if ICMP headers are present. So first of all we have to declare the necessary ICMP headers.
+
+```C
+
+header icmp_t {
+	bit<8> type;
+	bit<8> code;
+	bit<16> checksum;
+}
+
+```
+
+ Since this p4 program was intended to support IPv6 addressing, the equivalents in ICMPv6 and the IPv6 network header have also been added. 
+
+ ```C
+header ipv6_t {
+	bit<4> version;
+	bit<8> trafficClass;
+	bit<20> flowLabel;
+	bit<16> payloadLen;
+	bit<8> nextHdr;
+	bit<8> hopLimit;
+	ip6Addr_t srcAddr;
+	ip6Addr_t dstAddr;	
+}
+
+
+ header icmp6_t {
+	bit<8> type;
+	bit<8> code;
+	bit<16> checksum;
+}
+ ```
+
+ Now that we have the headers we only have to worry about defining the macros associated with the possible _ethertypes_ we want to handle, IPv4 and IPv6. And the protocol codes of the network headers, to make sure that on the network header we will only process those packets with ICMP. We had to consult the RFC associated with IPv6 to know what coding they did with the ``nextHeader`` field and apparently they use the same values as in IPv4. Below is the definition of these MACROS and an extract from the RFC.
+
+ ```C
+
+/*	---	Layer 2 MACROS	     ---	*/
+const bit<16> ETHERTYPE_IPV4 = 0x0800;
+const bit<16> ETHERTYPE_IPV6 = 0x86dd;
+
+/*	---	Layer 3 MACROS	     ---	*/
+const bit<8> IP_PROTOCOL_ICMP = 0x01;
+const bit<8> IP_PROTOCOL_ICMPv6 = 0x3a; 
+const bit<8> ICMP_ECHO_REQUEST_TYPE = 0x08;
+const bit<8> ICMP_ECHO_REQUEST_CODE = 0x00;
+const bit<8> ICMP_ECHO_REPLY_TYPE = 0x00;
+const bit<8> ICMP_ECHO_REPLY_CODE = 0x00;
+
+/*
+ *   According to RFC 2460, the codes of the protocol immediately above,
+ *   layer 4, are the same as those used in IPv4. And I quote:
+ *
+ *   Next Header          8-bit selector.  Identifies the type of header
+ *                       immediately following the IPv6 header.  Uses the
+ *                       same values as the IPv4 Protocol field [RFC-1700
+ *                       et seq.].
+ *
+ */
+
+ ```
+
+ As you can see, MACROS have been defined for the values we will be working with (REQUEST and REPLY). In this way the resulting code of the actions will be more interpretable and sustainable. Having already all the necessary tools to declare the new parser states, we can start working. The parser code is available in the following [line](https://github.com/davidcawork/TFG/blob/master/src/use_cases/p4/case03/case03.p4#L114).
+
+Well :smile:, now that we are able to filter the packets we are interested in, let's see how we have implemented the processing logic of those packets that have already been filtered. What we want to do is intercept all ICMP packets that come into our switch so that we can reply to them from the switch itself. Therefore, we will use the **validity bit** of the headers that have been correctly parsed, that is, if the packet contains those headers, if it does not, its validity bit will be set to ``false``. Below is the control logic of the Ingress block:
+
+```C
+
+
+/*  
+ *  In this way we ensure that we only process ICMP packets, or failing that ICMPv6.
+ *
+ */
+
+
+apply {
+	if(hdr.ipv4.isValid() && hdr.icmp.isValid()){
+	        echo();
+	}else if (hdr.ipv6.isValid() && hdr.icmp6.isValid()){
+		echo6();
+	}
+}
+
+```
+
+We already have all the ICMP packets at our disposal, we just need to program the logic to modify the headers of that packet to be able to answer satisfactorily to the sender of that ping. To do this, we will use an action, functions. It will _swape_ both source-destination MAC and source-destination IP, it will modify the ICMP header to indicate that it is a reply, and finally it will send the packet through the entry port, so that it reaches the sender.
+
+```C 
+
+
+
+action echo (){
+	/*	---	Auxiliary variables	---	*/
+        macAddr_t temp_mac = hdr.ethernet.srcAddr;
+    	ip4Addr_t temp_ip = hdr.ipv4.srcAddr;
+
+	/*      ---     Swap MACs     ---     */
+	hdr.ethernet.srcAddr = hdr.ethernet.dstAddr;
+        hdr.ethernet.dstAddr = temp_mac;
+
+	/*      ---     Swap Ips     ---     */
+ 	hdr.ipv4.srcAddr = hdr.ipv4.dstAddr;
+	hdr.ipv4.dstAddr = temp_ip;
+  
+	/*      ---     Re-Write ICMP's type and code     ---     */
+	hdr.icmp.type = ICMP_ECHO_REPLY_TYPE;
+	hdr.icmp.code = ICMP_ECHO_REPLY_CODE;
+
+	/*      ---     Forward the packet to the ingress intf     ---     */
+	standard_metadata.egress_spec = standard_metadata.ingress_port;
+
+    }  
+
+```
+
+Pay attention to the last sentence of the function where we indicate you to take the package out through the same interface you came in. This is the direct equivalent of the return code in XDP, ``XDP_TX`` with which we re-circulated the packet in the same way to the incoming interface.
+
+As a curiosity, comment that the ``checksum`` field of the ICMP header must be re-calculated so it must be done before the Egress. This was a problem because we were continually getting errors with the Wireshark dissector in the checksum field. Finally, it became clear that the checksum field should not be included in the new sum of the new checksum (it would have been great if the RFC had been clearer about this :joy: ).
+
+## Compilation and setting up the scenario 
+
+For the compilation of our p4 program we will use the compiler [``p4c``](https://github.com/p4lang/p4c). If you are not familiar with this compiler or do not know how to compile a p4 program, we recommend that you return to [case01](https://github.com/davidcawork/TFG/tree/master/src/use_cases/p4/case01) where it is explained how the compilation is done and which steps it takes. 
+
+Since people who want to replicate the use cases may not be very familiar with this whole compilation and upload process in the [``BMV2``](https://github.com/p4lang/behavioral-model) process, a Makefile has been provided to automate the compilation and upload tasks, and the cleanup tasks of the use case. Then for the implementation of the use case we must make a:
+
+```bash
+sudo make run
+```
+
+Once we have finished checking the correct functioning of the use case, we must use another Makefile target to clean the directory. In this case we must use :
+
+
+```bash
+sudo make clean
+```
+
+It is important to note that this target will clean up both the auxiliary files for loading the p4 program into the [``BMV2``](https://github.com/p4lang/behavioral-model), and the directories of ``pcaps``, ``log``, and ``build`` generated at the start of the scenario. So if you want to keep the captures of the different interfaces of the different [BMV2](https://github.com/p4lang/behavioral-model), copy them or clean the scenario by hand as follows:
+
+```bash
+
+# Clean Mininet
+sudo mn -c
+
+# We clean dynamically generated directories on the stage load
+sudo rm -rf build logs
+
+```
+
+## Testing
+
+Once the ``make run`` is done in this directory, we will have the topology described for this use case, which can be seen in the following figure. As our datapath does not contemplate the handling of ARP, the ARP entry has been added from the file [``topology.json``](scenario/topology.json) so that the ARP resolution is not generated in the ICMP Request submission.
+
+![scenario](../../../../img/use_cases/p4/case03/scenario.png)
+
+
+Going back to the use case check, we will have the CLI of [``Mininet``](https://github.com/mininet/mininet) open, so we will open a terminal for ``host1``.
+
+
+```bash
+mininet> xterm h1
+```
+
+Once we have the terminal open, we will proceed to open Wireshark (In this case I recommend Wireshark since we will be able to filter and check the validity of the checksums in an easier way). 
+
+```bash
+
+# Important to launch Wireshark with ampersand so as not to block the bash
+sudo wireshark &
+
+# Ping to host2
+ping 10.0.2.2
+
+```
+
+If everything works properly we should be getting a response to our ping. Check with Wireshark how the checksum of the ICMP header is correctly calculated. 
+
+## References 
+
+*	 [RFC 8200: Internet Protocol, Version 6 (IPv6) Specification](https://tools.ietf.org/html/rfc8200)
+*	 [RFC 792: ICMP](https://tools.ietf.org/html/rfc792)
+
+
+
+---
+
+
+# P4 - Case03: Echo server
+
+
 En este caso de uso desarrollaremos un servidor de echo que responda todos los pings que le lleguen. Como tal el programa p4 no es suficiente para probar esta funcionalidad ya que requiere de una plataforma que sea capaz de soportar el lenguaje p4. Nosotros haremos uso de software switch llamado [``behavioral-model``](https://github.com/p4lang/behavioral-model), [``BMV2``](https://github.com/p4lang/behavioral-model) en adelante, para testear nuestros programas p4, y de [``Mininet``](https://github.com/mininet/mininet) como escenario para recrear nuestras topologías de Red. 
 
 Nuestro programa p4 deberá ser capaz de analizar los paquetes que le lleguen, parsearlos y filtrarlos. Y solo aquellos que filtremos serán los que deberemos responder. ¿Cómo los filtraremos? Añadiendo nuevos estados en nuestro parser que comprueben si las cabeceras ICMP están presentes. Por ello antes de nada debemos declarar las cabeceras ICMP necesarias.
@@ -183,3 +375,4 @@ Si todo funciona correctamente deberíamos estar recibiendo respuesta a nuestro 
 
 *	 [RFC 8200: Internet Protocol, Version 6 (IPv6) Specification](https://tools.ietf.org/html/rfc8200)
 *	 [RFC 792: ICMP](https://tools.ietf.org/html/rfc792)
+
