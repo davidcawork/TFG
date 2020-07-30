@@ -1,6 +1,6 @@
 # XDP - Case03: Echo server
 
-In this test we will go into the package parsing, filtering and handling. In the previous cases of use exclusively we defined a behavior of the packets making an exclusive use of the XDP return codes, more specifically ``XDP_DROP`` to throw the packets and ``XDP_PASS`` to admit the packets. There are more XDP return codes, but we cannot develop all the possible logics with them, they can be consulted in the following header file [``bpf.h``] (https://github.com/torvalds/linux/blob/master/include/uapi/linux/bpf.h#L3298). In the following table you can see all the XDP return codes.
+In this test we will go into the package parsing, filtering and handling. In the previous cases of use exclusively we defined a behavior of the packets making an exclusive use of the XDP return codes, more specifically ``XDP_DROP`` to throw the packets and ``XDP_PASS`` to admit the packets. There are more XDP return codes, but we cannot develop all the possible logics with them, they can be consulted in the following header file [``bpf.h``](https://github.com/torvalds/linux/blob/master/include/uapi/linux/bpf.h#L3298). In the following table you can see all the XDP return codes.
 
 <div align="center">
   
