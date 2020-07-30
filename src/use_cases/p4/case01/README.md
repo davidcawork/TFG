@@ -1,5 +1,96 @@
 # P4 - Case01: Drop
 
+In this test we will prove that it is possible to discard all the packages received with a p4 program. As such the p4 program is not sufficient to test this functionality since it requires a platform that is capable of supporting the p4 language. We will make use of switch software called [``behavioral-model``](https://github.com/p4lang/behavioral-model), [``BMV2``](https://github.com/p4lang/behavioral-model) onwards, to test our p4 programs, and [``Mininet``](https://github.com/mininet/mininet) as a scenario to recreate our network topologies. 
+
+Before continuing with the use case I want to emphasize one thing. We will continuously refer to [``BMV2``](https://github.com/p4lang/behavioral-model) as a "switch", but we must understand that with the p4 language we are defining the datapath that the entity carrying our p4 program will have, in this case the [``BMV2``](https://github.com/p4lang/behavioral-model). So the switch name may be wrong, since it depends on the p4 program that it carries to behave as a switch. 
+
+Because of this, the [``BMV2``](https://github.com/p4lang/behavioral-model) can act as a hub, like a switch, a router or a firewall. It will depend on the functionality implemented in the p4 program. We will take advantage of the interface implemented in the [``BMV2``](https://github.com/p4lang/behavioral-model) with [``Mininet``](https://github.com/mininet/mininet) developed from the [P4Lang](https://p4.org/) organization in order to integrate these nodes into the network scenario and thus be able to test the operation of the developed p4 program.
+
+## Compilation
+
+For the compilation of our p4 program we will use the compiler [``p4c``](https://github.com/p4lang/p4c). This is the reference compiler for the p4 language, it is modular and allows you to choose different targets to carry out the compilation. Targets? Yes, the compilation of p4 programs is carried out in **two stages**, a frontend compilation stage where a ``*.p4info`` file is generated which contains all the necessary attributes of the p4 program at run time (table identifiers, its structure, actions.. ), and a backend stage in which, the generated ``*.p4info`` file is used to generate the files necessary to attack the target in question.
+
+<p align="center">
+    <img width="50%" src="../../../../img/use_cases/p4/case01/compilation_bmv2.png">
+</p>
+
+For example the backend compiler that attacks the [``BMV2``](https://github.com/p4lang/behavioral-model) generates a ``*.json`` file. This file will be sufficient to establish the entire datapath as programmed in the p4 program. The target of the [``p4c``](https://github.com/p4lang/p4c) compiler we will use is the [``p4c-bm2-ss``](https://github.com/p4lang/p4c/tree/master/backends/bmv2), P4 simple_switch - bmv2 , which supports the ``v1model`` architecture.
+
+## Setting up the scenario
+
+In order to start the scenario, we have written a Makefile which will be compiled by our p4 program, generating the *.p4info and *.json files. Then, the script called [``run_exercise.py``](https://github.com/davidcawork/TFG/blob/master/src/use_cases/p4/utils/run_exercise.py) will be launched, which will raise all the topology described in the file [``scenario/topology.json``](scenario/topology.json) with [``Mininet``](https://github.com/mininet/mininet) . Each topology switch will have all the logic described in our p4 program implemented within one instance of [``BMV2``](https://github.com/p4lang/behavioral-model). Below is a summary image of the survey of a single switch.
+
+<p align="center">
+    <img src="../../../../img/use_cases/p4/case01/setup.png">
+</p>
+
+
+Since people who want to replicate the use cases may not be very familiar with this whole compilation and upload process in the [``BMV2``](https://github.com/p4lang/behavioral-model) process, a Makefile has been provided to automate the compilation and upload tasks, and the cleanup tasks of the use case. Then for the implementation of the use case we must make a:
+
+```bash
+sudo make run
+```
+
+Once we have finished checking the correct functioning of the use case, we must use another Makefile target to clean the directory. In this case we must use :
+
+```bash
+sudo make clean
+```
+
+It is important to note that this target will clean up both the auxiliary files for loading the p4 program into the [``BMV2``](https://github.com/p4lang/behavioral-model), and the directories of ``pcaps``, ``log``, and ``build`` generated at the start of the scenario. So if you want to keep the captures of the different interfaces of the different [``BMV2``](https://github.com/p4lang/behavioral-model), copy them or clean the scenario by hand as follows:
+
+
+```bash
+
+# Clean up Mininet
+sudo mn -c
+
+# We clean dynamically generated directories on the stage load
+sudo rm -rf build logs
+
+```
+
+## Testing
+
+Once the ``make run`` is done in this directory, we will have the topology described for this use case, which can be seen in the following figure. As we mentioned before, the topology can be found described under the directory [``scenario``](scenario), in a ``json`` file called [``topology.json``](scenario/topology.json). This file also describes the location of the files that describe the control plane of each topology switch. The standard names used by the P4Lang organization, ``sX-runtime.json``, have been respected in all cases of use, where **X** in number that switch occupies in the topology of [``Mininet``](https://github.com/mininet/mininet). 
+
+![scenario](../../../../img/use_cases/p4/case01/scenario.png)
+
+Going back to the use case check, we will have the CLI of [``Mininet``](https://github.com/mininet/mininet) open, so we will open one terminal for ``host1`` and another for ``host2``.
+
+```bash
+mininet>  xterm h1 h2
+```
+
+Now with both terminals open, from the h2 we put to listen by its interface. We can use ``wireshark``, the sniffer that the user sees fit. In this case for simplicity I will use ``tcpdump``.
+
+
+```bash
+#  host2 terminal
+tcpdump -l
+
+# host1 terminal
+ping 10.0.2.2
+```
+
+Once we are listening on the host2 interface, we ping from host1 to host2 and we should not have connectivity. If this is the case it means that the p4 program developed is working correctly. To make sure that the action is actually running to throw packages, we can check the logs of the [``BMV2``](https://github.com/p4lang/behavioral-model), which generate a log file for each target instance of the single switch that was raised. These logs can be found in the ``logs`` directory, and each log file belonging to a single switch has the same name as it has in [``Mininet``](https://github.com/mininet/mininet). In this case if we wanted to open the logs from ``s1`` we would do a:
+
+```bash
+
+tail logs/s1.log
+
+```
+
+## References 
+
+* [P4 tutorial](https://github.com/p4lang/tutorials)
+* [Mininet](https://github.com/mininet/mininet)
+
+
+---
+
+# P4 - Case01: Drop
+
 En este test probaremos que es posible descartar todos los paquetes recibidos con un programa p4. Como tal el programa p4 no es suficiente para probar esta funcionalidad ya que requiere de una plataforma que sea capaz de soportar el lenguaje p4. Nosotros haremos uso de software switch llamado [``behavioral-model``](https://github.com/p4lang/behavioral-model), [``BMV2``](https://github.com/p4lang/behavioral-model) en adelante, para testear nuestros programas p4, y de [``Mininet``](https://github.com/mininet/mininet) como escenario para recrear nuestras topologías de Red. 
 
 Antes de continuar con el caso de uso quiero remarcar una cosa. Continuamente nos estaremos refiriendo al [``BMV2``](https://github.com/p4lang/behavioral-model) como un "switch", pero debemos entender que con el lenguaje p4 estamos definiendo el datapath que tendrá la entidad que cargue con nuestro programa p4, en este caso el  [``BMV2``](https://github.com/p4lang/behavioral-model). Por lo que la denominación de switch puede ser un errónea, ya que depende del programa p4 que porte para comportarse como un switch. 
@@ -83,3 +174,4 @@ tail logs/s1.log
 
 * [P4 tutorial](https://github.com/p4lang/tutorials)
 * [Mininet](https://github.com/mininet/mininet)
+
