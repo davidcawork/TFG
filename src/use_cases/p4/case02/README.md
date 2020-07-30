@@ -1,5 +1,20 @@
 # P4 - Case02: Pass
 
+As you can see in this directory there is no p4 program. This is because there is no equivalent in p4 of the return code XDP_PASS, so nothing can be done in this case of use. The following is an indication of why there is no equivalent between the two technologies.
+
+The return code in XDP is a way to carry out an action with the packet arriving at the interface, in which an XDP program is anchored. For more information on return codes, see the following [README](https://github.com/davidcawork/TFG/tree/master/src/use_cases/xdp/case03) which indicates in detail how many there are, what they are for, and what limitations they have. 
+
+In this case the ``XDP_PASS`` return code implies that the packet is passed to the next point in the network stack processing in the Linux Kernel. That is, if the program is anchored to the NIC, the packet will be passed to [``TC``](http://man7.org/linux/man-pages/man8/tc.8.html), from there to the network stack itself to parse its headers, and then fed to the socket interface.
+
+On p4, the environment for the use cases will be [``Mininet``](https://github.com/mininet/mininet) with switches ([``BMV2``](https://github.com/p4lang/behavioral-model)) and host. The "switchs" ([``BMV2``](https://github.com/p4lang/behavioral-model)) is a switch software that allows us to inject p4 code, with which we can define the datapath of it.
+
+Now, here comes the big difference between both technologies: with XDP you can always pass the package to the Kernel to take care of the processing, but in p4, we must define exclusively the whole Datapath, so there is no one to delegate the package, we have to take care of it ourselves. Then, as such, there would be no equivalent of the ``XDP_PASS`` on p4.
+
+
+---
+
+# P4 - Case02: Pass
+
 Como se puede apreciar en este directorio no hay ningún programa p4. Esto se debe a que no hay equivalente en p4 del código de retorno XDP_PASS, por ello, no se puede hacer nada en este caso de uso. A continuación, se indica el por qué no se encuentra un equivalente entre ambas tecnologías.
 
 El código de de retorno en XDP es una forma para llevar a cabo una acción con el paquete que llega a la interfaz, en la cual hay anclado un programa XDP. Para más información sobre los códigos de retorno consultar el siguiente [README](https://github.com/davidcawork/TFG/tree/master/src/use_cases/xdp/case03) donde se indica en detalle cuantos hay, para qué sirven y qué limitaciones tienen. 
