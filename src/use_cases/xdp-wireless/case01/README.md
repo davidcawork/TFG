@@ -1,5 +1,88 @@
 # XDP Wireless - Case01: Drop
 
+In this test we will prove that it is possible to discard all received packets by using XDP technology. To perform the test, we must first compile our XDP program, build the scenario where the test will be performed, anchor the binary to an interface of the scenario and observe the results when we generate traffic that goes through that interface.
+
+## Compilation
+
+To compile the XDP program a Makefile has been left prepared in this directory, so it is not necessary to understand the whole compilation process. We will detail this process later, but for now and since it is the first case of use, and maybe the first contact with this technology, we do not want to saturate the reader. So we exclusively make a:
+
+```bash
+sudo make
+```
+
+We would have already compiled the XDP program, you will notice that in its directory several files have been generated with extensions ``*.ll``, ``*.o``, several executables that we will use later to anchor xdp programs in interfaces (``xdp_loader``), and to check the return codes of our xdp programs once already anchored (``xdp_stats``).
+
+
+## Setting up the scenario
+
+To test the XDP programs in a wireless environment, we will do Mininet-Wifi to emulate the network topologies. This emulation tool is a Mininet fork, which makes use of the Network Namespaces to isolate the independent nodes of the network. But what is a Network Namespaces? A network namespace consists of a logical network stack replica that by default has the Linux kernel, routes, ARP tables, Iptables and network interfaces.
+
+Linux starts with a default Network namespace, with its routing table, with its ARP table, with its Iptables and network interfaces. But it is also possible to create more non-default network namespaces, create new devices in those namespaces, or move an existing device from one namespace to another. In this way, each element of the "network" has its own network namespace, that is, each element has its own network stack and interfaces. So at the networking level, as you might say, they can be seen as independent elements.
+
+To raise the scenario we will only have to execute the script in Python that makes use of the Mininet-Wifi API to generate all the network topology. Once executed, it will open the Mininet-Wifi command line interface, from which we will be able to check the operation of our use case. In this particular use case, the XDP program is loaded from the python script itself, [here](https://github.com/davidcawork/TFG/blob/master/src/use_cases/xdp-wireless/case01/runenv.py#L36) you can see it, using the `xdp_loader` tool developed for it. So, as we said this script is self-contained, so we just need to run it :smile::
+
+```bash
+sudo python runenv.py
+```
+
+To clean our machine from the scenario previously recreated with Mininet-Wifi we could do a `sudo mn -c` but it is recommended that the user makes use of the Makefile target intended for this purpose, since it will additionally clean the intermediate files generated in the process of compiling our XDP program. Executing the following command would clean up our machine:
+
+```bash
+sudo make clean
+```
+
+Finally just indicate that the recreated scenario is the following, composed exclusively of two wireless stations, isolated in their own network namespaces, and an access point running the `Hostapd` daemon to intercommunicate these wifi stations.
+
+![scenario](../../../../img/use_cases/xdp-wireless/case01/scenario.png)
+
+## Loading the XDP program
+
+Time to load our XDP program into the Kernel! How do we do it? There would be two ways to load our bytecode into the Kernel, the first would be to use the tool [``iproute2``](https://wiki.linuxfoundation.org/networking/iproute2) from version ``v4.12``. The second, and the most used due to the limitations of [``iproute2``](https://wiki.linuxfoundation.org/networking/iproute2) to work with BPF maps, is to use the library [``libbpf``](https://github.com/torvalds/linux/tree/master/tools/lib/bpf). In our case we will make use of a program made in C using that library to load our XDP programs into the kernel, BPF maps and so on.
+
+The code of such program can be found [here](https://github.com/davidcawork/TFG/blob/master/src/use_cases/xdp/util/xdp_loader.c), this loader was developed following the Linux kernel developers tutorial called [xdp-tutorial](https://github.com/xdp-project/xdp-tutorial).
+
+To the loader we are indicating ``-d`` (device), ``-S`` to indicate that the load on the interface is carried out in generic mode, ``-F`` (Force) to make an override in case there is already an XDP program attached to that interface and finally, we indicate the ``--progsec`` (program section) used in XDP to include different functionalities since in the same bytecode there can be different XDP programs. 
+
+```bash
+# Line 38 of the script runenv.py
+sudo ./xdp_loader -d sta1-wlan0 -F --progsec xdp_case01 -S
+```
+
+## Testing
+
+Once the XDP program was anchored to the interface of the ``sta1`` wifi station, we must make sure that it works as expected. We will do this by generating traffic from one wifi station to the other so that it passes through the interface that the XDP program is anchored to and we will observe its behaviour. In this case the expected behaviour is that it drops the packets as soon as they arrive at the interface, in this case the ``sta1-wlan0`` interface.
+
+
+```bash
+
+# We execute a ping from station sta2 to station sta1
+mininet-wifi> sta2 ping sta1
+
+# Additionally we can open an xterm in sta1, and start listening with a sniffer :)
+mininet-wifi> xterm sta1
+
+root@sta1~$ tcpdump -l
+
+# Now that we've seen that we don't have connectivity, due to the XDP program, let's do an unload
+# the XDP program, and we'll test the connectivity again.
+mininet-wifi> sta1 ./xdp_loader -S -U -d sta1-wlan0
+
+
+# We execute a ping from station sta2 to station sta1, and now yes, the connectivity should work.
+mininet-wifi> sta2 ping sta1
+```
+
+## References 
+
+* [Namespaces](http://man7.org/linux/man-pages/man7/namespaces.7.html)
+* [Network Namespaces](http://man7.org/linux/man-pages/man7/network_namespaces.7.html)
+
+
+
+---
+
+# XDP Wireless - Case01: Drop
+
 En este test probaremos que es posible descartar todos los paquetes recibidos haciendo uso de la tecnología XDP. Para la realizar la prueba, primero deberemos compilar nuestro programa XDP, levantar el escenario donde se va a realizar la prueba, anclar el binario a un interfaz del escenario y observar los resultados cuando generamos tráfico que atraviesa dicha interfaz.
 
 ## Compilación
