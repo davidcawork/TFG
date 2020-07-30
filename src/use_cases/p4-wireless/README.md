@@ -1,5 +1,225 @@
 # P4lang-wireless Implementation 
 
+The motivation for this implementation comes from the study of the different datapaths in wireless environments. The only consolidated platform for the emulation of SDN-wireless environments is Mininet-Wifi, so the search for its repository was started. Unfortunately no mention of the p4 language was found in that repository. Upon further investigation, it was found that the creator of Mininet-Wifi and IFBA professor, [Ramon Fontes](https://github.com/ramonfontes), had made a [fork](https://github.com/ramonfontes/tutorials) of the p4 tutorials and had adapted them to Mininet-Wifi, although as stated in the [here](https://github.com/p4lang/tutorials/issues/301) in this open issue on p4lang-tutorials, there is still much development to be done, it is only a first step. 
+
+Seeing the activity of this repository, it is understood that for the moment the development has not progressed much further, since there is no activity in it since 2019. Therefore, as we have the need to process packets with the WiFi headers, and seeing that in all the programs developed on p4 by Ramon the BMV2 works over Ethernet, we are going to venture to set up a scenario where the BMV2 has wireless interfaces, so that we can process the headers we need.
+
+The following plan is therefore proposed to address development:
+
+* Understand and analyze the interface created from the P4Lang organization, the BMV2 with Mininet.
+* Understand and analyze the integration made by Ramon of the interface created by P4Lang and Mininet-Wifi.
+* Once both interfaces are understood, it is possible to get BMV2 to run in a netns and have wireless interfaces.   
+
+If the magnitude of both interfaces were inaccessible due to their great complexity, we propose to go directly to the low level of Mininet-Wifi, make use of ``wmediumd`` and the kernel module ``mac80211_hwsim`` to mount custom scenarios to carry out our use cases.
+
+
+## P4Switch (BMV2) - Mininet Interface
+
+The P4lang organization wanted to provide a test environment where the developed p4 programs could be tested. They already had the software-switch where they were going to load the p4 program, which is the [``BMV2``](https://github.com/p4lang/behavioral-model), but they lacked a platform where they could deploy this switch and interconnect it with other network entities. This platform would be Mininet, a network emulation tool. 
+
+Mininet is generally used to emulate SDN environments with switches and controllers, so to achieve the integration of their new switch with the switches already available in Mininet, they had to add a new class called [``P4Switch``](https://github.com/p4lang/tutorials/blob/master/utils/p4_mininet.py#L57). This new class would inherit from Mininet's ``Switch`` class, adding all the methods and attributes needed for the orchestration of the [``BMV2``](https://github.com/p4lang/behavioral-model).
+
+Usually, when working with Mininet, scripts are developed where the topology of the network to be emulated is defined. In this case, to make it easier for the users of P4 tutorials, the topologies are defined in ``.json`` files, which define all the network topology and all the information of the control plane of each P4 switch. An example of such a file can be found [here](https://github.com/davidcawork/TFG/blob/master/src/use_cases/p4/case01/scenario/topology.json). 
+
+
+This way you can also abstract the definition of the topology from the orchestration script itself. The topology orchestration script, which will make use of the Mininet Python API, will be the famous script called [``run_exercise.py``](https://github.com/davidcawork/TFG/blob/master/src/use_cases/p4/utils/run_exercise.py). This way we'll have as many ``*.json`` files as we want, but only one orchestration script.
+
+The script [``run_exercise.py``](https://github.com/davidcawork/TFG/blob/master/src/use_cases/p4/utils/run_exercise.py) initializes an object of the ``ExerciseRunner`` class which will parse the ``*.json`` file, process the topology with the help of the ``ExerciseTopo`` class and raise the topology by making use of Mininet's Python API. Below is a UML diagram showing the class relationship from our _entrypoint_ in the survey of the various use cases.
+
+
+![UML_no_extendido](../../../img/analysis_p4-wireless/run_exercise_pertenencia.png)
+
+As mentioned above, to achieve the integration of [``BMV2``](https://github.com/p4lang/behavioral-model) into Mininet, the class [``P4Switch``](https://github.com/p4lang/tutorials/blob/master/utils/p4_mininet.py#L57) had to be created. This new class would inherit from the Mininet ``Switch`` class. In turn, new child classes would be created from the class [``P4Switch``](https://github.com/p4lang/tutorials/blob/master/utils/p4_mininet.py#L57), the most important one [``P4RuntimeSwitch``](https://github.com/p4lang/tutorials/blob/master/utils/p4runtime_switch.py#L27) which would be used to configure the switch via [``P4Runtime``](https://github.com/p4lang/PI) :smile: . If you want to see a larger view of this same UML, showing methods and attributes, go [here](../../../img/p4-wireless/run_exercise.png).
+
+![UML_no_extendido](../../../img/analysis_p4-wireless/run_exercise_class_names_only.png)
+
+<br/>
+
+### Example execution trace - case01
+
+For a better understanding of the internal functioning of the interface of [``BMV2``](https://github.com/p4lang/behavioral-model) with Mininet, the execution trace of [case01](https://github.com/davidcawork/TFG/tree/master/src/use_cases/p4/case01) will be thoroughly analyzed. Different execution trace modes have been obtained in order to obtain a better understanding of what the interface's workflow is. Below are the links to these traces in case you want to consult them:
+
+*   [System trace ](./analysis/p4-Mininet/strace_case01.log) [ trace of syscalls of the [case01](https://github.com/davidcawork/TFG/tree/master/src/use_cases/p4/case01) ]
+*   [Mininet debug trace ](./analysis/p4-Mininet/trace_case01_debug.log)[ execution trace of the  [case01](https://github.com/davidcawork/TFG/tree/master/src/use_cases/p4/case01)]
+*   [Pyreverse execution trace](./analysis/p4-Mininet/trace_case01_run_exer_raw.log) [ execution trace of the [case01](https://github.com/davidcawork/TFG/tree/master/src/use_cases/p4/case01), obtained using pyreverse module ]
+*   [Pyreverse execution trace - cleaned](./analysis/p4-Mininet/trace_case01_run_exer.log) [ execution trace of the [case01](https://github.com/davidcawork/TFG/tree/master/src/use_cases/p4/case01), obtained using pyreverse module ]
+
+*   [Fuctions list](./analysis/p4-Mininet/trace_case01_run_exer_functions.log) [ execution trace of the [case01](https://github.com/davidcawork/TFG/tree/master/src/use_cases/p4/case01)]
+
+Below is a summary table of the workflow that occurred in the lifting of [case01](https://github.com/davidcawork/TFG/tree/master/src/use_cases/p4/case01). Four columns are indicated in which the functionality being executed is described, the operation text thrown by the trace, which class is impacted and finally, in which method this step is occurring. All the steps are linked to the source in case you want to consult it personally :cat:.
+
+<br/>
+
+
+
+
+The motivation to create this table was twofold, first to document in detail the inner workings of the Mininet interface with the P4 environment, in order to provide others with an entrypoint to develop with Mininet. The second one has been to learn in a personal way the internal functioning, so that, later on, we could achieve the integration with Mininet-Wifi :monkey:.
+
+
+## Mininet-Wifi Internals
+
+Once the internal workings of the Mininet-P4 env API have been reviewed, the next step is to analyze Mininet-Wifi. Mininet-Wifi is a wireless network emulation tool that was born from Mininet, that is, it is a fork of it. Being a fork, it shares much of the class hierarchy as well as its ability to simulate certain network elements. Moreover, with the Mininet-Wifi tool you can run a Mininet topology without problems, since the addition of Wifi is a complement to Mininet!
+
+With Mininet-Wifi we can emulate Wifi stations, access points, ad hoc networks, mesh and all network nodes available in Mininet. As we said before, Mininet-Wifi is developed from Mininet, but the wireless interface emulation capability is taken from the Linux wireless subsystem (Later on we will enter the ``mac80211_hwsim`` Kernel module).
+
+
+The virtualization architecture used in Mininet-Wifi works in a similar way to Mininet, the tool [`mnexec`](https://github.com/intrig-unicamp/mininet-wifi/blob/master/mnexec.c) is used to launch different bash processes in new Network Namespaces, one for each independent node of the network. From these processes all the processes related to the different network nodes will hang, when the emulation is finished, these bash processes will be killed, so there will be no referencing conditions in the Network Namespaces, and these will be removed by the Kernel. 
+
+In this way, the network nodes would already be isolated from other network nodes, so the only thing left to virtualize are the wireless capabilities of the nodes that require them. For them we will use the wireless subsystem of the Linux Kernel, more specifically the ``mac80211_hwsim`` module which will create the wireless interfaces in our equipment. This module will communicate with the ``mac80211`` framework which will provide the access management capabilities to the wireless interface medium. In addition, in the Kernel space there is a further block called ``cfg80211`` which will serve as an API for the configuration of 802.11 headers. This configuration can be done by the userspace netlink interface called `nl80211`. 
+
+
+For the configuration of the access points, the program [``HostApd``](https://github.com/latelee/hostapd) will be used. By indicating the configuration of the access point and the interface on which it should run, it will emulate the operation of a standard access point. The following figure summarizes the basic architecture of Mininet-Wifi.
+
+
+![Imagen de la arquitectura de Mininet-Wifi](../../../img/analysis_p4-wireless/mininet_wifi_components.png)
+
+
+As for the class hierarchy, it is quite similar to Mininet's. To highlight two key classes in the Mininet-Wifi hierarchy would be [`Node_Wifi`](https://github.com/intrig-unicamp/mininet-wifi/blob/master/mn_wifi/node.py#L44), from which they inherit all the nodes with wireless capabilities that Mininet-Wifi has and finally, the class [`IntfWireless`](https://github.com/intrig-unicamp/mininet-wifi/blob/master/mn_wifi/link.py#L22), from which they inherit all the available Mininet-Wifi link types (under the 802.11 standard). The UMLs for these classes are left below.
+
+
+<p align="center">
+ <img src="../../../img/analysis_p4-wireless/uml_node.png"/>
+</p>
+
+As can be seen in the UML schemas, it has been possible to isolate the common functionality in the parent classes in order to optimize the amount of code in the child classes. In this way, adding new link types in Mininet-Wifi, for example, is quite affordable, as we have a lot of link types with a very clear and organized structure.
+
+![UML Intf wireless](../../../img/analysis_p4-wireless/uml_link.png)
+
+
+### Linux Wireless Subsystem
+
+The Linux wireless subsystem consists of a set of several modules found in the Linux Kernel. These handle the hardware configuration under the IEEE 802.11 standard as well as the management of the transmission and listening of the data packages. Going from the bottom to the top of the subsystem, the first module we find is the ``mac80211_hwsim`` module. This module, as we mentioned before, is responsible for creating the virtual wireless interfaces in our machine. 
+
+<p align="center">
+ <img src="../../../img/analysis_p4-wireless/linux_wireless_subsystem.JPG"/>
+</p>
+
+
+
+The main objective of this module ``mac80211_hwsim`` is to make it easier for developers of wireless card drivers to test their code and interaction with the following module called ``mac80211``. Virtualized interfaces do not have the limitations, that is, unlike real hardware, it is easier to create different tests with different configurations without being inhibited by lack of material resources. This module usually receives only one parameter, which is the number of "radii virtual interfaces, to be virtualized. Since the possibilities offered by this module were a bit reduced, many wrappers have been created to offer more functionality than the one given by the module itself. Most of the tools created make use of the Netlink library to communicate directly with the subsystem in the Kernel to get extra configurations, like adding an RSSI, giving name to the interface. An example of such tools would be the tool [``mac80211_hwsim_mgmt``](https://github.com/patgrosse/mac80211_hwsim_mgmt), which is used by Mininet-Wifi to manage the creation of the wireless interfaces in each node that requires them. 
+
+It is important to mention the paradigm change that exists in the wireless subsystem of Linux with the concept of interface. Generally we are used to think about the concept of interface as an element that manages the access to the media, layer two, and the hardware itself, physical layer, an example of this would be an Ethernet interface. Well, in the wireless subsystem the interface is broken down into **two layers**, one of them is the physical layer (PHY) where you can manage for example in which channel the emulated wireless card is listening. The other layer is the access to the medium, represented by the virtual interfaces that "hang" on a wireless card. 
+
+The idea behind this is that you can have *N* virtual interfaces associated to the same emulated wifi card, what surprised me is that the virtual interfaces work mainly with Ethernet (leaving aside the ones in monitor mode).
+
+
+
+#### Limitations found 
+
+As already mentioned, most of the virtual interfaces associated with an emulated wireless card are Ethernet type, so all the packets that arrive to us come with Ethernet headers. This is a limitation because in our case of use we wanted to manage the Wifi headers, but if all the virtual interfaces are generally of the Ethernet type, the idea would not be viable.
+
+<p align="center">
+ <img src="../../../img/analysis_p4-wireless/linux_wireless_subsystem_tx.png" width="40%" />
+</p>
+
+
+But what's the point of converting Wifi headers to Ethernet headers? At the moment the only reason I have found for this design decision, is to make a simpler design of all the drivers that operate under the `mac80211` module, convert to Ethernet and deliver it to the network stack to be managed as one more packet of a wired network. 
+
+
+<p align="center">
+ <img src="../../../img/analysis_p4-wireless/linux_wireless_subsystem_rx.png" width="50%" />
+</p>
+
+
+
+In my opinion, this is quite a waste of resources, since the package is glued up to three times (driver, ethernet queue, qdisc queue) and you have to invest time and resources in the process of casting the headers, [here](https://elixir.bootlin.com/linux/latest/source/net/mac80211/rx.c#L2376) you can see the function in the kernel where this process takes place.  
+
+
+
+I say generally because the only way an interface can get to listen to wifi packets is in **monitor** mode. But the monitor mode is intended only to listen to packets, not to transmit. This mode can be taken to the limit by doing a packet injection by the interface, this means that the construction of the wifi headers must be done by us, open a raw socket with that interface and transmit the packet. A test was made generating a Wifi ping, you can consult the tool [here](https://github.com/davidcawork/TFG/blob/master/src/use_cases/p4-wireless/analysis/Mininet-wifi/wtools/wping.py). To get the ping Wifi, we used [``Scapy``](https://scapy.readthedocs.io/en/latest/api/scapy.layers.dot11.html) to conform the headers needed to transmit the message, and the socket module to generate a raw socket with the interface in monitor mode.
+
+ In this way we would achieve our goal of handling Wifi headers, but after discussing it with my TFG tutors this development completely escapes the competence of a TFG since not even Mininet-Wifi contemplates the handling of Wifi headers. Therefore, this objective is considered as a future development, it will be mentioned in future work. The development on Mininet-Wifi will therefore consist of integrating the BMV2 into Mininet-Wifi, and testing the use cases developed for P4, under Mininet-Wifi. The headers that will arrive to us will be those of Ethernet, but as already explained, it is the own Kernel who is in charge to make a casting of the Wifi headers towards Ethernet headers, reason why it escapes of our control.
+
+
+### Example Mininet-Wifi execution trace
+
+To better understand how Mininet-Wifi works, two scripts have been proposed that emulate the same topology, but make use of TCLink links and ``wmediumd`` managed links. The ``wmediumd`` tool is a tool that works on the same module of the ``mac80211_hwsim`` Kernel, this tool has implemented models of losses and delays of the packages so that the emulation of the topology has a more realistic factor and closer to reality.
+
+The scripts that we will study are the following ones, also we indicate the traces obtained from the execution of each one of them (which will be analyzed to understand better its internal operation).
+
+*   [Topology with TCLink links](https://github.com/davidcawork/TFG/blob/master/src/use_cases/p4-wireless/analysis/Mininet-wifi/examples/topo_TC.py)
+
+    * [System trace](https://github.com/davidcawork/TFG/blob/master/src/use_cases/p4-wireless/analysis/Mininet-wifi/traces/strace_topo_TC.log)
+    * [Mininet-Wifi debug trace](https://github.com/davidcawork/TFG/blob/master/src/use_cases/p4-wireless/analysis/Mininet-wifi/traces/trace_topo_TC_debug.log)
+
+*   [Topology using``wmediumd``](https://github.com/davidcawork/TFG/blob/master/src/use_cases/p4-wireless/analysis/Mininet-wifi/examples/topo_wmediumd.py)
+
+    * [System trace](https://github.com/davidcawork/TFG/blob/master/src/use_cases/p4-wireless/analysis/Mininet-wifi/traces/strace_topo_wmediumd.log)
+    * [Mininet-Wifi debug trace](https://github.com/davidcawork/TFG/blob/master/src/use_cases/p4-wireless/analysis/Mininet-wifi/traces/trace_topo_wmediumd_debug.log)
+
+
+
+We have come to the conclusion that the big difference between a topology with `TCLink` links and `wmediumd` links is that the links contoured by the Linux `TC' are always one-to-one links, where the restrictions in the `TC' are applied to each end of the link. However, when the environment is managed by `wmediumd` it is not necessary to indicate the links, as the tool itself will manage the ranges of each network node. 
+
+Additionally, it is important to mention that the two analyses have been done with two different commits due to the fact that the `module` class was updated while the analysis was being done. It was thought that it would be useful to analyze the new version to see what changes had been introduced, it was seen that only code was reorganized to enable the creation of radios in flight when the links are managed by `wmediumd`, in addition to changing the name of the class `module` by `Mac80211Hwsim` being this last one much more identifying, since always in last instance it is this module that is inserted in the Kernel.
+
+## Integration of BMV2 in Mininet-Wifi
+
+Now that we have an idea about the internal functioning of both tools, let's proceed with their integration. As mentioned before, we will start from the base developed by [Ramon Fontes](https://github.com/ramonfontes), who had made a [fork](https://github.com/ramonfontes/tutorials) of the p4 tutorials and had adapted them to Mininet-Wifi.
+
+While working on the development of the integration of BMV2 in Mininet-Wifi [Ramon Fontes](https://github.com/ramonfontes) opened an [issue](https://github.com/intrig-unicamp/mininet-wifi/issues/295) where the intention of the created in this integration was exposed. In this [issue](https://github.com/intrig-unicamp/mininet-wifi/issues/295) it was possible to discuss with [Ramon Fontes](https://github.com/ramonfontes) how this development should be done. 
+
+It has been decided to make a generic class hierarchy for the BMv2 so that from these you can create custum classes with new additions, so to speak these classes will be the basis for classes that control the BMV2 in a more particular way. A class [`P4AP`](https://github.com/davidcawork/mininet-wifi/blob/p4/mn_wifi/bmv2.py#L447), which contains all the tributes and methods common to BMV2 such as the execution path of BMv2, the json of the p4 program, the thrift-port, log configuration and basic identifier of BMV2. From this class we want to inherit a class called [`P4RuntimeAP`](https://github.com/davidcawork/mininet-wifi/blob/p4/mn_wifi/bmv2.py#L616), which will provide all the elements necessary to support the configuration via P4Runtime via gRPC-port of the BMV2.
+
+
+
+![UML P4-Mininet-Wifi](../../../img/analysis_p4-wireless/p4_Mininet_Wifi_UML.png)
+
+
+Also talking with [Ramon Fontes](https://github.com/ramonfontes) about the implementation of these classes, he indicated me that it would be very useful that these classes have execution support in Network Namespaces, so in a parallel way it was necessary to create a class called [`Netns_mgmt`](https://github.com/davidcawork/TFG/tree/master/src/netns_mgmt). This class helps us to manage the execution of python code in runtime of a Network namespace indicated by using the `setns` call which associates the process over which this call is made to the system to a indicated Namespace.
+
+With the help of this class, [`Netns_mgmt`](https://github.com/davidcawork/TFG/tree/master/src/netns_mgmt), it was possible to configure each BMV2 in its own Network Namespace, so the integration was finished. Additionally, two examples were added to Mininet-Wifi in order to help people who will be using the class. These examples can be found [here](https://github.com/davidcawork/mininet-wifi/tree/p4/examples/p4).
+
+
+All this development was carried out in a Mininet-Wifi fork, and within this in a particular branch, in which all P4 developments are carried out. Once the integration was completed, the development was offered to the official Mininet-Wifi repository via [`pull-request`](https://github.com/intrig-unicamp/mininet-wifi/pull/302). Currently we are waiting to upgrade the dependencies where the integration was done, since Mininet-Wifi is working with the latest versions! For the development of the p4-wireless use cases, we will use the stable versions of the P4 environment dependencies.
+
+## Implementation of the modified Mininet-Wifi
+
+In order to test the development carried out with Mininet-Wifi, we must first carry out the following steps. Download the repository from my fork, not the official one:
+
+```bash
+    git clone https://github.com/davidcawork/mininet-wifi
+```
+
+We will make a checkout to switch from the master branch of the repository to the P4 element development branch. Previously we will have to download the references from the remote.
+
+```bash
+
+cd mininet-wifi && git fetch
+git checkout p4
+
+```
+
+
+As the development branch adds new modules to Mininet-Wifi you must "recompile" them again by doing a `make install` from the `/mininet-wifi` directory. For the added modules to work properly you must have the p4 environment dependencies, in the following table you can check which versions are required.
+
+
+
+|    Dependency   | Version required |
+|:---------------:|:-------------------:|
+|  [`BMV2`](https://github.com/p4lang/behavioral-model)  |  `b447ac4c0cfd83e5e72a3cc6120251c1e91128ab` |
+|  [`PI`](https://github.com/p4lang/PI) |     `41358da0ff32c94fa13179b9cee0ab597c9ccbcc`  |
+|  [`P4C`](https://github.com/p4lang/p4c)  |    `69e132d0d663e3408d740aaf8ed534ecefc88810`     |
+|  [`PROTOBUF`](https://github.com/protocolbuffers/protobuf) |   `v3.2.0`  |
+|  [`GRPC`](https://github.com/grpc) |    `v1.3.2` |
+
+
+## References 
+
+*   [Mininet-Wifi](https://github.com/intrig-unicamp/mininet-wifi)
+*   [P4 tutorials - Mininet-Wifi fork](https://github.com/ramonfontes/tutorials)
+*   [BMV2](https://github.com/p4lang/behavioral-model)
+*   [Medium and mobility behaviour insertion for 802.11 emulated networks -  wmediumd](https://core.ac.uk/download/pdf/41810121.pdf)
+*   [Design and implementation of a wireless network tap device for IEEE 802.11 wireless network emulation](https://ieeexplore.ieee.org/abstract/document/8330098)
+*   [Analysis of Open Source Drivers for IEEE 802.11 WLANs](http://www.au-kbc.org/comm/Docs/papers/Vipin_Analysis_of_open_source_WLAN_driver_paper.pdf)
+*   [Figura componentes Mininet-Wifi](https://github.com/ramonfontes/mn-wifi-book-pt)
+*   [Diapositivas de la universidad de trento sobre el subsistema wireless de Linux](http://disi.unitn.it/locigno/didattica/NC/14-15/Laboratory_1.pdf)
+
+ 
+ ---
+ 
+ # P4lang-wireless Implementation 
+
 La motivación de esta implementación viene dada para el estudio de los distintos datapaths en entornos wireless. La única plataforma consolidada para la emulación de entornos SDN-wireless es Mininet-Wifi, por ello, se empezó la búsqueda por su repositorio. Por desgracia no se encontró ninguna mención del lenguaje p4 en dicho repositorio. Investigando más, se encontró que el creador de Mininet-Wifi y profesor de la IFBA, [Ramon Fontes](https://github.com/ramonfontes), había hecho un [fork](https://github.com/ramonfontes/tutorials)  de los tutoriales de p4 y los había adaptado a Mininet-Wifi, aunque como según recoge el [aquí](https://github.com/p4lang/tutorials/issues/301) en este issue abierto en p4lang-tutorials, aun le queda mucho desarrollo por delante, es solo un primer paso. 
 
 Viendo la actividad de dicho repositorio se entiende que de momento el desarrollo no ha progresado mucho más, ya que no hay actividad en él desde el 2019. Por tanto, como se tiene la necesidad de procesar paquetes con la cabeceras WiFi, y viendo que en todos los programas desarrollados en p4 por Ramon el BMV2 trabaja sobre Ethernet, nos vamos a aventurar a montar un escenario donde el BMV2 posea interfaces wireless, para así, poder procesar las cabeceras que necesitamos.
@@ -333,3 +553,4 @@ Como la rama de desarrollo añade modulos nuevos a Mininet-Wifi se deberá "reco
 *   [Diapositivas de la universidad de trento sobre el subsistema wireless de Linux](http://disi.unitn.it/locigno/didattica/NC/14-15/Laboratory_1.pdf)
 
  
+
