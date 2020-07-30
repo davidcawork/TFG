@@ -1,5 +1,226 @@
 # XDP - Case04: Layer 3 forwarding
 
+In this use case we will explore packet forwarding, at this point we already know how to filter by the packet headers, analyze them and establish a logic associated with that filtering with the XDP return codes. An extra action to be done with the packets will be the forwarding, in XDP it will be implemented by return codes and by [``helpers BPF``](http://man7.org/linux/man-pages/man7/bpf-helpers.7.html), because as we already mentioned in [case02](https://github.com/davidcawork/TFG/tree/master/src/use_cases/xdp/case02), XDP ends up being translated into BPF (eBPF), so certain functions, not all, to work with bpf are available when working with XDP. 
+
+Throughout this use case, the different ways to achieve forwarding with XDP have been explored. We have gone from the simplest way to the most robust and complex way. In order to avoid differences between these ways of forwarding, a single scenario has been created where these paths will be explored without any differences induced by forwarding.
+
+In the case of previous use we were already forwarding, since, with the code ``XDP_TX`` we are forwarding to the interface through which that packet was received. But how do we forward to other interfaces? How can we route a packet that arrives at us through interface A and to another interface B? Well, reading the man-page of the [``helpers BPF``](http://man7.org/linux/man-pages/man7/bpf-helpers.7.html) we find the functions ``bpf_redirect()``, ``bpf_redirect_map()`` which, reading their description, will be the way used to address this need.
+
+```C
+
+int bpf_redirect(u32 ifindex, u64 flags);
+
+int bpf_redirect_map(struct bpf_map *map, u32 key, u64 flags);
+
+```
+
+If we look at their definition, none of them works with the ``sk_buff``, data structure used very frequently in the network stack of the Linux Kernel in [case05](https://github.com/davidcawork/TFG/blob/master/src/use_cases/xdp/case05/), it will be explained what limitations induce some of the _BPF_ helpers to make use of it. The first one, ``bpf_redirect()`` makes use of ``ifindex`` as an identifier element of the interface to which it has to forward. As for the function ``bpf_redirect_map()`` makes use of a BPF map and a _key_, remember that BPF maps are of the key - value type, and based on the key we give it will go to the BPF map to find the value associated with that key, which will be an ``ifindex``. This last function will be explored further in this use case.
+
+
+## Compilation
+
+To compile the XDP program a Makefile has been left prepared in this directory as well as in the [``case03``](https://github.com/davidcawork/TFG/tree/master/src/use_cases/xdp/case03), so to compile it you only need to make a:
+
+```bash
+make
+```
+If you are in doubt about the process of compiling the XDP program, we recommend that you return to [``case02``](https://github.com/davidcawork/TFG/tree/master/src/use_cases/xdp/case02)] where the flow arranged for compiling the programs is referred to.
+
+## Setting up the scenario
+
+To test the XDP programs we will use the Network Namespaces. If you don't know what the Network Namespaces are, or the concept of namespace in general, we recommend that you read the [``case01``](https://github.com/davidcawork/TFG/tree/master/src/use_cases/xdp/case01) where a short introduction to the Network Namespaces is given, what they are and how we can use them to emulate our Network scenarios. 
+
+As we mentioned before, so that the concept of the Network Namespaces does not pose a barrier to entry, a script has been written to raise the stage, and for its subsequent cleaning. It is important to point out that the script must be launched with root permissions. To raise the scenario we must execute the script in the following way:
+
+```bash
+sudo ./runenv.sh -i
+```
+
+To clean our machine from the previously recreated scenario we can run the same script indicating now the -c (Clean) parameter. To some bad, and if it is believed that the cleaning has not been done in a satisfactory way, we can make a reboot of our machine obtaining this way that all the not persistent entities(veth, netns..) disappear of our computer.
+
+```bash
+sudo ./runenv.sh -c
+```
+
+
+## Hardcoded Forwarding 
+
+The scenario raised is the following, it is composed of two Network Namespaces, and two pairs of ``veth's`` which we will use to communicate the two network namespaces with each other, through the default Network namespace. In this case, we will forward from the ``dos`` interface to the ``uno`` interface.
+
+
+![scenario](../../../../img/use_cases/xdp/case04/scenario_01.png)
+
+### Loading the XDP program 
+
+Before loading the program **we must obtain two data**, the **``ifindex`` of the ``uno``** interface to which we are going to send the packets generated from the interior of the ``dos`` network namespace, and the **MAC of the internal interface** of the ``uno`` network namespace, since it will be necessary that the packets that go to the ``uno`` interface have as destination MAC that of the ``veth0`` so that the packets are not discarded. Once we have this data noted, we will open the xdp program (``*.c``) like any text editor, and go to the declaration of variables and hardcode both the ``ifindex`` and the MAC. For example:
+
+```C 
+
+    /*  Para un ifindex: 6 y una MAC: 9A:DE:AF:EC:18:6E */
+
+    ...
+    
+    unsigned char dst[ETH_ALEN + 1] = {0x9a,0xde,0xaf,0xec,0x18,0x6e, '\0'} ;
+    unsigned ifindex = 6; 
+
+    ...
+
+```
+
+Once we have hardcoded the data to do the forwarding we will have to recompile the XDP program so that the bytecode we anchor to the ``dos`` interface does the forwarding correctly. Therefore, we simply have to do a **``make``** again. 
+
+Now if :smile: .. We're all set to anchor the XDP program again! Remember that because we are working with a ``veth's`` interface we must anchor a dummy program at the end where the packets will be received, for more information on this limitation we recommend that you go back to [case03](https://github.com/davidcawork/TFG/tree/master/src/use_cases/xdp/case03) or see the [Netdev](https://netdevconf.info) talk called **_Veth XDP: XDP for containers_** where they explain in more detail this limitation, how to deal with it and why it is induced.  [Link to the talk](https://netdevconf.info/0x13/session.html?talk-veth-xdp).
+
+```bash
+
+# We enter the Network Namespace "uno" and anchor the dummy program to the veth0 interface
+sudo ip netns exec uno ./xdp_loader -d veth0 -F --progsec xdp_pass
+
+# Then, we anchored the program to interface "dos" as we mentioned before
+sudo ./xdp_loader -d dos -F --progsec xdp_case04
+
+```
+
+### Testing
+
+
+The performance check of this XDP program is quite basic, we are going to generate packets from inside the ``dos`` Network Namespace to the ``veth`` inside the ``uno`` Network Namespace. To do this we will open three terminals, in each of them we will carry out a task:
+
+```bash
+
+# In this terminal we will generate the ping to the Network Namespace "uno" interface from the Network Namespace "dos"
+[Terminal:1] sudo ip netns exec dos ping {IP_veth0_uno}
+
+# In this terminal we will put a sniffer to listen to the packages that arrive to us within the Network Namespace "dos"
+[Terminal:2] sudo ip netns exec uno tcpdump -l
+
+# Finally, optionally, we can run the program that acted as a collector of statistics on XDP return codes
+[Terminal:3] sudo ./xdp_stats -d dos
+```
+
+
+## Forwarding semi-Hardcoded(BPF maps)
+
+The scenario raised is the following, it is composed of two Network Namespaces, and two pairs of ``veth's`` which we will use to communicate the two network namespaces with each other, through the default Network namespace. In this case we will forward from the ``dos`` interface to the ``uno`` interface and vice versa, so the communication will be bidirectional.
+
+
+![scenario2](../../../../img/use_cases/xdp/case04/scenario_02.png)
+
+### Loading XDP program
+
+This way of doing the forwarding does not require hardcoding data in the XDP program itself that will go to the Kernel, but using the BPF maps as a means to save forwarding data such as the ``ifindex`` and the destination MACs from user space so that later the program anchored in the Kernel will be able to read the maps, obtain the forwarding information and do it based on the perceived information from the BPF maps.
+
+Again, and as in this case the communication will be bidirectional we must anchor two _dummy program_ at the two ends where the packets will arrive, if you are not aware of this limitation come back to this [section](https://github.com/davidcawork/TFG/blob/master/src/use_cases/xdp/case04/README.md#carga-del-programa--xdp) where the limitation is mentioned.
+
+
+It is important to note that previously anchored programs must be removed, so one option would be to clean up the scenario using the given script ( ``sudo ./runenv.sh -c``) and start over.
+
+
+
+```bash
+
+# We go into every Network Namespace and anchor the dummy programs
+sudo ip netns exec uno ./xdp_loader -d veth0 -F --progsec xdp_pass
+sudo ip netns exec dos ./xdp_loader -d veth0 -F --progsec xdp_pass
+
+# We anchor the XDP program on each interface to achieve two-way communication 
+sudo ./xdp_loader -d uno -F --progsec xdp_case04_map
+sudo ./xdp_loader -d dos -F --progsec xdp_case04_map
+
+# We store the necessary information for forwarding 
+local src="uno"
+local dest="dos"
+local src_mac=$(ip netns exec $src cat /sys/class/net/veth0/address)
+local dest_mac=$(ip netns exec $dest cat /sys/class/net/veth0/address)
+ 
+# We populate the BPF maps with the useful information to carry out the forwarding in both directions
+./prog_user -d $src -r $dest --src-mac $src_mac --dest-mac $dest_mac
+./prog_user -d $dest -r $src --src-mac $dest_mac --dest-mac $src_mac
+
+
+```
+
+### Testing
+
+This program can be tested from one end or the other because, if everything works correctly, there will be two-way communication. So we will test from the Network namepsace ``uno`` to the ``dos``.
+
+```bash
+
+# We ping from the inside of the network namespace "uno" to the veth0 of the network namespace "dos"
+ping  {IP_veth_dos} [ y viceversa..]
+
+# We check with the statistics collector that they are producing XDP_REDIRECT
+sudo ./xdp_stats -d uno
+
+ó
+
+sudo ./xdp_stats -d dos
+
+``` 
+
+## Forwarding auto (Kernel FIBs)
+
+The scenario we will work on will be the same as the previous one so we only have to worry about cleaning the scenario of the XDP programs previously anchored to each interface so that they do not interfere with the new XDP programs we are going to anchor. 
+
+In this case, we'll go one step further and the forwarding will be automatic. Automatic? Yes, we won't hardcode any information to forward the packets. But then, how will we know where to send the packets? Very good question, this information will be obtained from the network stack of the Linux kernel which has a FIB (_Forwarding Information Base_) with very useful rules which we can take advantage of. So we will make a query to the FIB with the _helper_ ``bpf_fib_lookup()`` to get the forwarding information from the network stack itself, this is a clear example where the cooperation with the network stack makes our XDP program more robust and independent from the user space. 
+
+
+
+
+![scenario3](../../../../img/use_cases/xdp/case04/scenario_03.png)
+
+### Loading the XDP program
+
+To load our XDP program we must first enable the forwarding in our Kernel, then we will try to anchor the _dummy program_ and finally anchor the programs in both interfaces both ``uno`` and ``dos`` to get the communication bidirectional.
+
+```bash
+
+# Set the forwarding 
+sudo sysctl net.ipv4.conf.all.forwarding=1
+
+# Hook the XDP programs
+sudo ./xdp_loader -d uno -F --progsec xdp_case04_fib
+sudo ./xdp_loader -d dos -F --progsec xdp_case04_fib
+
+# Lets add the dummy programs
+sudo ip netns exec uno ./xdp_loader -d veth0 -F --progsec xdp_pass
+sudo ip netns exec dos ./xdp_loader -d veth0 -F --progsec xdp_pass
+
+# We enable ifindex 
+sudo ./prog_user -d uno
+sudo ./prog_user -d dos
+
+```
+
+### Testing
+
+This program can be tested from one end or the other because, if everything works correctly, there will be two-way communication. So we will test from the Network namepsace ``uno`` to the ``dos``.
+
+```bash
+
+# We ping from the inside of the network namespace "uno" to the veth0 of the network namespace "dos"
+ping  {IP_veth_dos} [ y viceversa..]
+
+# We check with the statistics collector that they are producing XDP_REDIRECT
+sudo ./xdp_stats -d uno
+
+ó
+
+sudo ./xdp_stats -d dos
+
+```
+
+## References
+
+* [Helpers BPF](http://man7.org/linux/man-pages/man7/bpf-helpers.7.html) 
+* [Rounting Linux - FIB](https://www.net.in.tum.de/fileadmin/TUM/NET/NET-2015-09-1/NET-2015-09-1_07.pdf)
+* [Rounting Linux - FIB (source)](https://github.com/torvalds/linux/blob/master/include/net/fib_rules.h)
+
+
+---
+
+# XDP - Case04: Layer 3 forwarding
+
 En este caso de uso exploraremos el forwarding de paquetes, en este punto ya sabemos como filtrar por las cabeceras de los paquetes, analizarlos y establecer una lógica asociada a ese filtrado con los códigos de retorno XDP. Una acción extra a realizar con los paquetes será el forwarding, en XDP vendrá implementado por códigos de retorno y por [``helpers BPF``](http://man7.org/linux/man-pages/man7/bpf-helpers.7.html), por que como ya comentábamos en el [case02](https://github.com/davidcawork/TFG/tree/master/src/use_cases/xdp/case02), XDP se termina traduciendo en BPF (eBPF), por lo que ciertas funciones, no todas, para trabajar con bpf están disponibles a la hora de trabajar con XDP. 
 
 A lo largo de este caso de uso, se han explorado las distintas maneras para lograr el forwarding con XDP. Hemos ido desde la manera más simple a la manera más robusta y compleja. Para que no haya diferencias entre estas formas de realizar el forwarding, se ha creado un mismo escenario donde se explorarán estas vias sin que existan diferencias inducidas por este.
@@ -213,3 +434,5 @@ sudo ./xdp_stats -d dos
 * [Helpers BPF](http://man7.org/linux/man-pages/man7/bpf-helpers.7.html) 
 * [Rounting Linux - FIB](https://www.net.in.tum.de/fileadmin/TUM/NET/NET-2015-09-1/NET-2015-09-1_07.pdf)
 * [Rounting Linux - FIB (source)](https://github.com/torvalds/linux/blob/master/include/net/fib_rules.h)
+
+
