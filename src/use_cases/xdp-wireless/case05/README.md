@@ -1,5 +1,75 @@
 # XDP Wireless - Case05: Broadcast
 
+Finally, in this use case we will explore the forwarding capability of XDP ( :joy: ). Therefore we have tried to replicate a basic broadcast scenario in a wireless scenario. We have proposed to use the tool [**arping**](http://man7.org/linux/man-pages/man8/arping.8.html) to emulate an ARP resolution, generating ARP Request, these take their destination MAC all to FF:FF:FF:FF:FF and their broadcast domain would include all those network nodes operating up to layer 2.
+
+![scenario](../../../../img/use_cases/xdp-wireless/case05/scenario.png)
+
+The proposed scenario to emulate that scenario was as follows. This would be composed of two wireless stations connected to an access point on which all the XDP logic will go, and finally, a host from which we can start the ARP resolutions to see their broadcast in a wireless environment. 
+
+## Compilation
+
+To compile the XDP program a Makefile has been left prepared in this directory as well as in the [``case04``](https://github.com/davidcawork/TFG/tree/master/src/use_cases/xdp-wireless/case04), so to compile it you only have to make a
+
+```bash
+
+# Before doing the make, we must check the ifindex of the ap1-wlan1 interface and modify it in the program.
+sudo make
+```
+
+If you are in doubt about the process of compiling the XDP program, we recommend that you return to [``case02``](https://github.com/davidcawork/TFG/tree/master/src/use_cases/xdp/case02) where the flow arranged for compiling the programs is referred to.
+
+## Setting up the scenario 
+
+
+To test the XDP programs in a wireless environment, we will do Mininet-Wifi to emulate the network topologies. This emulation tool is a Mininet fork, which makes use of the Network Namespaces to isolate the independent nodes of the network. But what is a Network Namespaces? A network namespace consists of a logical network stack replica that by default has the Linux kernel, routes, ARP tables, Iptables and network interfaces.
+
+As we already mentioned, to raise the scenario we will only have to execute the script in Python that makes use of the Mininet-Wifi API to generate all the network topology. Once executed, it will open the Mininet-Wifi command line interface, from which we can check the operation of our use case. So we only need to run it :smile::
+
+```bash
+sudo python runenv.py
+```
+
+To clean our machine from the scenario previously recreated with Mininet-Wifi we could do a `sudo mn -c` but it is recommended that the user makes use of the Makefile target intended for this purpose, since it will additionally clean the intermediate files generated in the process of compiling our XDP program. Executing the following command would clean up our machine:
+
+```bash
+sudo make clean
+```
+
+
+## Loading th XDP program 
+
+Once our XDP program has been compiled, and our scenario launched with the execution of the `runenv.py` script, we will proceed with the loading of the XDP program using the `xdp_loader` tool.
+
+```bash
+
+# We opened a bash on the Network Namespace "switch"
+mininet-wifi> ap1 ./xdp_loader -d ap1-eth2 -F --progsec xdp_case05 -S
+
+```
+
+## Testing
+
+To check the operation of the Broadcast system the following test will be performed, from the `h1` host we will generate ARP-Request packages asking for any of the MACs of the wireless stations. If our Broadcast system works, listening in the wireless stations ``sta1`` and ``sta2`` destination we should see how the ARP-Request packets arrive without problems.
+
+```bash
+
+# Generate ARP-REQUEST
+mininet-wifi> h1 arping 10.0.0.1-2
+
+# We listen in the Network Namespace destination of the wireless stations waiting to see ARP-REQUEST.
+mininet-wifi> sta1 tcpduml -l
+mininet-wifi> sta2 tcpduml -l
+```
+
+## References 
+
+
+
+---
+
+
+# XDP Wireless - Case05: Broadcast
+
 Por último, en este caso de uso exploraremos la capacidad de forwarding de XDP ( :joy: ). Por ello se ha intentado replicar un escenario básico de broadcast en un escenario inalámbrico. Se ha planteado hacer uso de la herramienta [**arping**](http://man7.org/linux/man-pages/man8/arping.8.html) para emular una resolución ARP, generando ARP Request, estos llevan su MAC destino todo a FF:FF:FF:FF:FF:FF y su dominio de difusión englobaría todos aquellos nodos de la red que operen hasta capa 2.
 
 ![scenario](../../../../img/use_cases/xdp-wireless/case05/scenario.png)
@@ -62,4 +132,5 @@ mininet-wifi> sta2 tcpduml -l
 ```
 
 ## Fuentes
+
 
