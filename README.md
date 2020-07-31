@@ -16,7 +16,7 @@
 
 |      **Task**     |     **Status**    | **Priority** |
 |:-------------:|:-------------:|:-------------:|
-| Translate the contents of the repository into English | ![queued](https://img.shields.io/badge/-queued-orange) | ![low](https://img.shields.io/badge/-low-blue) |
+| Future Work | ![queued](https://img.shields.io/badge/-queued-orange) | ![low](https://img.shields.io/badge/-low-blue) |
 
 
 </div>
